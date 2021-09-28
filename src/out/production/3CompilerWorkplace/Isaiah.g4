@@ -1,17 +1,18 @@
 grammar Isaiah;
 
 program: declare* EOF;
+
 declare
     :   varDeclare ';'
     |   classDeclare ';'
-    |   funcDeclare
+    |   funcDeclare ';'
     ;
 
 digitType: Bool | Int | String | Identifier ;
 
 arrayType
-    : digitType LeftBracket RightBracket
-    | arrayType LeftBracket RightBracket
+    : digitType '[]'
+    | arrayType '[]'
     ;
 
 varType: digitType | arrayType;
@@ -40,7 +41,7 @@ classIdentity
     ;
 
 constructDeclare
-    :   Identifier LeftParen RightParen LeftBrace
+    :   Identifier '()' LeftBrace
             statement*
         RightBrace
     ;
@@ -51,21 +52,20 @@ funcDeclare
         RightBrace
     ;
 
-parameterList: '('(varType Identifier(','varType Identifier)*)?')';
+parameterList: '(' (varType Identifier(','varType Identifier)*)? ')';
 //TODO: init problem?
 
 expressionList: '('(expression(','expression)*)?')';
 
 block  : LeftBrace statement* RightBrace ;
 
+
 statement
-    :   ';'
-    |   varDeclare ';'
+    :   varDeclare ';'
     |   expression ';'
     |   condition
     |   loop
     |   jump ';'
-    |   block ';'
     ;
 
 expression
@@ -73,11 +73,10 @@ expression
     |   Identifier                                      #idExpr
     |   This                                            #thisExpr
     |   newExpr                                         #newOpExpr
-    |   Identifier expressionList                       #funcExpr
     |   lambdaFunc                                      #lambdaExpr     //TODO: MODIFY
     |   '('expression')'                                #parenExpr
     |   Identifier '.' Identifier                       #classCallExpr
-    |   expression ('['expression']')+ ('['']')*        #arrayIndexExpr
+    |   Identifier '[' expression ']'                   #arrayIndexExpr
     |   <assoc=right> op=('!'|'~')   expression         #unaryExpr
     |   <assoc=right> op=('+'|'-')   expression         #unaryExpr
     |   <assoc=right> op=('++'|'--') expression         #unaryExpr
@@ -96,15 +95,14 @@ expression
     |   expression '='  expression                      #binaryExpr
     ;
 
-constVal: IntConst | StringConst | True | False | Null;
+constVal: IntConst | StringConst | BoolConst | NullConst;
 
 newExpr
-    :   New digitType                                 #test1//static digit without assign
-    |   New digitType '('expression')'                #test2//static digit with assign
-    |   New digitType ('['expression']')+ ('['']')*   #test3//static array
-    |   New Identifier parameterList                  #test4//custom class with parameter(s)
+    :   New digitType                                 //static digit without assign
+    |   New digitType '('expression')'                //static digit with assign
+    |   New arrayType ('['expression']')+ ('[]')*     //static array
+    |   New Identifier parameterList                  //custom class with parameter(s)
     ;
-
 
 lambdaFunc
     :   '[&]'parameterList'->'LeftBrace
@@ -127,8 +125,6 @@ loop
     |   For '('forInit';'expression?';'expression?')' LeftBrace
             statement*
         RightBrace
-    |   For '('forInit';'expression?';'expression?')'
-            statement
     ;
     //TODO: forInit:    declare, expr
     //                  none
@@ -166,14 +162,7 @@ This: 'this';
 
 LeftBrace: '{';
 RightBrace: '}';
-LeftParen: '(';
-RightParen: ')';
-LeftBracket: '[';
-RightBracket: ']';
-BlockComment
-    :   '/*' .*? '*/'
-        -> skip
-    ;
+
 BlankChar
     :   [ \r\n\t]
         -> skip
@@ -183,10 +172,10 @@ LineComment
         -> skip
     ;
 Identifier: [a-zA-Z][a-zA-Z0-9_]* ;
-//BoolConst: 'true' | 'false';
+BoolConst: True | False;
 IntConst: [1-9][0-9]* | '0';
-StringConst: '"'([ -~]|([\\][\\])|[\\n]|([\\]["]))*'"';
-//NullConst: 'null';
+StringConst: ["]([ -~]|([\\][\\])|[\\n]|([\\]["]))*["] ;
+NullConst: Null;
 
-//xxx: '('('some')?')';
-xxx: NullConst;
+
+
