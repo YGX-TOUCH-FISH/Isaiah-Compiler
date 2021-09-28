@@ -2,8 +2,9 @@ grammar Isaiah;
 
 program: declare* EOF;
 declare
-    :   varDeclare ';'
-    |   classDeclare ';'
+    :   ';'
+    |   varDeclare
+    |   classDeclare
     |   funcDeclare
     ;
 
@@ -14,7 +15,15 @@ arrayType
     | arrayType LeftBracket RightBracket
     ;
 
-varType: digitType | arrayType;
+varType: digitType | arrayType;                         //for declaration
+
+varObj: Identifier
+      | constVal
+      | newExpr
+      | Identifier expressionList
+      | lambdaFunc
+      | This
+      ;
 
 retType: varType | Void;
 
@@ -34,9 +43,10 @@ classDeclare
     ;
 
 classIdentity
-    :   varDeclare ';'
-    |   funcDeclare ';'
-    |   constructDeclare ';'
+    :   ';'
+    |   varDeclare
+    |   funcDeclare
+    |   constructDeclare
     ;
 
 constructDeclare
@@ -52,12 +62,15 @@ funcDeclare
     ;
 
 parameterList: '('(varType Identifier(','varType Identifier)*)?')';
-//TODO: init problem?
 
 expressionList: '('(expression(','expression)*)?')';
 
-block  : LeftBrace statement* RightBrace ;
+block: LeftBrace statement* RightBrace ;
 
+suite: block | statement ;
+//if() a = c ;
+//if() ; ;
+//else
 statement
     :   ';'
     |   varDeclare ';'
@@ -65,19 +78,14 @@ statement
     |   condition
     |   loop
     |   jump ';'
-    |   block ';'
+    |   block
     ;
 
 expression
-    :   constVal                                        #constExpr
-    |   Identifier                                      #idExpr
-    |   This                                            #thisExpr
-    |   newExpr                                         #newOpExpr
-    |   Identifier expressionList                       #funcExpr
-    |   lambdaFunc                                      #lambdaExpr     //TODO: MODIFY
+    :   varObj                                          #valueExpr
     |   '('expression')'                                #parenExpr
-    |   Identifier '.' Identifier                       #classCallExpr
-    |   expression ('['expression']')+ ('['']')*        #arrayIndexExpr
+    |   expression ('['expression']')+ ('['']')*        #indexExpr
+    |   expression '.' expression                       #callExpr
     |   <assoc=right> op=('!'|'~')   expression         #unaryExpr
     |   <assoc=right> op=('+'|'-')   expression         #unaryExpr
     |   <assoc=right> op=('++'|'--') expression         #unaryExpr
@@ -112,32 +120,18 @@ lambdaFunc
         RightBrace expressionList
     ;
 
-condition
-    :   If '('expression')' LeftBrace
-            statement*
-        RightBrace Else LeftBrace
-            statement*
-        RightBrace
-    ;
+condition:  If '('expression')' suite (Else suite)? ;
 
 loop
-    :   While '('expression')' LeftBrace
-            statement*
-        RightBrace
-    |   For '('forInit';'expression?';'expression?')' LeftBrace
-            statement*
-        RightBrace
-    |   For '('forInit';'expression?';'expression?')'
-            statement
+    :   While '('expression')' suite
+    |   For '('forInit';'expression?';'expression?')' suite
     ;
-    //TODO: forInit:    declare, expr
-    //                  none
-    //                  expr
 
 forInit
     :   varDeclare
     |   (expression(','expression)*)?       //maybe empty
     ;
+//TODO: if语句 => 一句话应该怎么写？
 
 jump
     :   Return expression?
@@ -189,4 +183,4 @@ StringConst: '"'([ -~]|([\\][\\])|[\\n]|([\\]["]))*'"';
 //NullConst: 'null';
 
 //xxx: '('('some')?')';
-xxx: NullConst;
+//xxx: NullConst;
