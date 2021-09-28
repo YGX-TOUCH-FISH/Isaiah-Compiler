@@ -11,8 +11,8 @@ declare
 digitType: Bool | Int | String | Identifier ;
 
 arrayType
-    : digitType LeftBracket RightBracket
-    | arrayType LeftBracket RightBracket
+    : digitType '[' ']'
+    | arrayType '[' ']'
     ;
 
 varType: digitType | arrayType;                         //for declaration
@@ -159,10 +159,6 @@ This: 'this';
 
 LeftBrace: '{';
 RightBrace: '}';
-LeftParen: '(';
-RightParen: ')';
-LeftBracket: '[';
-RightBracket: ']';
 BlockComment
     :   '/*' .*? '*/'
         -> skip

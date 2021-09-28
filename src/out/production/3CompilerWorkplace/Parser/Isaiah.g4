@@ -1,21 +1,29 @@
 grammar Isaiah;
 
 program: declare* EOF;
-
 declare
-    :   varDeclare ';'
-    |   classDeclare ';'
-    |   funcDeclare ';'
+    :   ';'
+    |   varDeclare
+    |   classDeclare
+    |   funcDeclare
     ;
 
 digitType: Bool | Int | String | Identifier ;
 
 arrayType
-    : digitType '[]'
-    | arrayType '[]'
+    : digitType '[' ']'
+    | arrayType '[' ']'
     ;
 
-varType: digitType | arrayType;
+varType: digitType | arrayType;                         //for declaration
+
+varObj: Identifier
+      | constVal
+      | newExpr
+      | Identifier expressionList
+      | lambdaFunc
+      | This
+      ;
 
 retType: varType | Void;
 
@@ -35,48 +43,48 @@ classDeclare
     ;
 
 classIdentity
-    :   varDeclare ';'
-    |   funcDeclare ';'
-    |   constructDeclare ';'
+    :   ';'
+    |   varDeclare
+    |   funcDeclare
+    |   constructDeclare
     ;
 
 constructDeclare
-    :   Identifier '()' LeftBrace
+    :   Identifier '('')' LeftBrace
             statement*
         RightBrace
     ;
-
+    //int main()
+//'()'
 funcDeclare
     :   retType Identifier parameterList LeftBrace
             statement*
         RightBrace
     ;
 
-parameterList: '(' (varType Identifier(','varType Identifier)*)? ')';
-//TODO: init problem?
+parameterList: '('(varType Identifier(','varType Identifier)*)?')';
 
 expressionList: '('(expression(','expression)*)?')';
 
-block  : LeftBrace statement* RightBrace ;
+block: LeftBrace statement* RightBrace ;
 
+suite: block | statement ;
 
 statement
-    :   varDeclare ';'
+    :   ';'
+    |   varDeclare ';'
     |   expression ';'
     |   condition
     |   loop
     |   jump ';'
+    |   block
     ;
 
 expression
-    :   constVal                                        #constExpr
-    |   Identifier                                      #idExpr
-    |   This                                            #thisExpr
-    |   newExpr                                         #newOpExpr
-    |   lambdaFunc                                      #lambdaExpr     //TODO: MODIFY
+    :   varObj                                          #valueExpr
     |   '('expression')'                                #parenExpr
-    |   Identifier '.' Identifier                       #classCallExpr
-    |   Identifier '[' expression ']'                   #arrayIndexExpr
+    |   expression ('['expression']')+ ('['']')*        #indexExpr
+    |   expression '.' expression                       #callExpr
     |   <assoc=right> op=('!'|'~')   expression         #unaryExpr
     |   <assoc=right> op=('+'|'-')   expression         #unaryExpr
     |   <assoc=right> op=('++'|'--') expression         #unaryExpr
@@ -95,14 +103,15 @@ expression
     |   expression '='  expression                      #binaryExpr
     ;
 
-constVal: IntConst | StringConst | BoolConst | NullConst;
+constVal: IntConst | StringConst | True | False | Null;
 
 newExpr
-    :   New digitType                                 //static digit without assign
-    |   New digitType '('expression')'                //static digit with assign
-    |   New arrayType ('['expression']')+ ('[]')*     //static array
-    |   New Identifier parameterList                  //custom class with parameter(s)
+    :   New digitType                                 #test1//static digit without assign
+    |   New digitType '('expression')'                #test2//static digit with assign
+    |   New digitType ('['expression']')+ ('['']')*   #test3//static array
+    |   New Identifier parameterList                  #test4//custom class with parameter(s)
     ;
+
 
 lambdaFunc
     :   '[&]'parameterList'->'LeftBrace
@@ -110,30 +119,18 @@ lambdaFunc
         RightBrace expressionList
     ;
 
-condition
-    :   If '('expression')' LeftBrace
-            statement*
-        RightBrace Else LeftBrace
-            statement*
-        RightBrace
-    ;
+condition:  If '('expression')' suite (Else suite)? ;
 
 loop
-    :   While '('expression')' LeftBrace
-            statement*
-        RightBrace
-    |   For '('forInit';'expression?';'expression?')' LeftBrace
-            statement*
-        RightBrace
+    :   While '('expression')' suite
+    |   For '('forInit';'expression?';'expression?')' suite
     ;
-    //TODO: forInit:    declare, expr
-    //                  none
-    //                  expr
 
 forInit
     :   varDeclare
     |   (expression(','expression)*)?       //maybe empty
     ;
+//TODO: if语句 => 一句话应该怎么写？
 
 jump
     :   Return expression?
@@ -162,7 +159,10 @@ This: 'this';
 
 LeftBrace: '{';
 RightBrace: '}';
-
+BlockComment
+    :   '/*' .*? '*/'
+        -> skip
+    ;
 BlankChar
     :   [ \r\n\t]
         -> skip
@@ -172,10 +172,5 @@ LineComment
         -> skip
     ;
 Identifier: [a-zA-Z][a-zA-Z0-9_]* ;
-BoolConst: True | False;
 IntConst: [1-9][0-9]* | '0';
-StringConst: ["]([ -~]|([\\][\\])|[\\n]|([\\]["]))*["] ;
-NullConst: Null;
-
-
-
+StringConst: '"'([ -~]|([\\][\\])|[\\n]|([\\]["]))*'"';
