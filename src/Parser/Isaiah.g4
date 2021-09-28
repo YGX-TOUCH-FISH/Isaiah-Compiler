@@ -50,11 +50,12 @@ classIdentity
     ;
 
 constructDeclare
-    :   Identifier LeftParen RightParen LeftBrace
+    :   Identifier '('')' LeftBrace
             statement*
         RightBrace
     ;
-
+    //int main()
+//'()'
 funcDeclare
     :   retType Identifier parameterList LeftBrace
             statement*
@@ -68,9 +69,7 @@ expressionList: '('(expression(','expression)*)?')';
 block: LeftBrace statement* RightBrace ;
 
 suite: block | statement ;
-//if() a = c ;
-//if() ; ;
-//else
+
 statement
     :   ';'
     |   varDeclare ';'
@@ -177,10 +176,5 @@ LineComment
         -> skip
     ;
 Identifier: [a-zA-Z][a-zA-Z0-9_]* ;
-//BoolConst: 'true' | 'false';
 IntConst: [1-9][0-9]* | '0';
 StringConst: '"'([ -~]|([\\][\\])|[\\n]|([\\]["]))*'"';
-//NullConst: 'null';
-
-//xxx: '('('some')?')';
-//xxx: NullConst;
