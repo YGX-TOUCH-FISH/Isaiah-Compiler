@@ -92,7 +92,6 @@ expression
     |   expression op=('*'|'/'|'%')   expression        #binaryExpr
     |   expression op=('+'|'-')   expression            #binaryExpr
     |   expression op=('<<'|'>>') expression            #binaryExpr
-    |   <assoc=right> expression '=' expression         #assignExpr
     |   expression op=('<'|'>'|'<='|'>=') expression    #binaryExpr
     |   expression op=('=='|'!=') expression            #binaryExpr
     |   expression '&'  expression                      #binaryExpr
@@ -100,7 +99,8 @@ expression
     |   expression '|'  expression                      #binaryExpr
     |   expression '&&' expression                      #binaryExpr
     |   expression '||' expression                      #binaryExpr
-    |   expression '='  expression                      #binaryExpr
+//    |   expression '='  expression                      #binaryExpr
+    |   <assoc=right> expression '=' expression         #assignExpr
     ;
 
 constVal: IntConst | StringConst | True | False | Null;

@@ -1,6 +1,4 @@
 // Generated from E:/SJTU/3CompilerWorkplace/src\Isaiah.g4 by ANTLR 4.9.1
-package Parser;
-
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
