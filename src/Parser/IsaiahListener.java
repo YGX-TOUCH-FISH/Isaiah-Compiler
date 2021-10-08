@@ -1,4 +1,5 @@
-// Generated from E:/SJTU/3CompilerWorkplace/src\Isaiah.g4 by ANTLR 4.9.1
+// Generated from E:/SJTU/3CompilerWorkplace/src/Parser\Isaiah.g4 by ANTLR 4.9.1
+package Parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -280,30 +281,6 @@ public interface IsaiahListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitConstVal(IsaiahParser.ConstValContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code test1}
-	 * labeled alternative in {@link IsaiahParser#newExpr}.
-	 * @param ctx the parse tree
-	 */
-	void enterTest1(IsaiahParser.Test1Context ctx);
-	/**
-	 * Exit a parse tree produced by the {@code test1}
-	 * labeled alternative in {@link IsaiahParser#newExpr}.
-	 * @param ctx the parse tree
-	 */
-	void exitTest1(IsaiahParser.Test1Context ctx);
-	/**
-	 * Enter a parse tree produced by the {@code test2}
-	 * labeled alternative in {@link IsaiahParser#newExpr}.
-	 * @param ctx the parse tree
-	 */
-	void enterTest2(IsaiahParser.Test2Context ctx);
-	/**
-	 * Exit a parse tree produced by the {@code test2}
-	 * labeled alternative in {@link IsaiahParser#newExpr}.
-	 * @param ctx the parse tree
-	 */
-	void exitTest2(IsaiahParser.Test2Context ctx);
 	/**
 	 * Enter a parse tree produced by the {@code test3}
 	 * labeled alternative in {@link IsaiahParser#newExpr}.

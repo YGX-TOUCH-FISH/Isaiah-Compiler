@@ -1,4 +1,5 @@
-// Generated from E:/SJTU/3CompilerWorkplace/src\Isaiah.g4 by ANTLR 4.9.1
+// Generated from E:/SJTU/3CompilerWorkplace/src/Parser\Isaiah.g4 by ANTLR 4.9.1
+package Parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -172,20 +173,6 @@ public interface IsaiahVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitConstVal(IsaiahParser.ConstValContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code test1}
-	 * labeled alternative in {@link IsaiahParser#newExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTest1(IsaiahParser.Test1Context ctx);
-	/**
-	 * Visit a parse tree produced by the {@code test2}
-	 * labeled alternative in {@link IsaiahParser#newExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTest2(IsaiahParser.Test2Context ctx);
 	/**
 	 * Visit a parse tree produced by the {@code test3}
 	 * labeled alternative in {@link IsaiahParser#newExpr}.

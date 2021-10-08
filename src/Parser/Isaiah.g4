@@ -1,6 +1,7 @@
 grammar Isaiah;
 
 program: declare* EOF;
+
 declare
     :   ';'
     |   varDeclare
@@ -61,7 +62,6 @@ funcDeclare
             statement*
         RightBrace
     ;
-
 parameterList: '('(varType Identifier(','varType Identifier)*)?')';
 
 expressionList: '('(expression(','expression)*)?')';
@@ -106,10 +106,10 @@ expression
 constVal: IntConst | StringConst | True | False | Null;
 
 newExpr
-    :   New digitType                                 #test1//static digit without assign
-    |   New digitType '('expression')'                #test2//static digit with assign
-    |   New digitType ('['expression']')+ ('['']')*   #test3//static array
-    |   New Identifier parameterList                  #test4//custom class with parameter(s)
+//    |   New digitType '('expression')'                #test2//static digit with assign
+//    :   New digitType
+    :   New digitType ('['expression']')+ ('['']')*   #test3//static array
+    |   New Identifier parameterList?                 #test4//custom class with parameter(s)
     ;
 
 
