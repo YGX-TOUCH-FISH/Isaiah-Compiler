@@ -17,5 +17,7 @@ public class Main {
         IsaiahParser parser = new IsaiahParser(new CommonTokenStream(lexer));
         parser.removeErrorListeners();
         ParseTree parseTreeRoot = parser.program();
+
+
     }
 }

@@ -28,13 +28,61 @@ public class IsaiahBaseListener implements IsaiahListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDeclare(IsaiahParser.DeclareContext ctx) { }
+	@Override public void enterEmptyDeclr(IsaiahParser.EmptyDeclrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDeclare(IsaiahParser.DeclareContext ctx) { }
+	@Override public void exitEmptyDeclr(IsaiahParser.EmptyDeclrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterVarDeclr(IsaiahParser.VarDeclrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVarDeclr(IsaiahParser.VarDeclrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterClassDeclr(IsaiahParser.ClassDeclrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitClassDeclr(IsaiahParser.ClassDeclrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFuncDeclr(IsaiahParser.FuncDeclrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFuncDeclr(IsaiahParser.FuncDeclrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterConstrDeclare(IsaiahParser.ConstrDeclareContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConstrDeclare(IsaiahParser.ConstrDeclareContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -76,13 +124,73 @@ public class IsaiahBaseListener implements IsaiahListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVarObj(IsaiahParser.VarObjContext ctx) { }
+	@Override public void enterVariVal(IsaiahParser.VariValContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVarObj(IsaiahParser.VarObjContext ctx) { }
+	@Override public void exitVariVal(IsaiahParser.VariValContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterConstVal(IsaiahParser.ConstValContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConstVal(IsaiahParser.ConstValContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNewVal(IsaiahParser.NewValContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNewVal(IsaiahParser.NewValContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFuncVal(IsaiahParser.FuncValContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFuncVal(IsaiahParser.FuncValContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLambdaVal(IsaiahParser.LambdaValContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLambdaVal(IsaiahParser.LambdaValContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterThisVal(IsaiahParser.ThisValContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitThisVal(IsaiahParser.ThisValContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -112,18 +220,6 @@ public class IsaiahBaseListener implements IsaiahListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterInitialPart(IsaiahParser.InitialPartContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitInitialPart(IsaiahParser.InitialPartContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterClassDeclare(IsaiahParser.ClassDeclareContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -131,18 +227,6 @@ public class IsaiahBaseListener implements IsaiahListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitClassDeclare(IsaiahParser.ClassDeclareContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterClassIdentity(IsaiahParser.ClassIdentityContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitClassIdentity(IsaiahParser.ClassIdentityContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -208,25 +292,109 @@ public class IsaiahBaseListener implements IsaiahListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSuite(IsaiahParser.SuiteContext ctx) { }
+	@Override public void enterBlkSuite(IsaiahParser.BlkSuiteContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSuite(IsaiahParser.SuiteContext ctx) { }
+	@Override public void exitBlkSuite(IsaiahParser.BlkSuiteContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatement(IsaiahParser.StatementContext ctx) { }
+	@Override public void enterOneSuite(IsaiahParser.OneSuiteContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatement(IsaiahParser.StatementContext ctx) { }
+	@Override public void exitOneSuite(IsaiahParser.OneSuiteContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterEmptyStmt(IsaiahParser.EmptyStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEmptyStmt(IsaiahParser.EmptyStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeclrStmt(IsaiahParser.DeclrStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclrStmt(IsaiahParser.DeclrStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExprStmt(IsaiahParser.ExprStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExprStmt(IsaiahParser.ExprStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCondStmt(IsaiahParser.CondStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCondStmt(IsaiahParser.CondStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLoopStmt(IsaiahParser.LoopStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLoopStmt(IsaiahParser.LoopStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterJumpStmt(IsaiahParser.JumpStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitJumpStmt(IsaiahParser.JumpStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBlockStmt(IsaiahParser.BlockStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBlockStmt(IsaiahParser.BlockStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -280,30 +448,6 @@ public class IsaiahBaseListener implements IsaiahListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCallExpr(IsaiahParser.CallExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCallExpr(IsaiahParser.CallExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAssignExpr(IsaiahParser.AssignExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAssignExpr(IsaiahParser.AssignExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterParenExpr(IsaiahParser.ParenExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -316,37 +460,49 @@ public class IsaiahBaseListener implements IsaiahListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConstVal(IsaiahParser.ConstValContext ctx) { }
+	@Override public void enterConstValue(IsaiahParser.ConstValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConstVal(IsaiahParser.ConstValContext ctx) { }
+	@Override public void exitConstValue(IsaiahParser.ConstValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTest3(IsaiahParser.Test3Context ctx) { }
+	@Override public void enterNewWrongArray(IsaiahParser.NewWrongArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTest3(IsaiahParser.Test3Context ctx) { }
+	@Override public void exitNewWrongArray(IsaiahParser.NewWrongArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTest4(IsaiahParser.Test4Context ctx) { }
+	@Override public void enterNewArray(IsaiahParser.NewArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTest4(IsaiahParser.Test4Context ctx) { }
+	@Override public void exitNewArray(IsaiahParser.NewArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNewClass(IsaiahParser.NewClassContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNewClass(IsaiahParser.NewClassContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -376,13 +532,25 @@ public class IsaiahBaseListener implements IsaiahListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLoop(IsaiahParser.LoopContext ctx) { }
+	@Override public void enterWhileLoop(IsaiahParser.WhileLoopContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLoop(IsaiahParser.LoopContext ctx) { }
+	@Override public void exitWhileLoop(IsaiahParser.WhileLoopContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterForLoop(IsaiahParser.ForLoopContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitForLoop(IsaiahParser.ForLoopContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

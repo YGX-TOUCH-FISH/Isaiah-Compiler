@@ -17,11 +17,40 @@ public interface IsaiahVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitProgram(IsaiahParser.ProgramContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link IsaiahParser#declare}.
+	 * Visit a parse tree produced by the {@code emptyDeclr}
+	 * labeled alternative in {@link IsaiahParser#declare}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDeclare(IsaiahParser.DeclareContext ctx);
+	T visitEmptyDeclr(IsaiahParser.EmptyDeclrContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code varDeclr}
+	 * labeled alternative in {@link IsaiahParser#declare}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVarDeclr(IsaiahParser.VarDeclrContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code classDeclr}
+	 * labeled alternative in {@link IsaiahParser#declare}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClassDeclr(IsaiahParser.ClassDeclrContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code funcDeclr}
+	 * labeled alternative in {@link IsaiahParser#declare}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFuncDeclr(IsaiahParser.FuncDeclrContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code constrDeclare}
+	 * labeled alternative in {@link IsaiahParser#declare}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstrDeclare(IsaiahParser.ConstrDeclareContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link IsaiahParser#digitType}.
 	 * @param ctx the parse tree
@@ -41,11 +70,47 @@ public interface IsaiahVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVarType(IsaiahParser.VarTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link IsaiahParser#varObj}.
+	 * Visit a parse tree produced by the {@code variVal}
+	 * labeled alternative in {@link IsaiahParser#value}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVarObj(IsaiahParser.VarObjContext ctx);
+	T visitVariVal(IsaiahParser.VariValContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code constVal}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstVal(IsaiahParser.ConstValContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code newVal}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNewVal(IsaiahParser.NewValContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code funcVal}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFuncVal(IsaiahParser.FuncValContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code lambdaVal}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLambdaVal(IsaiahParser.LambdaValContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code thisVal}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitThisVal(IsaiahParser.ThisValContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link IsaiahParser#retType}.
 	 * @param ctx the parse tree
@@ -59,23 +124,11 @@ public interface IsaiahVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVarDeclare(IsaiahParser.VarDeclareContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link IsaiahParser#initialPart}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInitialPart(IsaiahParser.InitialPartContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link IsaiahParser#classDeclare}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitClassDeclare(IsaiahParser.ClassDeclareContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link IsaiahParser#classIdentity}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClassIdentity(IsaiahParser.ClassIdentityContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link IsaiahParser#constructDeclare}.
 	 * @param ctx the parse tree
@@ -107,17 +160,68 @@ public interface IsaiahVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBlock(IsaiahParser.BlockContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link IsaiahParser#suite}.
+	 * Visit a parse tree produced by the {@code blkSuite}
+	 * labeled alternative in {@link IsaiahParser#suite}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSuite(IsaiahParser.SuiteContext ctx);
+	T visitBlkSuite(IsaiahParser.BlkSuiteContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link IsaiahParser#statement}.
+	 * Visit a parse tree produced by the {@code oneSuite}
+	 * labeled alternative in {@link IsaiahParser#suite}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatement(IsaiahParser.StatementContext ctx);
+	T visitOneSuite(IsaiahParser.OneSuiteContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code emptyStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEmptyStmt(IsaiahParser.EmptyStmtContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code declrStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclrStmt(IsaiahParser.DeclrStmtContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code exprStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprStmt(IsaiahParser.ExprStmtContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code condStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCondStmt(IsaiahParser.CondStmtContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code loopStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLoopStmt(IsaiahParser.LoopStmtContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code jumpStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitJumpStmt(IsaiahParser.JumpStmtContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code blockStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlockStmt(IsaiahParser.BlockStmtContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code indexExpr}
 	 * labeled alternative in {@link IsaiahParser#expression}.
@@ -147,20 +251,6 @@ public interface IsaiahVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBinaryExpr(IsaiahParser.BinaryExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code callExpr}
-	 * labeled alternative in {@link IsaiahParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCallExpr(IsaiahParser.CallExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code assignExpr}
-	 * labeled alternative in {@link IsaiahParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAssignExpr(IsaiahParser.AssignExprContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code parenExpr}
 	 * labeled alternative in {@link IsaiahParser#expression}.
 	 * @param ctx the parse tree
@@ -168,25 +258,32 @@ public interface IsaiahVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParenExpr(IsaiahParser.ParenExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link IsaiahParser#constVal}.
+	 * Visit a parse tree produced by {@link IsaiahParser#constValue}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitConstVal(IsaiahParser.ConstValContext ctx);
+	T visitConstValue(IsaiahParser.ConstValueContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code test3}
+	 * Visit a parse tree produced by the {@code newWrongArray}
 	 * labeled alternative in {@link IsaiahParser#newExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTest3(IsaiahParser.Test3Context ctx);
+	T visitNewWrongArray(IsaiahParser.NewWrongArrayContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code test4}
+	 * Visit a parse tree produced by the {@code newArray}
 	 * labeled alternative in {@link IsaiahParser#newExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTest4(IsaiahParser.Test4Context ctx);
+	T visitNewArray(IsaiahParser.NewArrayContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code newClass}
+	 * labeled alternative in {@link IsaiahParser#newExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNewClass(IsaiahParser.NewClassContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link IsaiahParser#lambdaFunc}.
 	 * @param ctx the parse tree
@@ -200,11 +297,19 @@ public interface IsaiahVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCondition(IsaiahParser.ConditionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link IsaiahParser#loop}.
+	 * Visit a parse tree produced by the {@code whileLoop}
+	 * labeled alternative in {@link IsaiahParser#loop}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLoop(IsaiahParser.LoopContext ctx);
+	T visitWhileLoop(IsaiahParser.WhileLoopContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code forLoop}
+	 * labeled alternative in {@link IsaiahParser#loop}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForLoop(IsaiahParser.ForLoopContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link IsaiahParser#forInit}.
 	 * @param ctx the parse tree
