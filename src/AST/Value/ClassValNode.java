@@ -1,0 +1,14 @@
+package AST.Value;
+
+import AST.ASTVisitor;
+import Util.position;
+
+public class ClassValNode extends ValueNode{
+    public String name;
+    public ClassValNode(String _name, position pos) {
+        super(pos);
+        name = _name;
+    }
+    @Override
+    public void accept(ASTVisitor visitor) {visitor.visit(this);}
+}

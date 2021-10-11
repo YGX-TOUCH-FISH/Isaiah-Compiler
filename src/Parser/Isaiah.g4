@@ -1,13 +1,13 @@
 grammar Isaiah;
-
 program: declare* EOF;
 
 declare
-    :   ';'                                             #emptyDeclr
-    |   varDeclare                                      #varDeclr
-    |   classDeclare                                    #classDeclr
-    |   funcDeclare                                     #funcDeclr
-    |   constructDeclare                                #constrDeclare
+    :   ';'                                             #emptyDeclare
+    |   varType Identifier '=' expression               #assignDeclare
+    |   varType Identifier (',' Identifier)*            #listDeclare
+    |   Class Identifier LeftBrace declare* RightBrace  #classDeclare
+    |   retType Identifier parameterList block          #funcDeclare
+    |   Identifier '('')' block                         #constrDeclare
     ;
 
 digitType: Bool | Int | String | Identifier ;
@@ -17,35 +17,24 @@ arrayType
     | arrayType '[' ']'
     ;
 
-varType: digitType | arrayType;                         //for declaration
-
-value : Identifier                                      #variVal
-      | constValue                                      #constVal
-      | newExpr                                         #newVal
-      | Identifier expressionList                       #funcVal
-      | lambdaFunc                                      #lambdaVal
-      | This                                            #thisVal
-      ;
+varType: digitType | arrayType;
 
 retType: varType | Void;
 
-varDeclare
-    :   varType Identifier('='expression)?(','Identifier('='expression)?)*    //mingled
-    ;
-
-classDeclare
-    :   Class Identifier LeftBrace
-            declare*
-        RightBrace
-    ;
-
-constructDeclare
-    :   Identifier '('')' block
-    ;
-
-funcDeclare
-    :   retType Identifier parameterList block
-    ;
+value : Identifier                                      #variVal
+      | IntConst                                        #intVal
+      | StringConst                                     #stringVal
+      | True                                            #trueVal
+      | False                                           #falseVal
+      | Null                                            #nullVal
+      | New digitType ('['']')+ ('['expression']')*                         #newWrong2
+      | New digitType ('['expression']')+ ('['']')+ ('['expression']')+     #newWrong
+      | New digitType ('['expression']')+ ('['']')*                         #newArray//static array
+      | New Identifier ('('')')?                                            #newClass
+      | Identifier expressionList                       #funcVal
+      | '[&]'parameterList'->'block expressionList      #lambdaVal
+      | This                                            #thisVal
+      ;
 
 parameterList: '('(varType Identifier(','varType Identifier)*)?')';
 
@@ -53,31 +42,29 @@ expressionList: '('(expression(','expression)*)?')';
 
 block: LeftBrace statement* RightBrace ;
 
-suite
-    : block                                             #blkSuite
-    | statement                                         #oneSuite
-    ;
-
 statement
     :   ';'                                             #emptyStmt
-    |   varDeclare ';'                                  #declrStmt
+    |   varType Identifier '=' expression ';'           #assignStmt
+    |   varType Identifier (',' Identifier)* ';'        #listStmt
     |   expression ';'                                  #exprStmt
-    |   condition                                       #condStmt
-    |   loop                                            #loopStmt
-    |   jump ';'                                        #jumpStmt
+    |   If '('expression')' statement (Else statement)? #condStmt
+    |   While '('expression')' statement                #whileStmt
+    |   For '('forInit';'expression?';'expression?')' statement #forStmt
+    |   Return expression? ';'                          #retStmt
+    |   Break ';'                                       #breakStmt
+    |   Continue ';'                                    #continStmt
     |   block                                           #blockStmt
     ;
-    //👆若必加分号，则直接加
+
 expression
     :   value                                           #valueExpr
     |   '('expression')'                                #parenExpr
-//    |   expression ('['expression']')+ ('['']')*        #indexExpr
     |   expression '['expression']'                     #indexExpr
     |   expression '.' expression                       #binaryExpr
     |   <assoc=right> op=('!'|'~')   expression         #unaryExpr
     |   <assoc=right> op=('+'|'-')   expression         #unaryExpr
-    |   <assoc=right> op=('++'|'--') expression         #unaryExpr
-    |   <assoc=right> expression op=('++'|'--')         #unaryExpr
+    |   <assoc=right> op=('++'|'--') expression         #prefixExpr
+    |   <assoc=right> expression op=('++'|'--')         #suffixExpr
     |   expression op=('*'|'/'|'%')   expression        #binaryExpr
     |   expression op=('+'|'-')   expression            #binaryExpr
     |   expression op=('<<'|'>>') expression            #binaryExpr
@@ -91,42 +78,11 @@ expression
     |   <assoc=right> expression '=' expression         #binaryExpr
     ;
 
-//TODO: 注意 int[3][0][3] 的解释与判错
-//      添加 wrongTypeArray
-
-constValue: IntConst | StringConst | True | False | Null;
-
-newExpr
-    :   New digitType ('['']')+ ('['expression']')*                         #newWrongArray2
-    |   New digitType ('['expression']')+ ('['']')+ ('['expression']')+     #newWrongArray
-    |   New digitType ('['expression']')+ ('['']')*                         #newArray//static array
-    |   New Identifier ('('')')?                                            #newClass
-    ;
-
-
-lambdaFunc
-    :   '[&]'parameterList'->'block expressionList
-    ;
-
-condition:  If '('expression')' suite (Else suite)? ;
-
-loop
-    :   While '('expression')' suite                            #whileLoop
-    |   For '('forInit';'expression?';'expression?')' suite     #forLoop
-    ;
 
 forInit
-//    :   varDeclare
     :   (expression(','expression)*)?       //maybe empty
     ;
 
-jump
-    :   Return expression?
-    |   Break
-    |   Continue
-    ;
-
-// 2 KEYWORDS
 Int: 'int';
 Bool: 'bool';
 String: 'string';

@@ -1,1 +1,3 @@
-new int []
+int a = 1;
+int main () {
+}

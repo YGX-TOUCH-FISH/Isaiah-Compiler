@@ -3,10 +3,11 @@ grammar Isaiah;
 program: declare* EOF;
 
 declare
-    :   ';'
-    |   varDeclare
-    |   classDeclare
-    |   funcDeclare
+    :   ';'                                             #emptyDeclr
+    |   varDeclare                                      #varDeclr
+    |   classDeclare                                    #classDeclr
+    |   funcDeclare                                     #funcDeclr
+    |   constructDeclare                                #constrDeclare
     ;
 
 digitType: Bool | Int | String | Identifier ;
@@ -18,49 +19,32 @@ arrayType
 
 varType: digitType | arrayType;                         //for declaration
 
-varObj: Identifier
-      | constVal
-      | newExpr
-      | Identifier expressionList
-      | lambdaFunc
-      | This
+value : Identifier                                      #variVal
+      | constValue                                      #constVal
+      | newExpr                                         #newVal
+      | Identifier expressionList                       #funcVal
+      | lambdaFunc                                      #lambdaVal
+      | This                                            #thisVal
       ;
 
 retType: varType | Void;
 
 varDeclare
-    :   varType Identifier(initialPart)?(','Identifier(initialPart)?)*    //mingled
-    ;
-
-initialPart
-    :   '['expression ']'                     //static init (array)
-    |   '='expression                         //assign init (non-array)
+    :   varType Identifier('='expression)?(','Identifier('='expression)?)*    //mingled
     ;
 
 classDeclare
     :   Class Identifier LeftBrace
-            classIdentity*
+            declare*
         RightBrace
-    ;
-
-classIdentity
-    :   ';'
-    |   varDeclare
-    |   funcDeclare
-    |   constructDeclare
     ;
 
 constructDeclare
-    :   Identifier '('')' LeftBrace
-            statement*
-        RightBrace
+    :   Identifier '('')' block
     ;
-    //int main()
-//'()'
+
 funcDeclare
-    :   retType Identifier parameterList LeftBrace
-            statement*
-        RightBrace
+    :   retType Identifier parameterList block
     ;
 
 parameterList: '('(varType Identifier(','varType Identifier)*)?')';
@@ -69,23 +53,27 @@ expressionList: '('(expression(','expression)*)?')';
 
 block: LeftBrace statement* RightBrace ;
 
-suite: block | statement ;
-
-statement
-    :   ';'
-    |   varDeclare ';'
-    |   expression ';'
-    |   condition
-    |   loop
-    |   jump ';'
-    |   block
+suite
+    : block                                             #blkSuite
+    | statement                                         #oneSuite
     ;
 
+statement
+    :   ';'                                             #emptyStmt
+    |   varDeclare ';'                                  #declrStmt
+    |   expression ';'                                  #exprStmt
+    |   condition                                       #condStmt
+    |   loop                                            #loopStmt
+    |   jump ';'                                        #jumpStmt
+    |   block                                           #blockStmt
+    ;
+    //👆若必加分号，则直接加
 expression
-    :   varObj                                          #valueExpr
+    :   value                                           #valueExpr
     |   '('expression')'                                #parenExpr
-    |   expression ('['expression']')+ ('['']')*        #indexExpr
-    |   expression '.' expression                       #callExpr
+//    |   expression ('['expression']')+ ('['']')*        #indexExpr
+    |   expression '['expression']'                     #indexExpr
+    |   expression '.' expression                       #binaryExpr
     |   <assoc=right> op=('!'|'~')   expression         #unaryExpr
     |   <assoc=right> op=('+'|'-')   expression         #unaryExpr
     |   <assoc=right> op=('++'|'--') expression         #unaryExpr
@@ -100,38 +88,37 @@ expression
     |   expression '|'  expression                      #binaryExpr
     |   expression '&&' expression                      #binaryExpr
     |   expression '||' expression                      #binaryExpr
-//    |   expression '='  expression                      #binaryExpr
-    |   <assoc=right> expression '=' expression         #assignExpr
+    |   <assoc=right> expression '=' expression         #binaryExpr
     ;
 
-constVal: IntConst | StringConst | True | False | Null;
+//TODO: 注意 int[3][0][3] 的解释与判错
+//      添加 wrongTypeArray
+
+constValue: IntConst | StringConst | True | False | Null;
 
 newExpr
-    :   New digitType                                 #test1//static digit without assign
-    |   New digitType '('expression')'                #test2//static digit with assign
-    |   New digitType ('['expression']')+ ('['']')*   #test3//static array
-    |   New Identifier parameterList                  #test4//custom class with parameter(s)
+    :   New digitType ('['']')+ ('['expression']')*                         #newWrongArray2
+    |   New digitType ('['expression']')+ ('['']')+ ('['expression']')+     #newWrongArray
+    |   New digitType ('['expression']')+ ('['']')*                         #newArray//static array
+    |   New Identifier ('('')')?                                            #newClass
     ;
 
 
 lambdaFunc
-    :   '[&]'parameterList'->'LeftBrace
-            statement*
-        RightBrace expressionList
+    :   '[&]'parameterList'->'block expressionList
     ;
 
 condition:  If '('expression')' suite (Else suite)? ;
 
 loop
-    :   While '('expression')' suite
-    |   For '('forInit';'expression?';'expression?')' suite
+    :   While '('expression')' suite                            #whileLoop
+    |   For '('forInit';'expression?';'expression?')' suite     #forLoop
     ;
 
 forInit
-    :   varDeclare
-    |   (expression(','expression)*)?       //maybe empty
+//    :   varDeclare
+    :   (expression(','expression)*)?       //maybe empty
     ;
-//TODO: if语句 => 一句话应该怎么写？
 
 jump
     :   Return expression?
@@ -158,8 +145,49 @@ New: 'new';
 Class: 'class';
 This: 'this';
 
+Dot : '.';
+LeftParen : '(';
+RightParen : ')';
+LeftBracket : '[';
+RightBracket : ']';
 LeftBrace: '{';
 RightBrace: '}';
+Less : '<';
+LessEqual : '<=';
+Greater : '>';
+GreaterEqual : '>=';
+LeftShift : '<<';
+RightShift : '>>';
+
+Plus : '+';
+SelfPlus : '++';
+Minus : '-';
+SelfMinus : '--';
+
+Mul : '*';
+Div : '/';
+Mod : '%';
+
+And : '&';
+Or : '|';
+AndAnd : '&&';
+
+OrOr : '||';
+Caret : '^';
+Not : '!';
+Tilde : '~';
+
+Question : '?';
+Colon : ':';
+Semi : ';';
+Comma : ',';
+
+Assign : '=';
+Equal : '==';
+NotEqual : '!=';
+
+BackSlash : '\\\\';
+DbQuotation : '\\"';
 BlockComment
     :   '/*' .*? '*/'
         -> skip

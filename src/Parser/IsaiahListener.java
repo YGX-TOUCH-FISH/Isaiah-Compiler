@@ -18,53 +18,65 @@ public interface IsaiahListener extends ParseTreeListener {
 	 */
 	void exitProgram(IsaiahParser.ProgramContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code emptyDeclr}
+	 * Enter a parse tree produced by the {@code emptyDeclare}
 	 * labeled alternative in {@link IsaiahParser#declare}.
 	 * @param ctx the parse tree
 	 */
-	void enterEmptyDeclr(IsaiahParser.EmptyDeclrContext ctx);
+	void enterEmptyDeclare(IsaiahParser.EmptyDeclareContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code emptyDeclr}
+	 * Exit a parse tree produced by the {@code emptyDeclare}
 	 * labeled alternative in {@link IsaiahParser#declare}.
 	 * @param ctx the parse tree
 	 */
-	void exitEmptyDeclr(IsaiahParser.EmptyDeclrContext ctx);
+	void exitEmptyDeclare(IsaiahParser.EmptyDeclareContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code varDeclr}
+	 * Enter a parse tree produced by the {@code assignDeclare}
 	 * labeled alternative in {@link IsaiahParser#declare}.
 	 * @param ctx the parse tree
 	 */
-	void enterVarDeclr(IsaiahParser.VarDeclrContext ctx);
+	void enterAssignDeclare(IsaiahParser.AssignDeclareContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code varDeclr}
+	 * Exit a parse tree produced by the {@code assignDeclare}
 	 * labeled alternative in {@link IsaiahParser#declare}.
 	 * @param ctx the parse tree
 	 */
-	void exitVarDeclr(IsaiahParser.VarDeclrContext ctx);
+	void exitAssignDeclare(IsaiahParser.AssignDeclareContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code classDeclr}
+	 * Enter a parse tree produced by the {@code listDeclare}
 	 * labeled alternative in {@link IsaiahParser#declare}.
 	 * @param ctx the parse tree
 	 */
-	void enterClassDeclr(IsaiahParser.ClassDeclrContext ctx);
+	void enterListDeclare(IsaiahParser.ListDeclareContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code classDeclr}
+	 * Exit a parse tree produced by the {@code listDeclare}
 	 * labeled alternative in {@link IsaiahParser#declare}.
 	 * @param ctx the parse tree
 	 */
-	void exitClassDeclr(IsaiahParser.ClassDeclrContext ctx);
+	void exitListDeclare(IsaiahParser.ListDeclareContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code funcDeclr}
+	 * Enter a parse tree produced by the {@code classDeclare}
 	 * labeled alternative in {@link IsaiahParser#declare}.
 	 * @param ctx the parse tree
 	 */
-	void enterFuncDeclr(IsaiahParser.FuncDeclrContext ctx);
+	void enterClassDeclare(IsaiahParser.ClassDeclareContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code funcDeclr}
+	 * Exit a parse tree produced by the {@code classDeclare}
 	 * labeled alternative in {@link IsaiahParser#declare}.
 	 * @param ctx the parse tree
 	 */
-	void exitFuncDeclr(IsaiahParser.FuncDeclrContext ctx);
+	void exitClassDeclare(IsaiahParser.ClassDeclareContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code funcDeclare}
+	 * labeled alternative in {@link IsaiahParser#declare}.
+	 * @param ctx the parse tree
+	 */
+	void enterFuncDeclare(IsaiahParser.FuncDeclareContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code funcDeclare}
+	 * labeled alternative in {@link IsaiahParser#declare}.
+	 * @param ctx the parse tree
+	 */
+	void exitFuncDeclare(IsaiahParser.FuncDeclareContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code constrDeclare}
 	 * labeled alternative in {@link IsaiahParser#declare}.
@@ -108,6 +120,16 @@ public interface IsaiahListener extends ParseTreeListener {
 	 */
 	void exitVarType(IsaiahParser.VarTypeContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link IsaiahParser#retType}.
+	 * @param ctx the parse tree
+	 */
+	void enterRetType(IsaiahParser.RetTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IsaiahParser#retType}.
+	 * @param ctx the parse tree
+	 */
+	void exitRetType(IsaiahParser.RetTypeContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code variVal}
 	 * labeled alternative in {@link IsaiahParser#value}.
 	 * @param ctx the parse tree
@@ -120,29 +142,113 @@ public interface IsaiahListener extends ParseTreeListener {
 	 */
 	void exitVariVal(IsaiahParser.VariValContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code constVal}
+	 * Enter a parse tree produced by the {@code intVal}
 	 * labeled alternative in {@link IsaiahParser#value}.
 	 * @param ctx the parse tree
 	 */
-	void enterConstVal(IsaiahParser.ConstValContext ctx);
+	void enterIntVal(IsaiahParser.IntValContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code constVal}
+	 * Exit a parse tree produced by the {@code intVal}
 	 * labeled alternative in {@link IsaiahParser#value}.
 	 * @param ctx the parse tree
 	 */
-	void exitConstVal(IsaiahParser.ConstValContext ctx);
+	void exitIntVal(IsaiahParser.IntValContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code newVal}
+	 * Enter a parse tree produced by the {@code stringVal}
 	 * labeled alternative in {@link IsaiahParser#value}.
 	 * @param ctx the parse tree
 	 */
-	void enterNewVal(IsaiahParser.NewValContext ctx);
+	void enterStringVal(IsaiahParser.StringValContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code newVal}
+	 * Exit a parse tree produced by the {@code stringVal}
 	 * labeled alternative in {@link IsaiahParser#value}.
 	 * @param ctx the parse tree
 	 */
-	void exitNewVal(IsaiahParser.NewValContext ctx);
+	void exitStringVal(IsaiahParser.StringValContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code trueVal}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void enterTrueVal(IsaiahParser.TrueValContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code trueVal}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void exitTrueVal(IsaiahParser.TrueValContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code falseVal}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void enterFalseVal(IsaiahParser.FalseValContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code falseVal}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void exitFalseVal(IsaiahParser.FalseValContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code nullVal}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void enterNullVal(IsaiahParser.NullValContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code nullVal}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void exitNullVal(IsaiahParser.NullValContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code newWrong2}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void enterNewWrong2(IsaiahParser.NewWrong2Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code newWrong2}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void exitNewWrong2(IsaiahParser.NewWrong2Context ctx);
+	/**
+	 * Enter a parse tree produced by the {@code newWrong}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void enterNewWrong(IsaiahParser.NewWrongContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code newWrong}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void exitNewWrong(IsaiahParser.NewWrongContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code newArray}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void enterNewArray(IsaiahParser.NewArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code newArray}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void exitNewArray(IsaiahParser.NewArrayContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code newClass}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void enterNewClass(IsaiahParser.NewClassContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code newClass}
+	 * labeled alternative in {@link IsaiahParser#value}.
+	 * @param ctx the parse tree
+	 */
+	void exitNewClass(IsaiahParser.NewClassContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code funcVal}
 	 * labeled alternative in {@link IsaiahParser#value}.
@@ -180,56 +286,6 @@ public interface IsaiahListener extends ParseTreeListener {
 	 */
 	void exitThisVal(IsaiahParser.ThisValContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link IsaiahParser#retType}.
-	 * @param ctx the parse tree
-	 */
-	void enterRetType(IsaiahParser.RetTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link IsaiahParser#retType}.
-	 * @param ctx the parse tree
-	 */
-	void exitRetType(IsaiahParser.RetTypeContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link IsaiahParser#varDeclare}.
-	 * @param ctx the parse tree
-	 */
-	void enterVarDeclare(IsaiahParser.VarDeclareContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link IsaiahParser#varDeclare}.
-	 * @param ctx the parse tree
-	 */
-	void exitVarDeclare(IsaiahParser.VarDeclareContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link IsaiahParser#classDeclare}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassDeclare(IsaiahParser.ClassDeclareContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link IsaiahParser#classDeclare}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassDeclare(IsaiahParser.ClassDeclareContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link IsaiahParser#constructDeclare}.
-	 * @param ctx the parse tree
-	 */
-	void enterConstructDeclare(IsaiahParser.ConstructDeclareContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link IsaiahParser#constructDeclare}.
-	 * @param ctx the parse tree
-	 */
-	void exitConstructDeclare(IsaiahParser.ConstructDeclareContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link IsaiahParser#funcDeclare}.
-	 * @param ctx the parse tree
-	 */
-	void enterFuncDeclare(IsaiahParser.FuncDeclareContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link IsaiahParser#funcDeclare}.
-	 * @param ctx the parse tree
-	 */
-	void exitFuncDeclare(IsaiahParser.FuncDeclareContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link IsaiahParser#parameterList}.
 	 * @param ctx the parse tree
 	 */
@@ -260,30 +316,6 @@ public interface IsaiahListener extends ParseTreeListener {
 	 */
 	void exitBlock(IsaiahParser.BlockContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code blkSuite}
-	 * labeled alternative in {@link IsaiahParser#suite}.
-	 * @param ctx the parse tree
-	 */
-	void enterBlkSuite(IsaiahParser.BlkSuiteContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code blkSuite}
-	 * labeled alternative in {@link IsaiahParser#suite}.
-	 * @param ctx the parse tree
-	 */
-	void exitBlkSuite(IsaiahParser.BlkSuiteContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code oneSuite}
-	 * labeled alternative in {@link IsaiahParser#suite}.
-	 * @param ctx the parse tree
-	 */
-	void enterOneSuite(IsaiahParser.OneSuiteContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code oneSuite}
-	 * labeled alternative in {@link IsaiahParser#suite}.
-	 * @param ctx the parse tree
-	 */
-	void exitOneSuite(IsaiahParser.OneSuiteContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code emptyStmt}
 	 * labeled alternative in {@link IsaiahParser#statement}.
 	 * @param ctx the parse tree
@@ -296,17 +328,29 @@ public interface IsaiahListener extends ParseTreeListener {
 	 */
 	void exitEmptyStmt(IsaiahParser.EmptyStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code declrStmt}
+	 * Enter a parse tree produced by the {@code assignStmt}
 	 * labeled alternative in {@link IsaiahParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterDeclrStmt(IsaiahParser.DeclrStmtContext ctx);
+	void enterAssignStmt(IsaiahParser.AssignStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code declrStmt}
+	 * Exit a parse tree produced by the {@code assignStmt}
 	 * labeled alternative in {@link IsaiahParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitDeclrStmt(IsaiahParser.DeclrStmtContext ctx);
+	void exitAssignStmt(IsaiahParser.AssignStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code listStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterListStmt(IsaiahParser.ListStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code listStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitListStmt(IsaiahParser.ListStmtContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exprStmt}
 	 * labeled alternative in {@link IsaiahParser#statement}.
@@ -332,29 +376,65 @@ public interface IsaiahListener extends ParseTreeListener {
 	 */
 	void exitCondStmt(IsaiahParser.CondStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code loopStmt}
+	 * Enter a parse tree produced by the {@code whileStmt}
 	 * labeled alternative in {@link IsaiahParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterLoopStmt(IsaiahParser.LoopStmtContext ctx);
+	void enterWhileStmt(IsaiahParser.WhileStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code loopStmt}
+	 * Exit a parse tree produced by the {@code whileStmt}
 	 * labeled alternative in {@link IsaiahParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitLoopStmt(IsaiahParser.LoopStmtContext ctx);
+	void exitWhileStmt(IsaiahParser.WhileStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code jumpStmt}
+	 * Enter a parse tree produced by the {@code forStmt}
 	 * labeled alternative in {@link IsaiahParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterJumpStmt(IsaiahParser.JumpStmtContext ctx);
+	void enterForStmt(IsaiahParser.ForStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code jumpStmt}
+	 * Exit a parse tree produced by the {@code forStmt}
 	 * labeled alternative in {@link IsaiahParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitJumpStmt(IsaiahParser.JumpStmtContext ctx);
+	void exitForStmt(IsaiahParser.ForStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code retStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterRetStmt(IsaiahParser.RetStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code retStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitRetStmt(IsaiahParser.RetStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code breakStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterBreakStmt(IsaiahParser.BreakStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code breakStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitBreakStmt(IsaiahParser.BreakStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code continStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterContinStmt(IsaiahParser.ContinStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code continStmt}
+	 * labeled alternative in {@link IsaiahParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitContinStmt(IsaiahParser.ContinStmtContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code blockStmt}
 	 * labeled alternative in {@link IsaiahParser#statement}.
@@ -380,6 +460,18 @@ public interface IsaiahListener extends ParseTreeListener {
 	 */
 	void exitIndexExpr(IsaiahParser.IndexExprContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code prefixExpr}
+	 * labeled alternative in {@link IsaiahParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrefixExpr(IsaiahParser.PrefixExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code prefixExpr}
+	 * labeled alternative in {@link IsaiahParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrefixExpr(IsaiahParser.PrefixExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code valueExpr}
 	 * labeled alternative in {@link IsaiahParser#expression}.
 	 * @param ctx the parse tree
@@ -403,6 +495,18 @@ public interface IsaiahListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitUnaryExpr(IsaiahParser.UnaryExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code suffixExpr}
+	 * labeled alternative in {@link IsaiahParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterSuffixExpr(IsaiahParser.SuffixExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code suffixExpr}
+	 * labeled alternative in {@link IsaiahParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitSuffixExpr(IsaiahParser.SuffixExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code binaryExpr}
 	 * labeled alternative in {@link IsaiahParser#expression}.
@@ -428,96 +532,6 @@ public interface IsaiahListener extends ParseTreeListener {
 	 */
 	void exitParenExpr(IsaiahParser.ParenExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link IsaiahParser#constValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterConstValue(IsaiahParser.ConstValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link IsaiahParser#constValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitConstValue(IsaiahParser.ConstValueContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code newWrongArray}
-	 * labeled alternative in {@link IsaiahParser#newExpr}.
-	 * @param ctx the parse tree
-	 */
-	void enterNewWrongArray(IsaiahParser.NewWrongArrayContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code newWrongArray}
-	 * labeled alternative in {@link IsaiahParser#newExpr}.
-	 * @param ctx the parse tree
-	 */
-	void exitNewWrongArray(IsaiahParser.NewWrongArrayContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code newArray}
-	 * labeled alternative in {@link IsaiahParser#newExpr}.
-	 * @param ctx the parse tree
-	 */
-	void enterNewArray(IsaiahParser.NewArrayContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code newArray}
-	 * labeled alternative in {@link IsaiahParser#newExpr}.
-	 * @param ctx the parse tree
-	 */
-	void exitNewArray(IsaiahParser.NewArrayContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code newClass}
-	 * labeled alternative in {@link IsaiahParser#newExpr}.
-	 * @param ctx the parse tree
-	 */
-	void enterNewClass(IsaiahParser.NewClassContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code newClass}
-	 * labeled alternative in {@link IsaiahParser#newExpr}.
-	 * @param ctx the parse tree
-	 */
-	void exitNewClass(IsaiahParser.NewClassContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link IsaiahParser#lambdaFunc}.
-	 * @param ctx the parse tree
-	 */
-	void enterLambdaFunc(IsaiahParser.LambdaFuncContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link IsaiahParser#lambdaFunc}.
-	 * @param ctx the parse tree
-	 */
-	void exitLambdaFunc(IsaiahParser.LambdaFuncContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link IsaiahParser#condition}.
-	 * @param ctx the parse tree
-	 */
-	void enterCondition(IsaiahParser.ConditionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link IsaiahParser#condition}.
-	 * @param ctx the parse tree
-	 */
-	void exitCondition(IsaiahParser.ConditionContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code whileLoop}
-	 * labeled alternative in {@link IsaiahParser#loop}.
-	 * @param ctx the parse tree
-	 */
-	void enterWhileLoop(IsaiahParser.WhileLoopContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code whileLoop}
-	 * labeled alternative in {@link IsaiahParser#loop}.
-	 * @param ctx the parse tree
-	 */
-	void exitWhileLoop(IsaiahParser.WhileLoopContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code forLoop}
-	 * labeled alternative in {@link IsaiahParser#loop}.
-	 * @param ctx the parse tree
-	 */
-	void enterForLoop(IsaiahParser.ForLoopContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code forLoop}
-	 * labeled alternative in {@link IsaiahParser#loop}.
-	 * @param ctx the parse tree
-	 */
-	void exitForLoop(IsaiahParser.ForLoopContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link IsaiahParser#forInit}.
 	 * @param ctx the parse tree
 	 */
@@ -527,14 +541,4 @@ public interface IsaiahListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForInit(IsaiahParser.ForInitContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link IsaiahParser#jump}.
-	 * @param ctx the parse tree
-	 */
-	void enterJump(IsaiahParser.JumpContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link IsaiahParser#jump}.
-	 * @param ctx the parse tree
-	 */
-	void exitJump(IsaiahParser.JumpContext ctx);
 }

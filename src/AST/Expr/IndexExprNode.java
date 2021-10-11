@@ -6,9 +6,10 @@ import Util.position;
 public class IndexExprNode extends ExprNode{
     public ExprNode array;
     public ExprNode index;
-    //TODO: recursion on left
-    public IndexExprNode(position pos) {
+    public IndexExprNode(ExprNode _array, ExprNode _index, position pos) {
         super(pos);
+        array = _array;
+        index = _index;
     }
     @Override
     public void accept(ASTVisitor visitor) {visitor.visit(this);}

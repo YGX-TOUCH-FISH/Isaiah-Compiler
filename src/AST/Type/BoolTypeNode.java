@@ -4,7 +4,7 @@ import AST.ASTVisitor;
 import Util.Type;
 import Util.position;
 
-public class BoolTypeNode extends TypeNode{
+public class BoolTypeNode extends DigitTypeNode {
     public BoolTypeNode(position pos) {
         super(pos);
     }

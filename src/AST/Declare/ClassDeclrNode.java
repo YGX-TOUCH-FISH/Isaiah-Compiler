@@ -8,9 +8,10 @@ import java.util.ArrayList;
 
 public class ClassDeclrNode extends DeclrNode{
     public String name;
-    ArrayList<DeclrNode> declrs = new ArrayList<>();
-    public ClassDeclrNode(position pos) {
+    public ArrayList<DeclrNode> declrs = new ArrayList<>();
+    public ClassDeclrNode(String _name, position pos) {
         super(pos);
+        name = _name;
     }
     @Override
     public void accept(ASTVisitor visitor) {visitor.visit(this);}

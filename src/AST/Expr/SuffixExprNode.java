@@ -9,8 +9,10 @@ public class SuffixExprNode extends ExprNode{
     }
     public ExprNode lhs;
     public SufOp op;
-    public SuffixExprNode(position pos) {
+    public SuffixExprNode(ExprNode _lhs, SufOp _op, position pos) {
         super(pos);
+        lhs = _lhs;
+        op = _op;
     }
     @Override
     public void accept(ASTVisitor visitor) {

@@ -4,11 +4,11 @@ import AST.ASTVisitor;
 import Util.position;
 
 public class BinaryExprNode extends ExprNode{
-    public enum binaryOp{
+    public enum BinaryOp{
         DOT,
         ADD, SUB,
         MUL, DIV, MOD,
-        SHL, SHR,
+        LSH, RSH,
         LT , GT ,
         LEQ, REQ,
         EQ , NEQ,
@@ -21,9 +21,12 @@ public class BinaryExprNode extends ExprNode{
     }
     public ExprNode lhs;
     public ExprNode rhs;
-    public binaryOp op;
-    public BinaryExprNode(position pos) {
+    public BinaryOp op;
+    public BinaryExprNode(ExprNode _lhs, BinaryOp _op, ExprNode _rhs, position pos) {
         super(pos);
+        lhs = _lhs;
+        op  = _op;
+        rhs = _rhs;
     }
     @Override
     public void accept(ASTVisitor visitor) {visitor.visit(this);}
