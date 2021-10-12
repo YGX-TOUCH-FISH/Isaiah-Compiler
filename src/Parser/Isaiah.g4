@@ -3,8 +3,8 @@ program: declare* EOF;
 
 declare
     :   ';'                                             #emptyDeclare
-    |   varType Identifier '=' expression               #assignDeclare
-    |   varType Identifier (',' Identifier)*            #listDeclare
+    |   varType Identifier '=' expression  ';'          #assignDeclare
+    |   varType Identifier (',' Identifier)*  ';'       #listDeclare
     |   Class Identifier LeftBrace declare* RightBrace  #classDeclare
     |   retType Identifier parameterList block          #funcDeclare
     |   Identifier '('')' block                         #constrDeclare
@@ -77,7 +77,6 @@ expression
     |   expression '||' expression                      #binaryExpr
     |   <assoc=right> expression '=' expression         #binaryExpr
     ;
-
 
 forInit
     :   (expression(','expression)*)?       //maybe empty

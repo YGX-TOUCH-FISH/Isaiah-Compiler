@@ -13,6 +13,7 @@ import AST.Type.*;
 import AST.Value.*;
 import Parser.IsaiahBaseVisitor;
 import Parser.IsaiahParser;
+import Util.Type;
 import Util.error.semanticError;
 import Util.position;
 import Util.scope.GlobalScope;
@@ -33,20 +34,22 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         }
         return root;
     }
-    // TODO: 2021/10/11 arrayList: if (null)...
-
     // TODO: 2021/10/11 package Declare
     @Override public ASTNode visitEmptyDeclare(IsaiahParser.EmptyDeclareContext ctx) {
         return new EmptyDeclrNode(new position(ctx));
     }
     @Override public ASTNode visitClassDeclare(IsaiahParser.ClassDeclareContext ctx) {
+//        assert ctx.Identifier() != null;
         String className = ctx.Identifier().toString();
         ClassDeclrNode node = new ClassDeclrNode(className, new position(ctx));
-        for (IsaiahParser.DeclareContext declr : ctx.declare())
-            node.declrs.add((DeclrNode) visit(declr));
+        if (ctx.declare() != null) {
+            for (IsaiahParser.DeclareContext declr : ctx.declare())
+                node.declrs.add((DeclrNode) visit(declr));
+        }
         return node;
     }
     @Override public ASTNode visitFuncDeclare(IsaiahParser.FuncDeclareContext ctx) {
+//        assert ctx.Identifier() != null;
         TypeNode retType = (TypeNode) visit(ctx.retType());
         String funcName = ctx.Identifier().toString();
         ParaListNode paraList = (ParaListNode) visit(ctx.parameterList());
@@ -60,7 +63,7 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
     }
     @Override public ASTNode visitAssignDeclare(IsaiahParser.AssignDeclareContext ctx) {
         TypeNode type = (TypeNode) visit(ctx.varType());
-        String id = ctx.toString();
+        String id = ctx.Identifier().toString();
         ExprNode value = (ExprNode) visit(ctx.expression());
         return new AssignDeclrNode(type, id, value, new position(ctx));
     }
@@ -81,7 +84,7 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
     @Override public ASTNode visitVarType(IsaiahParser.VarTypeContext ctx) {
         assert (ctx.digitType() != null || ctx.arrayType() != null);
         if (ctx.digitType() != null) return visit(ctx.digitType());
-        else return visit(ctx.digitType());
+        else return visit(ctx.arrayType());
     }
     @Override public ASTNode visitDigitType(IsaiahParser.DigitTypeContext ctx) {
         position pos = new position(ctx);
@@ -92,18 +95,23 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         else throw new semanticError("[ERROR]visitDigitType.", pos);
     }
     @Override public ASTNode visitArrayType(IsaiahParser.ArrayTypeContext ctx) {
-        TypeNode type = (TypeNode) visit(ctx.arrayType());
+        assert (ctx.arrayType() != null || ctx.digitType() != null);
+        TypeNode type;
+        if (ctx.arrayType() != null)type = (TypeNode) visit(ctx.arrayType());
+        else type = (TypeNode) visit(ctx.digitType());
         return new ArrayTypeNode(type, new position(ctx));
     }
 
     // TODO: 2021/10/11 package Expr
     @Override public ASTNode visitValueExpr(IsaiahParser.ValueExprContext ctx) {
-        return visit(ctx.value());
+        ValueNode value = (ValueNode) visit(ctx.value());
+        return new ValueExprNode(value, new position(ctx));
     }
     @Override public ASTNode visitParenExpr(IsaiahParser.ParenExprContext ctx) {
         return visit(ctx.expression());
     }
     @Override public ASTNode visitIndexExpr(IsaiahParser.IndexExprContext ctx) {
+        assert ctx.expression().size() == 2;
         ExprNode arrayName = (ExprNode) visit(ctx.expression(0));
         ExprNode arrayIndex = (ExprNode) visit(ctx.expression(1));
         return new IndexExprNode(arrayName, arrayIndex, new position(ctx));
@@ -119,6 +127,7 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         return new UnaryExprNode(op,rhs, new position(ctx));
     }
     @Override public ASTNode visitBinaryExpr(IsaiahParser.BinaryExprContext ctx) {
+        assert ctx.expression().size() == 2;
         ExprNode lhs = (ExprNode) visit(ctx.expression(0));
         ExprNode rhs = (ExprNode) visit(ctx.expression(1));
         BinaryExprNode.BinaryOp op;
@@ -165,28 +174,37 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
     // TODO: 2021/10/11 package List
     @Override public ASTNode visitParameterList(IsaiahParser.ParameterListContext ctx) {
         ParaListNode node = new ParaListNode(new position(ctx));
-        for (IsaiahParser.VarTypeContext type : ctx.varType())
-            node.types.add((TypeNode) visit(type));
-        for (TerminalNode id : ctx.Identifier())
-            node.ids.add(id.toString());
+        if (ctx.varType() != null) {
+            for (IsaiahParser.VarTypeContext type : ctx.varType())
+                node.types.add((TypeNode) visit(type));
+            for (TerminalNode id : ctx.Identifier())
+                node.ids.add(id.toString());
+        }
+        else assert ctx.Identifier() == null;
         return node;
     }
     @Override public ASTNode visitExpressionList(IsaiahParser.ExpressionListContext ctx) {
         ExprListNode node = new ExprListNode(new position(ctx));
-        for (IsaiahParser.ExpressionContext expr : ctx.expression())
-            node.exprs.add((ExprNode) visit(expr));
+        if (ctx.expression() != null) {
+            for (IsaiahParser.ExpressionContext expr : ctx.expression())
+                node.exprs.add((ExprNode) visit(expr));
+        }
         return node;
     }
     @Override public ASTNode visitForInit(IsaiahParser.ForInitContext ctx) {
         ForInitNode node = new ForInitNode(new position(ctx));
-        for (IsaiahParser.ExpressionContext expr: ctx.expression())
-            node.exprs.add((ExprNode) visit(expr));
+        if (ctx.expression() != null) {
+            for (IsaiahParser.ExpressionContext expr: ctx.expression())
+                node.exprs.add((ExprNode) visit(expr));
+        }
         return node;
     }
     @Override public ASTNode visitBlock(IsaiahParser.BlockContext ctx) {
         BlockNode node = new BlockNode(new position(ctx));
-        for (IsaiahParser.StatementContext stmt: ctx.statement())
-            node.stmts.add((StmtNode) visit(stmt));
+        if (ctx.statement() != null) {
+            for (IsaiahParser.StatementContext stmt: ctx.statement())
+                node.stmts.add((StmtNode) visit(stmt));
+        }
         return node;
     }
 
@@ -212,9 +230,12 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         return new ExprStNode(expr, new position(ctx));
     }
     @Override public ASTNode visitCondStmt(IsaiahParser.CondStmtContext ctx) {
+        assert ctx.statement().size() < 2;
         ExprNode _cond = (ExprNode) visit(ctx.expression());
         StmtNode _if = (StmtNode) visit(ctx.statement(0));
-        StmtNode _else = (StmtNode) visit(ctx.statement(1));
+        StmtNode _else;
+        if (ctx.statement().size() == 1) _else = null;
+        else _else = (StmtNode) visit(ctx.statement(1));
         return new CondStNode(_cond, _if, _else, new position(ctx));
     }
     @Override public ASTNode visitWhileStmt(IsaiahParser.WhileStmtContext ctx) {
@@ -224,9 +245,13 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
     }
     @Override public ASTNode visitForStmt(IsaiahParser.ForStmtContext ctx) {
         // TODO: 2021/10/11 add ForInitNode
+        int exprSize = ctx.expression().size();
+        assert exprSize < 3;
+
         ForInitNode init = (ForInitNode) visit(ctx.forInit());
-        ExprNode cond = (ExprNode) visit(ctx.expression(0));
-        ExprNode incre = (ExprNode) visit(ctx.expression(1));
+        ExprNode cond = null, incre = null;
+        if (exprSize > 0) cond = (ExprNode) visit(ctx.expression(0));
+        if (exprSize > 1) incre = (ExprNode) visit(ctx.expression(1));
         StmtNode stmt = (StmtNode) visit(ctx.statement());
         return new ForStNode(init, cond, incre, stmt, new position(ctx));
     }
@@ -273,6 +298,7 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         throw new semanticError("[ERROR]ArrayNew Wrong[1]: ", new position(ctx));
     }
     @Override public ASTNode visitNewArray(IsaiahParser.NewArrayContext ctx) {
+        // TODO: 2021/10/12 should be arrayType or digitType? 
         TypeNode arrayType = (TypeNode) visit(ctx.digitType());
         assert (ctx.LeftBracket().size() == ctx.RightBracket().size());
         int dims = ctx.LeftBracket().size();

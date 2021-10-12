@@ -1,4 +1,7 @@
+import AST.RootNode;
+import FrontEnd.ASTBuilder;
 import Parser.*;
+import Util.scope.GlobalScope;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -12,12 +15,17 @@ public class Main {
         String name = "test.mx";
         InputStream input = new FileInputStream(name);
 
+        RootNode ASTRoot;
+        GlobalScope gScope = new GlobalScope(null);
+
         IsaiahLexer lexer = new IsaiahLexer(CharStreams.fromStream(input));
         lexer.removeErrorListeners();
         IsaiahParser parser = new IsaiahParser(new CommonTokenStream(lexer));
         parser.removeErrorListeners();
         ParseTree parseTreeRoot = parser.program();
-        int a = 1;
 
+        ASTBuilder astBuilder = new ASTBuilder(gScope);
+        ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
+        int a = 1;
     }
 }

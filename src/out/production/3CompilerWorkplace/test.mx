@@ -1,3 +1,10 @@
-int a = 1;
-int main () {
-}
+/*
+Test Package: Sema_Local_Preview
+Test Target: Built-In
+Author: 16' Yaoyao Ding
+Time: 2019-11-11
+Verdict: Success
+Origin Package: Semantic Pretest
+*/
+
+int[][] a = ((new int[2][3][3])[0])[1];

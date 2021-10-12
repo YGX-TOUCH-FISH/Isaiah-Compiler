@@ -8,7 +8,7 @@ import AST.Stmt.*;
 import AST.Type.*;
 import AST.Value.*;
 
-public class SemanticChecker implements ASTVisitor{
+public class SemanticChecker {
 
 
 }
