@@ -8,12 +8,12 @@ import Util.position;
 import java.util.ArrayList;
 
 public class NewArrayNode extends ValueNode{
-    public TypeNode valType;
+    public TypeNode baseType;
     public ArrayList<ExprNode> sizeofDim = new ArrayList<>();
     public int dims;
-    public NewArrayNode(TypeNode _valType, int _dims, position pos) {
+    public NewArrayNode(TypeNode _baseType, int _dims, position pos) {
         super(pos);
-        valType = _valType;
+        baseType = _baseType;
         dims = _dims;
     }
     @Override

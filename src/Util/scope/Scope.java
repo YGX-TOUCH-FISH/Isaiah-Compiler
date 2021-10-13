@@ -8,9 +8,10 @@ import Util.position;
 import java.util.HashMap;
 
 public class Scope {
+    // TODO: 2021/10/14 waiting for REWRITE!!
     private HashMap<String, Type> define;
     private HashMap<String, Entity> entity = new HashMap<>();
-    //TODO: Waiting for IR implement
+    // TODO: 2021/10/14 Waiting for IR implement
     private Scope parent;
 
     public Scope(Scope _parent) {

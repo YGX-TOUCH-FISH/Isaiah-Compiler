@@ -13,7 +13,6 @@ import AST.Type.*;
 import AST.Value.*;
 import Parser.IsaiahBaseVisitor;
 import Parser.IsaiahParser;
-import Util.Type;
 import Util.error.semanticError;
 import Util.position;
 import Util.scope.GlobalScope;
@@ -298,7 +297,7 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         throw new semanticError("[ERROR]ArrayNew Wrong[1]: ", new position(ctx));
     }
     @Override public ASTNode visitNewArray(IsaiahParser.NewArrayContext ctx) {
-        // TODO: 2021/10/12 should be arrayType or digitType? 
+        // TODO: 2021/10/12 should be arrayType or digitType?
         TypeNode arrayType = (TypeNode) visit(ctx.digitType());
         assert (ctx.LeftBracket().size() == ctx.RightBracket().size());
         int dims = ctx.LeftBracket().size();

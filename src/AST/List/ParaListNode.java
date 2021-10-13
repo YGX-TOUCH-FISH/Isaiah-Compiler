@@ -3,7 +3,6 @@ package AST.List;
 import AST.ASTNode;
 import AST.ASTVisitor;
 import AST.Type.TypeNode;
-import Util.Type;
 import Util.position;
 
 import java.util.ArrayList;

@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+// TODO: 2021/10/14 single return is permitted in constructor 
 public class Main {
     public static void main(String[] args) throws Exception{
         String name = "test.mx";

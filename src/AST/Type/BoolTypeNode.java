@@ -1,7 +1,6 @@
 package AST.Type;
 
 import AST.ASTVisitor;
-import Util.Type;
 import Util.position;
 
 public class BoolTypeNode extends DigitTypeNode {

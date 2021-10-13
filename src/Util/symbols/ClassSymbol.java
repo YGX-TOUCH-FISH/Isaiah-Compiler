@@ -1,7 +1,5 @@
 package Util.symbols;
 
-import Util.Type;
-import Util.position;
 import Util.scope.Scope;
 
 public class ClassSymbol extends Symbol {

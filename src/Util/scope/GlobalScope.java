@@ -1,29 +1,36 @@
 package Util.scope;
 
 import Util.Type;
+import Util.FunctionDef;
 import Util.error.semanticError;
 import Util.position;
 
-import java.util.HashMap;
+import java.util.HashSet;
 
 public class GlobalScope extends Scope{
     //TODO: collect all Type definition
-    //      because cannot define Class in Function
+    //      because of cannot define Class in any Function
 
-    HashMap<String, Type> globalDef = new HashMap<>();
-
+    HashSet<String> classDefs = new HashSet<>();
+    HashSet<FunctionDef> functionDefs = new HashSet<>();
     public GlobalScope(Scope _parent) {
         super(_parent);
     }
 
-    public void addType(String _name, Type _type, position pos) {
-        if (globalDef.containsKey(_name))
-            throw new semanticError("[ERROR]redefinition of " + _name, pos);
-        globalDef.put(_name, _type);
+    public void addClassType(String _name, position pos) {
+        if (classDefs.contains(_name))
+            throw new semanticError("[ERROR]redefinition CLASS of " + _name, pos);
+        classDefs.add(_name);
     }
-
-    public Type getTypeByName(String _name, position pos) {
-        if (globalDef.containsKey(_name)) return globalDef.get(_name);
-        else throw new semanticError("[ERROR]no such type: "+_name, pos);
+    public boolean containsClass(String _name) {
+        return classDefs.contains(_name);
+    }
+    public void addFuncDef(FunctionDef _funcDef, position pos) {
+        if (functionDefs.contains(_funcDef))
+            throw new semanticError("[ERROR]redefinition FUNCTION of " + _funcDef.name, pos);
+        functionDefs.add(_funcDef);
+    }
+    public boolean containsFunc(FunctionDef _funcDef) {
+        return functionDefs.contains(_funcDef);
     }
 }

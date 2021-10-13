@@ -1,11 +1,9 @@
 package Util.symbols;
 
 import Util.Type;
-import Util.position;
 import Util.scope.Scope;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class FuncSymbol extends Symbol{
     public Type retType;
