@@ -1693,12 +1693,12 @@ public class IsaiahParser extends Parser {
 	public static class WhileStmtContext extends StatementContext {
 		public TerminalNode While() { return getToken(IsaiahParser.While, 0); }
 		public TerminalNode LeftParen() { return getToken(IsaiahParser.LeftParen, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
 		public TerminalNode RightParen() { return getToken(IsaiahParser.RightParen, 0); }
 		public StatementContext statement() {
 			return getRuleContext(StatementContext.class,0);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
 		}
 		public WhileStmtContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
@@ -1847,9 +1847,9 @@ public class IsaiahParser extends Parser {
 		enterRule(_localctx, 20, RULE_statement);
 		int _la;
 		try {
-			setState(275);
+			setState(276);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,26,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,27,_ctx) ) {
 			case 1:
 				_localctx = new EmptyStmtContext(_localctx);
 				enterOuterAlt(_localctx, 1);
@@ -1948,11 +1948,19 @@ public class IsaiahParser extends Parser {
 				match(While);
 				setState(246);
 				match(LeftParen);
-				setState(247);
-				expression(0);
 				setState(248);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << Null) | (1L << True) | (1L << False) | (1L << New) | (1L << This) | (1L << LeftParen) | (1L << Plus) | (1L << SelfPlus) | (1L << Minus) | (1L << SelfMinus) | (1L << Not) | (1L << Tilde) | (1L << Identifier) | (1L << IntConst) | (1L << StringConst))) != 0)) {
+					{
+					setState(247);
+					expression(0);
+					}
+				}
+
+				setState(250);
 				match(RightParen);
-				setState(249);
+				setState(251);
 				statement();
 				}
 				break;
@@ -1960,39 +1968,39 @@ public class IsaiahParser extends Parser {
 				_localctx = new ForStmtContext(_localctx);
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(251);
-				match(For);
 				setState(252);
-				match(LeftParen);
+				match(For);
 				setState(253);
-				forInit();
+				match(LeftParen);
 				setState(254);
+				forInit();
+				setState(255);
 				match(Semi);
-				setState(256);
+				setState(257);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << Null) | (1L << True) | (1L << False) | (1L << New) | (1L << This) | (1L << LeftParen) | (1L << Plus) | (1L << SelfPlus) | (1L << Minus) | (1L << SelfMinus) | (1L << Not) | (1L << Tilde) | (1L << Identifier) | (1L << IntConst) | (1L << StringConst))) != 0)) {
 					{
-					setState(255);
+					setState(256);
 					expression(0);
 					}
 				}
 
-				setState(258);
+				setState(259);
 				match(Semi);
-				setState(260);
+				setState(261);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << Null) | (1L << True) | (1L << False) | (1L << New) | (1L << This) | (1L << LeftParen) | (1L << Plus) | (1L << SelfPlus) | (1L << Minus) | (1L << SelfMinus) | (1L << Not) | (1L << Tilde) | (1L << Identifier) | (1L << IntConst) | (1L << StringConst))) != 0)) {
 					{
-					setState(259);
+					setState(260);
 					expression(0);
 					}
 				}
 
-				setState(262);
-				match(RightParen);
 				setState(263);
+				match(RightParen);
+				setState(264);
 				statement();
 				}
 				break;
@@ -2000,19 +2008,19 @@ public class IsaiahParser extends Parser {
 				_localctx = new RetStmtContext(_localctx);
 				enterOuterAlt(_localctx, 8);
 				{
-				setState(265);
+				setState(266);
 				match(Return);
-				setState(267);
+				setState(268);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << Null) | (1L << True) | (1L << False) | (1L << New) | (1L << This) | (1L << LeftParen) | (1L << Plus) | (1L << SelfPlus) | (1L << Minus) | (1L << SelfMinus) | (1L << Not) | (1L << Tilde) | (1L << Identifier) | (1L << IntConst) | (1L << StringConst))) != 0)) {
 					{
-					setState(266);
+					setState(267);
 					expression(0);
 					}
 				}
 
-				setState(269);
+				setState(270);
 				match(Semi);
 				}
 				break;
@@ -2020,9 +2028,9 @@ public class IsaiahParser extends Parser {
 				_localctx = new BreakStmtContext(_localctx);
 				enterOuterAlt(_localctx, 9);
 				{
-				setState(270);
-				match(Break);
 				setState(271);
+				match(Break);
+				setState(272);
 				match(Semi);
 				}
 				break;
@@ -2030,9 +2038,9 @@ public class IsaiahParser extends Parser {
 				_localctx = new ContinStmtContext(_localctx);
 				enterOuterAlt(_localctx, 10);
 				{
-				setState(272);
-				match(Continue);
 				setState(273);
+				match(Continue);
+				setState(274);
 				match(Semi);
 				}
 				break;
@@ -2040,7 +2048,7 @@ public class IsaiahParser extends Parser {
 				_localctx = new BlockStmtContext(_localctx);
 				enterOuterAlt(_localctx, 11);
 				{
-				setState(274);
+				setState(275);
 				block();
 				}
 				break;
@@ -2260,7 +2268,7 @@ public class IsaiahParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(289);
+			setState(290);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__0:
@@ -2277,7 +2285,7 @@ public class IsaiahParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
-				setState(278);
+				setState(279);
 				value();
 				}
 				break;
@@ -2286,11 +2294,11 @@ public class IsaiahParser extends Parser {
 				_localctx = new ParenExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(279);
-				match(LeftParen);
 				setState(280);
-				expression(0);
+				match(LeftParen);
 				setState(281);
+				expression(0);
+				setState(282);
 				match(RightParen);
 				}
 				break;
@@ -2300,7 +2308,7 @@ public class IsaiahParser extends Parser {
 				_localctx = new UnaryExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(283);
+				setState(284);
 				((UnaryExprContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==Not || _la==Tilde) ) {
@@ -2311,7 +2319,7 @@ public class IsaiahParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(284);
+				setState(285);
 				expression(15);
 				}
 				break;
@@ -2321,7 +2329,7 @@ public class IsaiahParser extends Parser {
 				_localctx = new UnaryExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(285);
+				setState(286);
 				((UnaryExprContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==Plus || _la==Minus) ) {
@@ -2332,7 +2340,7 @@ public class IsaiahParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(286);
+				setState(287);
 				expression(14);
 				}
 				break;
@@ -2342,7 +2350,7 @@ public class IsaiahParser extends Parser {
 				_localctx = new PrefixExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(287);
+				setState(288);
 				((PrefixExprContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==SelfPlus || _la==SelfMinus) ) {
@@ -2353,7 +2361,7 @@ public class IsaiahParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(288);
+				setState(289);
 				expression(13);
 				}
 				break;
@@ -2361,26 +2369,26 @@ public class IsaiahParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(336);
+			setState(337);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,29,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,30,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(334);
+					setState(335);
 					_errHandler.sync(this);
-					switch ( getInterpreter().adaptivePredict(_input,28,_ctx) ) {
+					switch ( getInterpreter().adaptivePredict(_input,29,_ctx) ) {
 					case 1:
 						{
 						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(291);
-						if (!(precpred(_ctx, 16))) throw new FailedPredicateException(this, "precpred(_ctx, 16)");
 						setState(292);
-						match(Dot);
+						if (!(precpred(_ctx, 16))) throw new FailedPredicateException(this, "precpred(_ctx, 16)");
 						setState(293);
+						match(Dot);
+						setState(294);
 						expression(17);
 						}
 						break;
@@ -2388,9 +2396,9 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(294);
-						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
 						setState(295);
+						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
+						setState(296);
 						((BinaryExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Mul) | (1L << Div) | (1L << Mod))) != 0)) ) {
@@ -2401,7 +2409,7 @@ public class IsaiahParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(296);
+						setState(297);
 						expression(12);
 						}
 						break;
@@ -2409,9 +2417,9 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(297);
-						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
 						setState(298);
+						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
+						setState(299);
 						((BinaryExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==Plus || _la==Minus) ) {
@@ -2422,7 +2430,7 @@ public class IsaiahParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(299);
+						setState(300);
 						expression(11);
 						}
 						break;
@@ -2430,9 +2438,9 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(300);
-						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
 						setState(301);
+						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
+						setState(302);
 						((BinaryExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==LeftShift || _la==RightShift) ) {
@@ -2443,7 +2451,7 @@ public class IsaiahParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(302);
+						setState(303);
 						expression(10);
 						}
 						break;
@@ -2451,9 +2459,9 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(303);
-						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
 						setState(304);
+						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
+						setState(305);
 						((BinaryExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Less) | (1L << LessEqual) | (1L << Greater) | (1L << GreaterEqual))) != 0)) ) {
@@ -2464,7 +2472,7 @@ public class IsaiahParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(305);
+						setState(306);
 						expression(9);
 						}
 						break;
@@ -2472,9 +2480,9 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(306);
-						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
 						setState(307);
+						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
+						setState(308);
 						((BinaryExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==Equal || _la==NotEqual) ) {
@@ -2485,7 +2493,7 @@ public class IsaiahParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(308);
+						setState(309);
 						expression(8);
 						}
 						break;
@@ -2493,11 +2501,11 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(309);
-						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
 						setState(310);
-						match(And);
+						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
 						setState(311);
+						match(And);
+						setState(312);
 						expression(7);
 						}
 						break;
@@ -2505,11 +2513,11 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(312);
-						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
 						setState(313);
-						match(Caret);
+						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
 						setState(314);
+						match(Caret);
+						setState(315);
 						expression(6);
 						}
 						break;
@@ -2517,11 +2525,11 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(315);
-						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
 						setState(316);
-						match(Or);
+						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
 						setState(317);
+						match(Or);
+						setState(318);
 						expression(5);
 						}
 						break;
@@ -2529,11 +2537,11 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(318);
-						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
 						setState(319);
-						match(AndAnd);
+						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
 						setState(320);
+						match(AndAnd);
+						setState(321);
 						expression(4);
 						}
 						break;
@@ -2541,11 +2549,11 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(321);
-						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
 						setState(322);
-						match(OrOr);
+						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
 						setState(323);
+						match(OrOr);
+						setState(324);
 						expression(3);
 						}
 						break;
@@ -2553,11 +2561,11 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(324);
-						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
 						setState(325);
-						match(Assign);
+						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
 						setState(326);
+						match(Assign);
+						setState(327);
 						expression(1);
 						}
 						break;
@@ -2565,13 +2573,13 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new IndexExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(327);
-						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
 						setState(328);
-						match(LeftBracket);
+						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
 						setState(329);
-						expression(0);
+						match(LeftBracket);
 						setState(330);
+						expression(0);
+						setState(331);
 						match(RightBracket);
 						}
 						break;
@@ -2579,9 +2587,9 @@ public class IsaiahParser extends Parser {
 						{
 						_localctx = new SuffixExprContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(332);
-						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
 						setState(333);
+						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
+						setState(334);
 						((SuffixExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==SelfPlus || _la==SelfMinus) ) {
@@ -2597,9 +2605,9 @@ public class IsaiahParser extends Parser {
 					}
 					} 
 				}
-				setState(338);
+				setState(339);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,29,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,30,_ctx);
 			}
 			}
 		}
@@ -2651,26 +2659,26 @@ public class IsaiahParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(347);
+			setState(348);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << Null) | (1L << True) | (1L << False) | (1L << New) | (1L << This) | (1L << LeftParen) | (1L << Plus) | (1L << SelfPlus) | (1L << Minus) | (1L << SelfMinus) | (1L << Not) | (1L << Tilde) | (1L << Identifier) | (1L << IntConst) | (1L << StringConst))) != 0)) {
 				{
-				setState(339);
+				setState(340);
 				expression(0);
-				setState(344);
+				setState(345);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==Comma) {
 					{
 					{
-					setState(340);
-					match(Comma);
 					setState(341);
+					match(Comma);
+					setState(342);
 					expression(0);
 					}
 					}
-					setState(346);
+					setState(347);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
@@ -2741,7 +2749,7 @@ public class IsaiahParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3?\u0160\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3?\u0161\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\3\2\7\2\36\n\2\f\2\16\2!\13\2\3\2\3\2\3"+
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\7\3\60\n\3\f\3\16\3\63\13\3"+
@@ -2758,33 +2766,33 @@ public class IsaiahParser extends Parser {
 		"\n\3\n\7\n\u00c8\n\n\f\n\16\n\u00cb\13\n\5\n\u00cd\n\n\3\n\3\n\3\13\3"+
 		"\13\7\13\u00d3\n\13\f\13\16\13\u00d6\13\13\3\13\3\13\3\f\3\f\3\f\3\f\3"+
 		"\f\3\f\3\f\3\f\3\f\3\f\3\f\7\f\u00e5\n\f\f\f\16\f\u00e8\13\f\3\f\3\f\3"+
-		"\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\5\f\u00f6\n\f\3\f\3\f\3\f\3\f\3"+
-		"\f\3\f\3\f\3\f\3\f\3\f\3\f\5\f\u0103\n\f\3\f\3\f\5\f\u0107\n\f\3\f\3\f"+
-		"\3\f\3\f\3\f\5\f\u010e\n\f\3\f\3\f\3\f\3\f\3\f\3\f\5\f\u0116\n\f\3\r\3"+
-		"\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\5\r\u0124\n\r\3\r\3\r\3\r\3"+
-		"\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r"+
+		"\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\5\f\u00f6\n\f\3\f\3\f\3\f\5\f\u00fb"+
+		"\n\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\5\f\u0104\n\f\3\f\3\f\5\f\u0108\n\f\3"+
+		"\f\3\f\3\f\3\f\3\f\5\f\u010f\n\f\3\f\3\f\3\f\3\f\3\f\3\f\5\f\u0117\n\f"+
+		"\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\5\r\u0125\n\r\3\r\3\r"+
 		"\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3"+
-		"\r\3\r\3\r\3\r\3\r\7\r\u0151\n\r\f\r\16\r\u0154\13\r\3\16\3\16\3\16\7"+
-		"\16\u0159\n\16\f\16\16\16\u015c\13\16\5\16\u015e\n\16\3\16\2\4\b\30\17"+
-		"\2\4\6\b\n\f\16\20\22\24\26\30\32\2\n\4\2\5\7==\3\2/\60\4\2##%%\4\2$$"+
-		"&&\3\2\')\3\2!\"\3\2\35 \3\2\66\67\2\u0199\2\37\3\2\2\2\4I\3\2\2\2\6K"+
-		"\3\2\2\2\bM\3\2\2\2\n\\\3\2\2\2\f`\3\2\2\2\16\u00b1\3\2\2\2\20\u00b3\3"+
-		"\2\2\2\22\u00c3\3\2\2\2\24\u00d0\3\2\2\2\26\u0115\3\2\2\2\30\u0123\3\2"+
-		"\2\2\32\u015d\3\2\2\2\34\36\5\4\3\2\35\34\3\2\2\2\36!\3\2\2\2\37\35\3"+
-		"\2\2\2\37 \3\2\2\2 \"\3\2\2\2!\37\3\2\2\2\"#\7\2\2\3#\3\3\2\2\2$J\7\63"+
-		"\2\2%&\5\n\6\2&\'\7=\2\2\'(\7\65\2\2()\5\30\r\2)*\7\63\2\2*J\3\2\2\2+"+
-		",\5\n\6\2,\61\7=\2\2-.\7\64\2\2.\60\7=\2\2/-\3\2\2\2\60\63\3\2\2\2\61"+
-		"/\3\2\2\2\61\62\3\2\2\2\62\64\3\2\2\2\63\61\3\2\2\2\64\65\7\63\2\2\65"+
-		"J\3\2\2\2\66\67\7\24\2\2\678\7=\2\28<\7\33\2\29;\5\4\3\2:9\3\2\2\2;>\3"+
-		"\2\2\2<:\3\2\2\2<=\3\2\2\2=?\3\2\2\2><\3\2\2\2?J\7\34\2\2@A\5\f\7\2AB"+
-		"\7=\2\2BC\5\20\t\2CD\5\24\13\2DJ\3\2\2\2EF\7=\2\2FG\7\27\2\2GH\7\30\2"+
-		"\2HJ\5\24\13\2I$\3\2\2\2I%\3\2\2\2I+\3\2\2\2I\66\3\2\2\2I@\3\2\2\2IE\3"+
-		"\2\2\2J\5\3\2\2\2KL\t\2\2\2L\7\3\2\2\2MN\b\5\1\2NO\5\6\4\2OP\7\31\2\2"+
-		"PQ\7\32\2\2QW\3\2\2\2RS\f\3\2\2ST\7\31\2\2TV\7\32\2\2UR\3\2\2\2VY\3\2"+
-		"\2\2WU\3\2\2\2WX\3\2\2\2X\t\3\2\2\2YW\3\2\2\2Z]\5\6\4\2[]\5\b\5\2\\Z\3"+
-		"\2\2\2\\[\3\2\2\2]\13\3\2\2\2^a\5\n\6\2_a\7\t\2\2`^\3\2\2\2`_\3\2\2\2"+
-		"a\r\3\2\2\2b\u00b2\7=\2\2c\u00b2\7>\2\2d\u00b2\7?\2\2e\u00b2\7\n\2\2f"+
-		"\u00b2\7\13\2\2g\u00b2\7\b\2\2hi\7\23\2\2il\5\6\4\2jk\7\31\2\2km\7\32"+
+		"\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r"+
+		"\3\r\3\r\3\r\3\r\3\r\3\r\7\r\u0152\n\r\f\r\16\r\u0155\13\r\3\16\3\16\3"+
+		"\16\7\16\u015a\n\16\f\16\16\16\u015d\13\16\5\16\u015f\n\16\3\16\2\4\b"+
+		"\30\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2\n\4\2\5\7==\3\2/\60\4\2##%%"+
+		"\4\2$$&&\3\2\')\3\2!\"\3\2\35 \3\2\66\67\2\u019b\2\37\3\2\2\2\4I\3\2\2"+
+		"\2\6K\3\2\2\2\bM\3\2\2\2\n\\\3\2\2\2\f`\3\2\2\2\16\u00b1\3\2\2\2\20\u00b3"+
+		"\3\2\2\2\22\u00c3\3\2\2\2\24\u00d0\3\2\2\2\26\u0116\3\2\2\2\30\u0124\3"+
+		"\2\2\2\32\u015e\3\2\2\2\34\36\5\4\3\2\35\34\3\2\2\2\36!\3\2\2\2\37\35"+
+		"\3\2\2\2\37 \3\2\2\2 \"\3\2\2\2!\37\3\2\2\2\"#\7\2\2\3#\3\3\2\2\2$J\7"+
+		"\63\2\2%&\5\n\6\2&\'\7=\2\2\'(\7\65\2\2()\5\30\r\2)*\7\63\2\2*J\3\2\2"+
+		"\2+,\5\n\6\2,\61\7=\2\2-.\7\64\2\2.\60\7=\2\2/-\3\2\2\2\60\63\3\2\2\2"+
+		"\61/\3\2\2\2\61\62\3\2\2\2\62\64\3\2\2\2\63\61\3\2\2\2\64\65\7\63\2\2"+
+		"\65J\3\2\2\2\66\67\7\24\2\2\678\7=\2\28<\7\33\2\29;\5\4\3\2:9\3\2\2\2"+
+		";>\3\2\2\2<:\3\2\2\2<=\3\2\2\2=?\3\2\2\2><\3\2\2\2?J\7\34\2\2@A\5\f\7"+
+		"\2AB\7=\2\2BC\5\20\t\2CD\5\24\13\2DJ\3\2\2\2EF\7=\2\2FG\7\27\2\2GH\7\30"+
+		"\2\2HJ\5\24\13\2I$\3\2\2\2I%\3\2\2\2I+\3\2\2\2I\66\3\2\2\2I@\3\2\2\2I"+
+		"E\3\2\2\2J\5\3\2\2\2KL\t\2\2\2L\7\3\2\2\2MN\b\5\1\2NO\5\6\4\2OP\7\31\2"+
+		"\2PQ\7\32\2\2QW\3\2\2\2RS\f\3\2\2ST\7\31\2\2TV\7\32\2\2UR\3\2\2\2VY\3"+
+		"\2\2\2WU\3\2\2\2WX\3\2\2\2X\t\3\2\2\2YW\3\2\2\2Z]\5\6\4\2[]\5\b\5\2\\"+
+		"Z\3\2\2\2\\[\3\2\2\2]\13\3\2\2\2^a\5\n\6\2_a\7\t\2\2`^\3\2\2\2`_\3\2\2"+
+		"\2a\r\3\2\2\2b\u00b2\7=\2\2c\u00b2\7>\2\2d\u00b2\7?\2\2e\u00b2\7\n\2\2"+
+		"f\u00b2\7\13\2\2g\u00b2\7\b\2\2hi\7\23\2\2il\5\6\4\2jk\7\31\2\2km\7\32"+
 		"\2\2lj\3\2\2\2mn\3\2\2\2nl\3\2\2\2no\3\2\2\2ov\3\2\2\2pq\7\31\2\2qr\5"+
 		"\30\r\2rs\7\32\2\2su\3\2\2\2tp\3\2\2\2ux\3\2\2\2vt\3\2\2\2vw\3\2\2\2w"+
 		"\u00b2\3\2\2\2xv\3\2\2\2yz\7\23\2\2z\177\5\6\4\2{|\7\31\2\2|}\5\30\r\2"+
@@ -2819,58 +2827,59 @@ public class IsaiahParser extends Parser {
 		"\u00cd\3\2\2\2\u00cd\u00ce\3\2\2\2\u00ce\u00cf\7\30\2\2\u00cf\23\3\2\2"+
 		"\2\u00d0\u00d4\7\33\2\2\u00d1\u00d3\5\26\f\2\u00d2\u00d1\3\2\2\2\u00d3"+
 		"\u00d6\3\2\2\2\u00d4\u00d2\3\2\2\2\u00d4\u00d5\3\2\2\2\u00d5\u00d7\3\2"+
-		"\2\2\u00d6\u00d4\3\2\2\2\u00d7\u00d8\7\34\2\2\u00d8\25\3\2\2\2\u00d9\u0116"+
+		"\2\2\u00d6\u00d4\3\2\2\2\u00d7\u00d8\7\34\2\2\u00d8\25\3\2\2\2\u00d9\u0117"+
 		"\7\63\2\2\u00da\u00db\5\n\6\2\u00db\u00dc\7=\2\2\u00dc\u00dd\7\65\2\2"+
-		"\u00dd\u00de\5\30\r\2\u00de\u00df\7\63\2\2\u00df\u0116\3\2\2\2\u00e0\u00e1"+
+		"\u00dd\u00de\5\30\r\2\u00de\u00df\7\63\2\2\u00df\u0117\3\2\2\2\u00e0\u00e1"+
 		"\5\n\6\2\u00e1\u00e6\7=\2\2\u00e2\u00e3\7\64\2\2\u00e3\u00e5\7=\2\2\u00e4"+
 		"\u00e2\3\2\2\2\u00e5\u00e8\3\2\2\2\u00e6\u00e4\3\2\2\2\u00e6\u00e7\3\2"+
 		"\2\2\u00e7\u00e9\3\2\2\2\u00e8\u00e6\3\2\2\2\u00e9\u00ea\7\63\2\2\u00ea"+
-		"\u0116\3\2\2\2\u00eb\u00ec\5\30\r\2\u00ec\u00ed\7\63\2\2\u00ed\u0116\3"+
+		"\u0117\3\2\2\2\u00eb\u00ec\5\30\r\2\u00ec\u00ed\7\63\2\2\u00ed\u0117\3"+
 		"\2\2\2\u00ee\u00ef\7\f\2\2\u00ef\u00f0\7\27\2\2\u00f0\u00f1\5\30\r\2\u00f1"+
 		"\u00f2\7\30\2\2\u00f2\u00f5\5\26\f\2\u00f3\u00f4\7\r\2\2\u00f4\u00f6\5"+
-		"\26\f\2\u00f5\u00f3\3\2\2\2\u00f5\u00f6\3\2\2\2\u00f6\u0116\3\2\2\2\u00f7"+
-		"\u00f8\7\17\2\2\u00f8\u00f9\7\27\2\2\u00f9\u00fa\5\30\r\2\u00fa\u00fb"+
-		"\7\30\2\2\u00fb\u00fc\5\26\f\2\u00fc\u0116\3\2\2\2\u00fd\u00fe\7\16\2"+
-		"\2\u00fe\u00ff\7\27\2\2\u00ff\u0100\5\32\16\2\u0100\u0102\7\63\2\2\u0101"+
-		"\u0103\5\30\r\2\u0102\u0101\3\2\2\2\u0102\u0103\3\2\2\2\u0103\u0104\3"+
-		"\2\2\2\u0104\u0106\7\63\2\2\u0105\u0107\5\30\r\2\u0106\u0105\3\2\2\2\u0106"+
-		"\u0107\3\2\2\2\u0107\u0108\3\2\2\2\u0108\u0109\7\30\2\2\u0109\u010a\5"+
-		"\26\f\2\u010a\u0116\3\2\2\2\u010b\u010d\7\22\2\2\u010c\u010e\5\30\r\2"+
-		"\u010d\u010c\3\2\2\2\u010d\u010e\3\2\2\2\u010e\u010f\3\2\2\2\u010f\u0116"+
-		"\7\63\2\2\u0110\u0111\7\20\2\2\u0111\u0116\7\63\2\2\u0112\u0113\7\21\2"+
-		"\2\u0113\u0116\7\63\2\2\u0114\u0116\5\24\13\2\u0115\u00d9\3\2\2\2\u0115"+
-		"\u00da\3\2\2\2\u0115\u00e0\3\2\2\2\u0115\u00eb\3\2\2\2\u0115\u00ee\3\2"+
-		"\2\2\u0115\u00f7\3\2\2\2\u0115\u00fd\3\2\2\2\u0115\u010b\3\2\2\2\u0115"+
-		"\u0110\3\2\2\2\u0115\u0112\3\2\2\2\u0115\u0114\3\2\2\2\u0116\27\3\2\2"+
-		"\2\u0117\u0118\b\r\1\2\u0118\u0124\5\16\b\2\u0119\u011a\7\27\2\2\u011a"+
-		"\u011b\5\30\r\2\u011b\u011c\7\30\2\2\u011c\u0124\3\2\2\2\u011d\u011e\t"+
-		"\3\2\2\u011e\u0124\5\30\r\21\u011f\u0120\t\4\2\2\u0120\u0124\5\30\r\20"+
-		"\u0121\u0122\t\5\2\2\u0122\u0124\5\30\r\17\u0123\u0117\3\2\2\2\u0123\u0119"+
-		"\3\2\2\2\u0123\u011d\3\2\2\2\u0123\u011f\3\2\2\2\u0123\u0121\3\2\2\2\u0124"+
-		"\u0152\3\2\2\2\u0125\u0126\f\22\2\2\u0126\u0127\7\26\2\2\u0127\u0151\5"+
-		"\30\r\23\u0128\u0129\f\r\2\2\u0129\u012a\t\6\2\2\u012a\u0151\5\30\r\16"+
-		"\u012b\u012c\f\f\2\2\u012c\u012d\t\4\2\2\u012d\u0151\5\30\r\r\u012e\u012f"+
-		"\f\13\2\2\u012f\u0130\t\7\2\2\u0130\u0151\5\30\r\f\u0131\u0132\f\n\2\2"+
-		"\u0132\u0133\t\b\2\2\u0133\u0151\5\30\r\13\u0134\u0135\f\t\2\2\u0135\u0136"+
-		"\t\t\2\2\u0136\u0151\5\30\r\n\u0137\u0138\f\b\2\2\u0138\u0139\7*\2\2\u0139"+
-		"\u0151\5\30\r\t\u013a\u013b\f\7\2\2\u013b\u013c\7.\2\2\u013c\u0151\5\30"+
-		"\r\b\u013d\u013e\f\6\2\2\u013e\u013f\7+\2\2\u013f\u0151\5\30\r\7\u0140"+
-		"\u0141\f\5\2\2\u0141\u0142\7,\2\2\u0142\u0151\5\30\r\6\u0143\u0144\f\4"+
-		"\2\2\u0144\u0145\7-\2\2\u0145\u0151\5\30\r\5\u0146\u0147\f\3\2\2\u0147"+
-		"\u0148\7\65\2\2\u0148\u0151\5\30\r\3\u0149\u014a\f\23\2\2\u014a\u014b"+
-		"\7\31\2\2\u014b\u014c\5\30\r\2\u014c\u014d\7\32\2\2\u014d\u0151\3\2\2"+
-		"\2\u014e\u014f\f\16\2\2\u014f\u0151\t\5\2\2\u0150\u0125\3\2\2\2\u0150"+
-		"\u0128\3\2\2\2\u0150\u012b\3\2\2\2\u0150\u012e\3\2\2\2\u0150\u0131\3\2"+
-		"\2\2\u0150\u0134\3\2\2\2\u0150\u0137\3\2\2\2\u0150\u013a\3\2\2\2\u0150"+
-		"\u013d\3\2\2\2\u0150\u0140\3\2\2\2\u0150\u0143\3\2\2\2\u0150\u0146\3\2"+
-		"\2\2\u0150\u0149\3\2\2\2\u0150\u014e\3\2\2\2\u0151\u0154\3\2\2\2\u0152"+
-		"\u0150\3\2\2\2\u0152\u0153\3\2\2\2\u0153\31\3\2\2\2\u0154\u0152\3\2\2"+
-		"\2\u0155\u015a\5\30\r\2\u0156\u0157\7\64\2\2\u0157\u0159\5\30\r\2\u0158"+
-		"\u0156\3\2\2\2\u0159\u015c\3\2\2\2\u015a\u0158\3\2\2\2\u015a\u015b\3\2"+
-		"\2\2\u015b\u015e\3\2\2\2\u015c\u015a\3\2\2\2\u015d\u0155\3\2\2\2\u015d"+
-		"\u015e\3\2\2\2\u015e\33\3\2\2\2\"\37\61<IW\\`nv\u0081\u0087\u008f\u0099"+
-		"\u009f\u00a6\u00b1\u00bc\u00bf\u00c9\u00cc\u00d4\u00e6\u00f5\u0102\u0106"+
-		"\u010d\u0115\u0123\u0150\u0152\u015a\u015d";
+		"\26\f\2\u00f5\u00f3\3\2\2\2\u00f5\u00f6\3\2\2\2\u00f6\u0117\3\2\2\2\u00f7"+
+		"\u00f8\7\17\2\2\u00f8\u00fa\7\27\2\2\u00f9\u00fb\5\30\r\2\u00fa\u00f9"+
+		"\3\2\2\2\u00fa\u00fb\3\2\2\2\u00fb\u00fc\3\2\2\2\u00fc\u00fd\7\30\2\2"+
+		"\u00fd\u0117\5\26\f\2\u00fe\u00ff\7\16\2\2\u00ff\u0100\7\27\2\2\u0100"+
+		"\u0101\5\32\16\2\u0101\u0103\7\63\2\2\u0102\u0104\5\30\r\2\u0103\u0102"+
+		"\3\2\2\2\u0103\u0104\3\2\2\2\u0104\u0105\3\2\2\2\u0105\u0107\7\63\2\2"+
+		"\u0106\u0108\5\30\r\2\u0107\u0106\3\2\2\2\u0107\u0108\3\2\2\2\u0108\u0109"+
+		"\3\2\2\2\u0109\u010a\7\30\2\2\u010a\u010b\5\26\f\2\u010b\u0117\3\2\2\2"+
+		"\u010c\u010e\7\22\2\2\u010d\u010f\5\30\r\2\u010e\u010d\3\2\2\2\u010e\u010f"+
+		"\3\2\2\2\u010f\u0110\3\2\2\2\u0110\u0117\7\63\2\2\u0111\u0112\7\20\2\2"+
+		"\u0112\u0117\7\63\2\2\u0113\u0114\7\21\2\2\u0114\u0117\7\63\2\2\u0115"+
+		"\u0117\5\24\13\2\u0116\u00d9\3\2\2\2\u0116\u00da\3\2\2\2\u0116\u00e0\3"+
+		"\2\2\2\u0116\u00eb\3\2\2\2\u0116\u00ee\3\2\2\2\u0116\u00f7\3\2\2\2\u0116"+
+		"\u00fe\3\2\2\2\u0116\u010c\3\2\2\2\u0116\u0111\3\2\2\2\u0116\u0113\3\2"+
+		"\2\2\u0116\u0115\3\2\2\2\u0117\27\3\2\2\2\u0118\u0119\b\r\1\2\u0119\u0125"+
+		"\5\16\b\2\u011a\u011b\7\27\2\2\u011b\u011c\5\30\r\2\u011c\u011d\7\30\2"+
+		"\2\u011d\u0125\3\2\2\2\u011e\u011f\t\3\2\2\u011f\u0125\5\30\r\21\u0120"+
+		"\u0121\t\4\2\2\u0121\u0125\5\30\r\20\u0122\u0123\t\5\2\2\u0123\u0125\5"+
+		"\30\r\17\u0124\u0118\3\2\2\2\u0124\u011a\3\2\2\2\u0124\u011e\3\2\2\2\u0124"+
+		"\u0120\3\2\2\2\u0124\u0122\3\2\2\2\u0125\u0153\3\2\2\2\u0126\u0127\f\22"+
+		"\2\2\u0127\u0128\7\26\2\2\u0128\u0152\5\30\r\23\u0129\u012a\f\r\2\2\u012a"+
+		"\u012b\t\6\2\2\u012b\u0152\5\30\r\16\u012c\u012d\f\f\2\2\u012d\u012e\t"+
+		"\4\2\2\u012e\u0152\5\30\r\r\u012f\u0130\f\13\2\2\u0130\u0131\t\7\2\2\u0131"+
+		"\u0152\5\30\r\f\u0132\u0133\f\n\2\2\u0133\u0134\t\b\2\2\u0134\u0152\5"+
+		"\30\r\13\u0135\u0136\f\t\2\2\u0136\u0137\t\t\2\2\u0137\u0152\5\30\r\n"+
+		"\u0138\u0139\f\b\2\2\u0139\u013a\7*\2\2\u013a\u0152\5\30\r\t\u013b\u013c"+
+		"\f\7\2\2\u013c\u013d\7.\2\2\u013d\u0152\5\30\r\b\u013e\u013f\f\6\2\2\u013f"+
+		"\u0140\7+\2\2\u0140\u0152\5\30\r\7\u0141\u0142\f\5\2\2\u0142\u0143\7,"+
+		"\2\2\u0143\u0152\5\30\r\6\u0144\u0145\f\4\2\2\u0145\u0146\7-\2\2\u0146"+
+		"\u0152\5\30\r\5\u0147\u0148\f\3\2\2\u0148\u0149\7\65\2\2\u0149\u0152\5"+
+		"\30\r\3\u014a\u014b\f\23\2\2\u014b\u014c\7\31\2\2\u014c\u014d\5\30\r\2"+
+		"\u014d\u014e\7\32\2\2\u014e\u0152\3\2\2\2\u014f\u0150\f\16\2\2\u0150\u0152"+
+		"\t\5\2\2\u0151\u0126\3\2\2\2\u0151\u0129\3\2\2\2\u0151\u012c\3\2\2\2\u0151"+
+		"\u012f\3\2\2\2\u0151\u0132\3\2\2\2\u0151\u0135\3\2\2\2\u0151\u0138\3\2"+
+		"\2\2\u0151\u013b\3\2\2\2\u0151\u013e\3\2\2\2\u0151\u0141\3\2\2\2\u0151"+
+		"\u0144\3\2\2\2\u0151\u0147\3\2\2\2\u0151\u014a\3\2\2\2\u0151\u014f\3\2"+
+		"\2\2\u0152\u0155\3\2\2\2\u0153\u0151\3\2\2\2\u0153\u0154\3\2\2\2\u0154"+
+		"\31\3\2\2\2\u0155\u0153\3\2\2\2\u0156\u015b\5\30\r\2\u0157\u0158\7\64"+
+		"\2\2\u0158\u015a\5\30\r\2\u0159\u0157\3\2\2\2\u015a\u015d\3\2\2\2\u015b"+
+		"\u0159\3\2\2\2\u015b\u015c\3\2\2\2\u015c\u015f\3\2\2\2\u015d\u015b\3\2"+
+		"\2\2\u015e\u0156\3\2\2\2\u015e\u015f\3\2\2\2\u015f\33\3\2\2\2#\37\61<"+
+		"IW\\`nv\u0081\u0087\u008f\u0099\u009f\u00a6\u00b1\u00bc\u00bf\u00c9\u00cc"+
+		"\u00d4\u00e6\u00f5\u00fa\u0103\u0107\u010e\u0116\u0124\u0151\u0153\u015b"+
+		"\u015e";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

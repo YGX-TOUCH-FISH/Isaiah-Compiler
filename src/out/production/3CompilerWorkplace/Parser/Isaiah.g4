@@ -48,7 +48,7 @@ statement
     |   varType Identifier (',' Identifier)* ';'        #listStmt
     |   expression ';'                                  #exprStmt
     |   If '('expression')' statement (Else statement)? #condStmt
-    |   While '('expression')' statement                #whileStmt
+    |   While '('expression?')' statement               #whileStmt
     |   For '('forInit';'expression?';'expression?')' statement #forStmt
     |   Return expression? ';'                          #retStmt
     |   Break ';'                                       #breakStmt
@@ -155,6 +155,6 @@ LineComment
     :   '//' ~[\r\n]*
         -> skip
     ;
-Identifier: [a-zA-Z][a-zA-Z0-9_]* ;
+Identifier: [a-zA-Z_][a-zA-Z0-9_]*;
 IntConst: [1-9][0-9]* | '0';
 StringConst: '"'([ -~]|([\\][\\])|[\\n]|([\\]["]))*'"';

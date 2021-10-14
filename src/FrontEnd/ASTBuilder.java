@@ -17,6 +17,7 @@ import Util.error.semanticError;
 import Util.position;
 import Util.scope.GlobalScope;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ErrorNodeImpl;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
@@ -31,14 +32,15 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
                 root.declrs.add((DeclrNode) visit(declr));
             }
         }
+        else throw new semanticError("[ERROR]main function not found: ", new position(ctx));
         return root;
     }
+
     // TODO: 2021/10/11 package Declare
     @Override public ASTNode visitEmptyDeclare(IsaiahParser.EmptyDeclareContext ctx) {
         return new EmptyDeclrNode(new position(ctx));
     }
     @Override public ASTNode visitClassDeclare(IsaiahParser.ClassDeclareContext ctx) {
-//        assert ctx.Identifier() != null;
         String className = ctx.Identifier().toString();
         ClassDeclrNode node = new ClassDeclrNode(className, new position(ctx));
         if (ctx.declare() != null) {
@@ -48,7 +50,6 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         return node;
     }
     @Override public ASTNode visitFuncDeclare(IsaiahParser.FuncDeclareContext ctx) {
-//        assert ctx.Identifier() != null;
         TypeNode retType = (TypeNode) visit(ctx.retType());
         String funcName = ctx.Identifier().toString();
         ParaListNode paraList = (ParaListNode) visit(ctx.parameterList());
@@ -81,9 +82,9 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         else throw new semanticError("[ERROR]retType error:", new position(ctx));
     }
     @Override public ASTNode visitVarType(IsaiahParser.VarTypeContext ctx) {
-        assert (ctx.digitType() != null || ctx.arrayType() != null);
         if (ctx.digitType() != null) return visit(ctx.digitType());
-        else return visit(ctx.arrayType());
+        else if (ctx.arrayType() != null)return visit(ctx.arrayType());
+        else throw new semanticError("[ERROR]varType declaration lost: ", new position(ctx));
     }
     @Override public ASTNode visitDigitType(IsaiahParser.DigitTypeContext ctx) {
         position pos = new position(ctx);
@@ -91,10 +92,9 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         else if (ctx.Int() != null) return new IntTypeNode(pos);
         else if (ctx.String() != null) return new StringTypeNode(pos);
         else if (ctx.Identifier() != null) return new ClassTypeNode(ctx.Identifier().toString(), pos);
-        else throw new semanticError("[ERROR]visitDigitType.", pos);
+        else throw new semanticError("[ERROR]visitDigitType error: ", pos);
     }
     @Override public ASTNode visitArrayType(IsaiahParser.ArrayTypeContext ctx) {
-        assert (ctx.arrayType() != null || ctx.digitType() != null);
         TypeNode type;
         if (ctx.arrayType() != null)type = (TypeNode) visit(ctx.arrayType());
         else type = (TypeNode) visit(ctx.digitType());
@@ -107,10 +107,10 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         return new ValueExprNode(value, new position(ctx));
     }
     @Override public ASTNode visitParenExpr(IsaiahParser.ParenExprContext ctx) {
+        IsaiahParser.ExpressionContext expr = ctx.expression();
         return visit(ctx.expression());
     }
     @Override public ASTNode visitIndexExpr(IsaiahParser.IndexExprContext ctx) {
-        assert ctx.expression().size() == 2;
         ExprNode arrayName = (ExprNode) visit(ctx.expression(0));
         ExprNode arrayIndex = (ExprNode) visit(ctx.expression(1));
         return new IndexExprNode(arrayName, arrayIndex, new position(ctx));

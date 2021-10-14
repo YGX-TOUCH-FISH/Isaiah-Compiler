@@ -1,4 +1,4 @@
-package Util;
+package Util.error;
 
 import Util.error.syntaxError;
 import Util.position;
@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 
-public class MxErrorListener extends BaseErrorListener {
+public class IsaiahErrorListener extends BaseErrorListener {
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer,
                             Object offendingSymbol,
