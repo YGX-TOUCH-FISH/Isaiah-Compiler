@@ -7,11 +7,13 @@ public class FunctionDef {
     public ArrayList<Type> paraType = new ArrayList<>();
     public String name;
     public FunctionDef(Type _retType, String _name, ArrayList<Type> _paraType) {
-        retType = new Type(_retType.baseType, _retType.dims);
+        retType = new Type(_retType.name, _retType.dims);
         name = _name;
+
         if (_paraType != null) {
-            for (Type paraMember : _paraType)
-                paraType.add(new Type(paraMember.baseType, paraMember.dims));
+            for (Type paraMember : _paraType) {
+                paraType.add(new Type(paraMember.name, paraMember.dims));
+            }
         }
         //传null与传空arrayList 相同
     }
@@ -19,6 +21,7 @@ public class FunctionDef {
     @Override public boolean equals(Object other) {
         if (other instanceof FunctionDef ) {
             FunctionDef etc = (FunctionDef) other;
+
             if (!name.equals(etc.name)) return false;
             if (paraType.size() != etc.paraType.size()) return false;
             if (!retType.equals(etc.retType)) return false;
@@ -31,8 +34,9 @@ public class FunctionDef {
     }
 
     @Override public int hashCode() {
-        int result = retType.hashCode() + name.hashCode();
-        for (Type paraMember : paraType) result += paraMember.hashCode();
+        int result = name.hashCode() + retType.hashCode();
+        if (paraType != null)
+            for (Type paraMember : paraType) result += paraMember.hashCode();
         return result;
     }
 }

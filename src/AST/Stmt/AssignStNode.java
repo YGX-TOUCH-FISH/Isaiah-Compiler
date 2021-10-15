@@ -6,9 +6,9 @@ import AST.Type.TypeNode;
 import Util.position;
 
 public class AssignStNode extends StmtNode{
-    TypeNode type;
-    String name;
-    ExprNode value;
+    public TypeNode type;
+    public String name;
+    public ExprNode value;
     public AssignStNode(TypeNode _type, String _name, ExprNode _value, position pos) {
         super(pos);
         type = _type;

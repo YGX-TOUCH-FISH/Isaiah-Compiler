@@ -3,7 +3,7 @@ package AST.Type;
 import AST.ASTVisitor;
 import Util.position;
 
-public class ClassTypeNode extends DigitTypeNode{
+public class ClassTypeNode extends TypeNode{
     public String name;
     public ClassTypeNode(String _name, position pos) {
         super(pos);

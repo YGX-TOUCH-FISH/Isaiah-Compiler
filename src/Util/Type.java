@@ -1,26 +1,59 @@
 package Util;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
+import java.util.Objects;
+
 public class Type {
-    String baseType;
-    int dims;
+    public String name;
+    public int dims;
     public Type() {
-        baseType = "";
+        name = null;
         dims = 0;
     }
+    public Type(Type etc) {
+        name = etc.name;
+        dims = etc.dims;
+    }
     public Type(String type, int dimSize) {
-        baseType = type;
+        name = type;
         dims = dimSize;
     }
 
     @Override public boolean equals(Object other) {
         if (other instanceof Type) {
             Type _type = (Type) other;
-            return baseType.equals(_type.baseType) && dims == _type.dims;
+            return name.equals(_type.name) && dims == _type.dims;
         }
         return false;
     }
 
     @Override public int hashCode() {
-        return baseType.hashCode()*dims;
+        return name.hashCode()*dims;
+    }
+
+    public boolean isNull() {
+        return Objects.equals(name, "null") && dims == 0;
+    }
+    public boolean isInt() {
+        return Objects.equals(name, "int") && dims == 0;
+    }
+    public boolean isBool() {
+        return Objects.equals(name, "bool") && dims == 0;
+    }
+    public boolean isString() {
+        return Objects.equals(name, "string") && dims == 0;
+    }
+    public boolean isVoid() {
+        return Objects.equals(name, "void") && dims == 0;
+    }
+    public boolean isConstructor() {
+        return Objects.equals(name, "class") && dims == 0;
+    }
+    public boolean isClass() {
+        return !isNull() && !isInt() && !isBool() && !isString() && !isVoid() && !isArray() && !isConstructor();
+    }
+    public boolean isArray() {
+        return dims != 0;
     }
 }

@@ -13,9 +13,15 @@ public class Scope {
     // TODO: 2021/10/14 Waiting for (IR implement && semantic check)
     private Scope parent;
 
+    private int loopDepth;
+    private boolean inConstruct;
+
     public Scope(Scope _parent) {
         define = new HashMap<>();
         parent = _parent;
+        loopDepth = 0;
+//        funcDepth = 0;
+        inConstruct = false;
     }
 
     public Scope getParent() { return parent; }
@@ -43,5 +49,27 @@ public class Scope {
         if (entity.containsKey(_name)) return entity.get(_name);
         else if (lookUpon && parent != null) return parent.getEntity(_name, true);
         else return null;
+    }
+
+    public void intoLoop() {
+        loopDepth++;
+    }
+    public void outLoop() {
+        loopDepth--;
+        assert loopDepth >= 0;
+    }
+    public void intoConstruct() {
+        inConstruct = true;
+    }
+    public void outConstruct() {
+        inConstruct = false;
+    }
+
+    public boolean isInLoop() {
+        return loopDepth != 0;
+    }
+
+    public boolean isInConstruct() {
+        return inConstruct;
     }
 }

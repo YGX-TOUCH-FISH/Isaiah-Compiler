@@ -1,7 +1,6 @@
 package AST.Declare;
 
 import AST.ASTVisitor;
-import AST.Expr.ExprNode;
 import AST.Type.TypeNode;
 import Util.position;
 

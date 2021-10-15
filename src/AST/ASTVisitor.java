@@ -24,7 +24,7 @@ public interface ASTVisitor {
     void visit(IntTypeNode node);
     void visit(StringTypeNode node);
     void visit(ClassTypeNode node);
-    void visit(DigitTypeNode node);
+//    void visit(DigitTypeNode node);
     void visit(ArrayTypeNode node);
 
     void visit(EmptyStNode node);

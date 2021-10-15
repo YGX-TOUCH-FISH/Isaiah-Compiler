@@ -12,15 +12,14 @@ public class ArrayTypeNode extends TypeNode{
     public int dims;
     public ArrayTypeNode(TypeNode _baseType, position pos) {
         super(pos);
-        if (_baseType instanceof DigitTypeNode) {
-            baseType = _baseType;
-            dims = 1;
-        }
-        else if (_baseType instanceof ArrayTypeNode){
+        if (_baseType instanceof ArrayTypeNode){
             baseType = ((ArrayTypeNode) _baseType).baseType;
             dims = ((ArrayTypeNode) _baseType).dims + 1;
         }
-        else throw new semanticError("[ERROR]ArrayTypeNode construct error", pos);
+        else {
+            baseType = _baseType;
+            dims = 1;
+        }
     }
     @Override
     public void accept(ASTVisitor visitor) {visitor.visit(this);}

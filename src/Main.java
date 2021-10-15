@@ -1,6 +1,5 @@
 import AST.RootNode;
-import FrontEnd.ASTBuilder;
-import FrontEnd.SymbolCollector;
+import FrontEnd.*;
 import Parser.*;
 import Util.error.IsaiahErrorListener;
 import Util.error.error;
@@ -33,8 +32,8 @@ public class Main {
             ASTBuilder astBuilder = new ASTBuilder(gScope);
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
 
-            new SymbolCollector(gScope).visit(ASTRoot);
-//        new SemanticChecker(gScope).visit(ASTRoot);
+//            new SymbolCollector(gScope).visit(ASTRoot);
+//            new SemanticChecker(gScope).visit(ASTRoot);
             int a = 1;
         } catch (error er) {
             System.err.println(er.toString());

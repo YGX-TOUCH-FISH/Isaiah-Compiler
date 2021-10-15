@@ -17,7 +17,6 @@ import Util.error.semanticError;
 import Util.position;
 import Util.scope.GlobalScope;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ErrorNodeImpl;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
@@ -175,7 +174,7 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         ParaListNode node = new ParaListNode(new position(ctx));
         if (ctx.varType() != null) {
             for (IsaiahParser.VarTypeContext type : ctx.varType())
-                node.types.add((TypeNode) visit(type));
+                node.para.add((TypeNode) visit(type));
             for (TerminalNode id : ctx.Identifier())
                 node.ids.add(id.toString());
         }
