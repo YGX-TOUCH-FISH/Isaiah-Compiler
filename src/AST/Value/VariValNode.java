@@ -3,9 +3,9 @@ package AST.Value;
 import AST.ASTVisitor;
 import Util.position;
 
-public class ClassValNode extends ValueNode{
+public class VariValNode extends ValueNode{
     public String name;
-    public ClassValNode(String _name, position pos) {
+    public VariValNode(String _name, position pos) {
         super(pos);
         name = _name;
     }

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class ParaListNode extends ASTNode {
     public ArrayList<TypeNode> para = new ArrayList<>();
-    public ArrayList<Type> type = new ArrayList<>();
+    public ArrayList<Type> types = new ArrayList<>();
     public ArrayList<String> ids = new ArrayList<>();
     public ParaListNode(position pos) {
         super(pos);

@@ -14,7 +14,7 @@ public class GlobalScope extends Scope{
     //      because of cannot define Class in any Function
 
     HashMap<String, ClassDef> classDefs = new HashMap<>();
-    HashSet<FunctionDef> functionDefs = new HashSet<>();
+    HashMap<FunctionDef, Type> functionDefs = new HashMap<>();
     public GlobalScope(Scope _parent) {
         super(_parent);
     }
@@ -25,18 +25,21 @@ public class GlobalScope extends Scope{
         classDefs.put(_name, _classDef);
     }
     public boolean containsClass(String _name) {
-//        return classDefs.contains(_name);
         return classDefs.containsKey(_name);
     }
-    public void addFuncDef(FunctionDef _funcDef, position pos) {
-        if (functionDefs.contains(_funcDef))
-            throw new semanticError("[ERROR]redefinition FUNCTION of " + _funcDef.name, pos);
-        functionDefs.add(_funcDef);
-    }
-    public boolean containsFunc(FunctionDef _funcDef) {
-        return functionDefs.contains(_funcDef);
+    public ClassDef getClassByName(String _name) {
+        return classDefs.get(_name);
     }
 
+    public void addFuncDef(FunctionDef _funcDef, position pos) {
+        if (functionDefs.containsKey(_funcDef))
+            throw new semanticError("[ERROR]redefinition FUNCTION of " + _funcDef.name, pos);
+        functionDefs.put(_funcDef, _funcDef.retType);
+    }
+    public boolean containsFunc(FunctionDef _funcDef) {
+        return functionDefs.containsKey(_funcDef);
+    }
+    public Type getFuncType(FunctionDef _funcDef) { return functionDefs.get(_funcDef); }
     public void initialize() {
         //basic class
         addClassDef("bool", new ClassDef("bool"), new position(0, 0));
@@ -70,5 +73,4 @@ public class GlobalScope extends Scope{
         addFuncDef(getInt, new position(0, 0));
         addFuncDef(toString, new position(0, 0));
     }
-
 }

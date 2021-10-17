@@ -114,6 +114,14 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         ExprNode arrayIndex = (ExprNode) visit(ctx.expression(1));
         return new IndexExprNode(arrayName, arrayIndex, new position(ctx));
     }
+    @Override public ASTNode visitCallExpr(IsaiahParser.CallExprContext ctx) {
+        ExprNode object = (ExprNode) visit(ctx.expression());
+        String memberID = ctx.Identifier().toString();
+        ExprListNode exprList = null;
+        if (ctx.expressionList() != null)
+            exprList = (ExprListNode) visit(ctx.expressionList());
+        return new CallExprNode(object, memberID, exprList, new position(ctx));
+    }
     @Override public ASTNode visitUnaryExpr(IsaiahParser.UnaryExprContext ctx) {
         ExprNode rhs = (ExprNode) visit(ctx.expression());
         UnaryExprNode.UnaryOp op;
@@ -129,8 +137,8 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         ExprNode lhs = (ExprNode) visit(ctx.expression(0));
         ExprNode rhs = (ExprNode) visit(ctx.expression(1));
         BinaryExprNode.BinaryOp op;
-        if (ctx.Dot() != null) op = BinaryExprNode.BinaryOp.DOT;
-        else if (ctx.Mul() != null) op = BinaryExprNode.BinaryOp.MUL;
+//        if (ctx.Dot() != null) op = BinaryExprNode.BinaryOp.DOT;
+        if (ctx.Mul() != null) op = BinaryExprNode.BinaryOp.MUL;
         else if (ctx.Div() != null) op = BinaryExprNode.BinaryOp.DIV;
         else if (ctx.Mod() != null) op = BinaryExprNode.BinaryOp.MOD;
         else if (ctx.Plus() != null)op = BinaryExprNode.BinaryOp.ADD;
@@ -270,7 +278,7 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
 
     // TODO: 2021/10/11 package Value
     @Override public ASTNode visitVariVal(IsaiahParser.VariValContext ctx) {
-        return new ClassValNode(ctx.Identifier().toString(), new position(ctx));
+        return new VariValNode(ctx.Identifier().toString(), new position(ctx));
     }
     @Override public ASTNode visitIntVal(IsaiahParser.IntValContext ctx) {
         String intStrVal = ctx.IntConst().toString();
@@ -306,7 +314,7 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         return node;
     }
     @Override public ASTNode visitNewClass(IsaiahParser.NewClassContext ctx) {
-        return new ClassValNode(ctx.Identifier().toString(), new position(ctx));
+        return new VariValNode(ctx.Identifier().toString(), new position(ctx));
     }
     @Override public ASTNode visitFuncVal(IsaiahParser.FuncValContext ctx) {
         String name = ctx.Identifier().toString();

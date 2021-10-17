@@ -24,7 +24,6 @@ public interface ASTVisitor {
     void visit(IntTypeNode node);
     void visit(StringTypeNode node);
     void visit(ClassTypeNode node);
-//    void visit(DigitTypeNode node);
     void visit(ArrayTypeNode node);
 
     void visit(EmptyStNode node);
@@ -41,13 +40,13 @@ public interface ASTVisitor {
 
     void visit(ValueExprNode node);
     void visit(IndexExprNode node);
-    //Array...
+    void visit(CallExprNode node);
     void visit(UnaryExprNode node);
     void visit(BinaryExprNode node);
     void visit(PrefixExprNode node);
     void visit(SuffixExprNode node);
 
-    void visit(ClassValNode node);
+    void visit(VariValNode node);
     void visit(IntValNode node);
     void visit(StringValNode node);
     void visit(BoolValNode node);

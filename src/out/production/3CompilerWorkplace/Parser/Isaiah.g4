@@ -60,7 +60,8 @@ expression
     :   value                                           #valueExpr
     |   '('expression')'                                #parenExpr
     |   expression '['expression']'                     #indexExpr
-    |   expression '.' expression                       #binaryExpr
+    |   expression '.' Identifier expressionList?       #callExpr
+//    |   expression '.' expression                       #binaryExpr
     |   <assoc=right> op=('!'|'~')   expression         #unaryExpr
     |   <assoc=right> op=('+'|'-')   expression         #unaryExpr
     |   <assoc=right> op=('++'|'--') expression         #prefixExpr

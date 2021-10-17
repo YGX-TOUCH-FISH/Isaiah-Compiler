@@ -1,5 +1,6 @@
 package Util;
 
+import Util.error.semanticError;
 import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.util.Objects;
@@ -56,4 +57,9 @@ public class Type {
     public boolean isArray() {
         return dims != 0;
     }
+
+    public boolean equalwith(Type etc) {
+        return Objects.equals(name, etc.name);
+    }
+
 }

@@ -520,6 +520,18 @@ public interface IsaiahListener extends ParseTreeListener {
 	 */
 	void exitBinaryExpr(IsaiahParser.BinaryExprContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code callExpr}
+	 * labeled alternative in {@link IsaiahParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterCallExpr(IsaiahParser.CallExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code callExpr}
+	 * labeled alternative in {@link IsaiahParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitCallExpr(IsaiahParser.CallExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code parenExpr}
 	 * labeled alternative in {@link IsaiahParser#expression}.
 	 * @param ctx the parse tree

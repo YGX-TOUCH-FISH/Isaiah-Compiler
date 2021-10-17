@@ -311,6 +311,13 @@ public interface IsaiahVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBinaryExpr(IsaiahParser.BinaryExprContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code callExpr}
+	 * labeled alternative in {@link IsaiahParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCallExpr(IsaiahParser.CallExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code parenExpr}
 	 * labeled alternative in {@link IsaiahParser#expression}.
 	 * @param ctx the parse tree

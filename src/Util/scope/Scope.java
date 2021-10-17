@@ -10,19 +10,24 @@ import java.util.HashMap;
 public class Scope {
     private HashMap<String, Type> define;
     private HashMap<String, Entity> entity = new HashMap<>();
-    // TODO: 2021/10/14 Waiting for (IR implement && semantic check)
+    // TODO: 2021/10/14 Waiting for IR implement
     private Scope parent;
 
-    private int loopDepth;
-    private boolean inConstruct;
-
+    private boolean inLoop;
+    private boolean inLambda;
     public Scope(Scope _parent) {
         define = new HashMap<>();
         parent = _parent;
-        loopDepth = 0;
-//        funcDepth = 0;
-        inConstruct = false;
+        inLoop = _parent.inLoop;
+        inLambda = _parent.inLambda;
     }
+//    public Scope(Scope _parent, boolean _inLoop, boolean _inConstruct, boolean _inLambda) {
+//        define = new HashMap<>();
+//        parent = _parent;
+//        inLoop = _inLoop;
+//        inConstruct = _inConstruct;
+//        inLambda = _inLambda;
+//    }
 
     public Scope getParent() { return parent; }
 
@@ -52,24 +57,15 @@ public class Scope {
     }
 
     public void intoLoop() {
-        loopDepth++;
+        inLoop = true;
     }
-    public void outLoop() {
-        loopDepth--;
-        assert loopDepth >= 0;
-    }
-    public void intoConstruct() {
-        inConstruct = true;
-    }
-    public void outConstruct() {
-        inConstruct = false;
+    public void intoLambda() {
+        inLambda = true;
     }
 
     public boolean isInLoop() {
-        return loopDepth != 0;
+        return inLoop;
     }
+    public boolean isInLambda() { return inLambda; }
 
-    public boolean isInConstruct() {
-        return inConstruct;
-    }
 }

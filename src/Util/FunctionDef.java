@@ -15,16 +15,15 @@ public class FunctionDef {
                 paraType.add(new Type(paraMember.name, paraMember.dims));
             }
         }
-        //传null与传空arrayList 相同
     }
 
     @Override public boolean equals(Object other) {
+        //ignore retType differences
         if (other instanceof FunctionDef ) {
             FunctionDef etc = (FunctionDef) other;
 
             if (!name.equals(etc.name)) return false;
             if (paraType.size() != etc.paraType.size()) return false;
-            if (!retType.equals(etc.retType)) return false;
             for (int i = 0 ; i < paraType.size() ; i++) {
                 if (!paraType.get(i).equals(etc.paraType.get(i))) return false;
             }
@@ -34,9 +33,12 @@ public class FunctionDef {
     }
 
     @Override public int hashCode() {
-        int result = name.hashCode() + retType.hashCode();
+        int result = name.hashCode();
         if (paraType != null)
             for (Type paraMember : paraType) result += paraMember.hashCode();
         return result;
+    }
+    public boolean equalwith(FunctionDef _def) {
+        return equals(_def) && retType.equalwith(_def.retType);
     }
 }

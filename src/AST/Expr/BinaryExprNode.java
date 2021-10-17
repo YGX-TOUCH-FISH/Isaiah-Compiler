@@ -5,7 +5,6 @@ import Util.position;
 
 public class BinaryExprNode extends ExprNode{
     public enum BinaryOp{
-        DOT,
         ADD, SUB,
         MUL, DIV, MOD,
         LSH, RSH,
