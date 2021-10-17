@@ -35,18 +35,33 @@ public class SemanticChecker implements ASTVisitor{
     // TODO: 2021/10/17 如何确保函数必有返回值？ （部分有，部分没有）
     @Override public void visit(RootNode node) {
         for (DeclrNode declare : node.declrs) {
-            declare.accept(this);
+            if (declare instanceof ClassDeclrNode) {
+                ClassDeclrNode classDeclare = (ClassDeclrNode) declare;
+                globalScope.addClassDef(classDeclare.name, new ClassDef(classDeclare.name), node.pos);
+            }
+        }
+        for (DeclrNode declare : node.declrs) {
+            if (declare instanceof FuncDeclrNode) {
+                FuncDeclrNode funcDeclare = (FuncDeclrNode) declare;
+                funcDeclare.retType.accept(this);
+                funcDeclare.paraList.accept(this);
+                globalScope.addFuncDef(new FunctionDef(funcDeclare.retType.typeOfNode, funcDeclare.name,funcDeclare.paraList.types), node.pos);
+            }
         }
         FunctionDef mainDef = new FunctionDef(new Type(), "main", null);
         if (!globalScope.containsFunc(mainDef))
             throw new semanticError("[ERROR]main function not found: ", node.pos);
         if (!globalScope.getFuncType(mainDef).isInt())
             throw new semanticError("[ERROR]main function return-type error not match: ", node.pos);
+
+
+        for (DeclrNode declare : node.declrs) {
+            declare.accept(this);
+        }
     }
 
     @Override public void visit(ClassDeclrNode node) {
-        currentClass = new ClassDef(node.name);
-        globalScope.addClassDef(node.name, currentClass, node.pos);
+        currentClass = globalScope.getClassByName(node.name);
         currentScope = new Scope(currentScope);
         for (DeclrNode declare : node.declrs) {
             declare.accept(this);
@@ -57,14 +72,16 @@ public class SemanticChecker implements ASTVisitor{
     }
 
     @Override public void visit(FuncDeclrNode node) {
-        node.retType.accept(this);
-        node.paraList.accept(this);
-        FunctionDef funcDef = new FunctionDef(node.retType.typeOfNode, node.name, node.paraList.types);
-        if (currentClass != null)
+        FunctionDef funcDef;
+        if (currentClass != null) {
+            node.retType.accept(this);
+            node.paraList.accept(this);
+            funcDef = new FunctionDef(node.retType.typeOfNode, node.name, node.paraList.types);
             currentClass.addFuncDef(funcDef, node.pos);     //class private function
-        else
-            globalScope.addFuncDef(funcDef, node.pos);      //global share function
-
+        }
+        else {
+            funcDef = new FunctionDef(node.retType.typeOfNode, node.name, node.paraList.types);
+        }
         currentFunc = funcDef;
         currentScope = new Scope(currentScope);
         node.block.accept(this);
