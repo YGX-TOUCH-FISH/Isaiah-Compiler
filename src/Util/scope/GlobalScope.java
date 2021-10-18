@@ -15,13 +15,18 @@ public class GlobalScope extends Scope{
 
     HashMap<String, ClassDef> classDefs = new HashMap<>();
     HashMap<FunctionDef, Type> functionDefs = new HashMap<>();
+    HashSet<String> nameCollection = new HashSet<>();
+
     public GlobalScope(Scope _parent) {
         super(_parent);
     }
 
     public void addClassDef(String _name, ClassDef _classDef, position pos) {
         if (classDefs.containsKey(_name))
-            throw new semanticError("[ERROR]redefinition CLASS of " + _name, pos);
+            throw new semanticError("[ERROR]redefinition CLASS of " + _name+": ", pos);
+        if (nameCollection.contains(_name))
+            throw new semanticError("[ERROR]duplicated name for "+_name+": ", pos);
+        nameCollection.add(_name);
         classDefs.put(_name, _classDef);
     }
     public boolean containsClass(String _name) {
@@ -33,18 +38,39 @@ public class GlobalScope extends Scope{
 
     public void addFuncDef(FunctionDef _funcDef, position pos) {
         if (functionDefs.containsKey(_funcDef))
-            throw new semanticError("[ERROR]redefinition FUNCTION of " + _funcDef.name, pos);
+            throw new semanticError("[ERROR]redefinition FUNCTION of " + _funcDef.name+": ", pos);
+        if (nameCollection.contains(_funcDef.name))
+            throw new semanticError("[ERROR]duplicated name for "+_funcDef.name+": ", pos);
+        nameCollection.add(_funcDef.name);
         functionDefs.put(_funcDef, _funcDef.retType);
     }
     public boolean containsFunc(FunctionDef _funcDef) {
         return functionDefs.containsKey(_funcDef);
     }
     public Type getFuncType(FunctionDef _funcDef) { return functionDefs.get(_funcDef); }
+
     public void initialize() {
-        //basic class
+        ClassDef strDef = new ClassDef("string");
+        FunctionDef length = new FunctionDef(new Type("int", 0), "length", null);
+        FunctionDef substring = new FunctionDef(new Type("string", 0), "substring", null);
+        substring.paraType.add(new Type("int", 0));
+        substring.paraType.add(new Type("int", 0));
+        FunctionDef parseInt = new FunctionDef(new Type("int", 0), "parseInt", null);
+        FunctionDef ord = new FunctionDef(new Type("int", 0), "ord", null);
+        ord.paraType.add(new Type("int", 0));
+        strDef.addFuncDef(length, new position(0, 0));
+        strDef.addFuncDef(substring, new position(0,0));
+        strDef.addFuncDef(parseInt, new position(0, 0));
+        strDef.addFuncDef(ord, new position(0, 0));
+
+        ClassDef arrayDef = new ClassDef("class[]");
+        FunctionDef size = new FunctionDef(new Type("int", 0), "size", null);
+        arrayDef.addFuncDef(size, new position(0, 0));
+
         addClassDef("bool", new ClassDef("bool"), new position(0, 0));
-        addClassDef("int", new ClassDef("bool"), new position(0, 0));
-        addClassDef("string", new ClassDef("bool"), new position(0, 0));
+        addClassDef("int", new ClassDef("int"), new position(0, 0));
+        addClassDef("string", strDef, new position(0, 0));
+        addClassDef("class[]", arrayDef, new position(0, 0)); //arrayDef
         //basic function
         FunctionDef print = new FunctionDef(new Type("void", 0), "print", null);
         print.paraType.add(new Type("string", 0));

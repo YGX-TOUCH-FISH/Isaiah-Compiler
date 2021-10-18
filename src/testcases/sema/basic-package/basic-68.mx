@@ -18,6 +18,8 @@ class A{
         return alt.af();
     }
 };
+int main(){
+}
 
 int main()
 {

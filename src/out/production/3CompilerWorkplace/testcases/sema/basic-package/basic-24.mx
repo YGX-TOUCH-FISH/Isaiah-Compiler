@@ -4,10 +4,9 @@ Test Target: Basic
 Author: 12' Chao Liao
 Time: 2019-11-11
 Verdict: Fail
-Comment: Operator '>>' cannot applied to string object
+Comment: true cannot be assigned.
 Origin Package: Semantic Pretest
 */
 int main() {
-    string str = "120";
-    int x = str >> 3;
+    true = false;
 }

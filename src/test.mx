@@ -1,14 +1,22 @@
 /*
 Test Package: Sema_Local_Preview
-Test Target: Array
-Author: 17' Yifan Xu
-Time: 2020-02-26
-Verdict: Failed
-Comment: The shape of multidimensional array must be specified from left to right.
+Test Target: Basic
+Author: 16' Yunfeng Lin
+Time: 2019-11-11
+Verdict: Fail
+Comment: Illegal member access.
 Origin Package: Semantic Pretest
 */
-int main()
-{
-    int[][][] a = new int[1][][1];
-    return 0;
+class A{
+    int a;
+    A ptr;
+    B alt;
+    B af(){
+        return alt.pf();
+    }
+    A pf(){
+        return alt.af();
+    }
+};
+int main(){
 }

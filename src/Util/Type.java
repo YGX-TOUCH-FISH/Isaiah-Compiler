@@ -55,7 +55,7 @@ public class Type {
         return !isNull() && !isInt() && !isBool() && !isString() && !isVoid() && !isArray() && !isConstructor();
     }
     public boolean isArray() {
-        return dims >= 0;
+        return dims >= 1;
     }
 
     public boolean equalwith(Type etc) {

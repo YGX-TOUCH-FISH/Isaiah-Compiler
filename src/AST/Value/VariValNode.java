@@ -5,6 +5,7 @@ import Util.position;
 
 public class VariValNode extends ValueNode{
     public String name;
+    //be null?
     public VariValNode(String _name, position pos) {
         super(pos);
         name = _name;

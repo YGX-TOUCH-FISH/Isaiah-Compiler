@@ -13,6 +13,7 @@ import AST.Type.*;
 import AST.Value.*;
 import Parser.IsaiahBaseVisitor;
 import Parser.IsaiahParser;
+import Util.Type;
 import Util.error.semanticError;
 import Util.position;
 import Util.scope.GlobalScope;
@@ -116,7 +117,8 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
     }
     @Override public ASTNode visitCallExpr(IsaiahParser.CallExprContext ctx) {
         ExprNode object = (ExprNode) visit(ctx.expression());
-        String memberID = ctx.Identifier().toString();
+        String memberID;
+        memberID = ctx.Identifier().toString();
         ExprListNode exprList = null;
         if (ctx.expressionList() != null)
             exprList = (ExprListNode) visit(ctx.expressionList());
@@ -314,7 +316,10 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         return node;
     }
     @Override public ASTNode visitNewClass(IsaiahParser.NewClassContext ctx) {
-        return new VariValNode(ctx.Identifier().toString(), new position(ctx));
+        VariValNode variable =  new VariValNode(null, new position(ctx));
+        variable.type = new Type(ctx.Identifier().toString(), 0);
+        return variable;
+        //
     }
     @Override public ASTNode visitFuncVal(IsaiahParser.FuncValContext ctx) {
         String name = ctx.Identifier().toString();
