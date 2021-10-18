@@ -55,11 +55,11 @@ public class Type {
         return !isNull() && !isInt() && !isBool() && !isString() && !isVoid() && !isArray() && !isConstructor();
     }
     public boolean isArray() {
-        return dims != 0;
+        return dims >= 0;
     }
 
     public boolean equalwith(Type etc) {
-        return Objects.equals(name, etc.name);
+        return Objects.equals(name, etc.name) && dims == etc.dims;
     }
 
 }

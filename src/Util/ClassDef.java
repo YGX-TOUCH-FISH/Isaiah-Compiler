@@ -8,8 +8,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class ClassDef {
-    public ArrayList<String> ids = new ArrayList<>();
-    public ArrayList<Type> types = new ArrayList<>();
+//    public ArrayList<String> ids = new ArrayList<>();
+//    public ArrayList<Type> types = new ArrayList<>();
+    public HashMap<String, Type> varDefs = new HashMap<>();
     public HashMap<FunctionDef, Type> funcDefs = new HashMap<>();
     public String identifier;
     public ClassDef(String _identifier) {
@@ -21,14 +22,18 @@ public class ClassDef {
     public void addMember(String _id, Type _type, position _pos) {
 //        if (ids.contains(_id))
 //            throw new semanticError("[ERROR]redefinition of member variable in class "+ identifier + ": ", _pos);
-        types.add(_type);
-        ids.add(_id);
+//        types.add(_type);
+//        ids.add(_id);
+        if (varDefs.containsKey(_id))
+            throw new semanticError("[ERROR]redefinition of member variable in class "+ identifier + ": ", _pos);
+        varDefs.put(_id, _type);
+
     }
     public boolean containsMember(String _id) {
-        return ids.contains(_id);
+        return varDefs.containsKey(_id);
     }
     public Type getMemberType(String _id) {
-        return types.get(ids.indexOf(_id));
+        return varDefs.get(_id);
     }
 
     public void addFuncDef(FunctionDef _def, position _pos) {

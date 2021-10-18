@@ -18,8 +18,14 @@ public class Scope {
     public Scope(Scope _parent) {
         define = new HashMap<>();
         parent = _parent;
-        inLoop = _parent.inLoop;
-        inLambda = _parent.inLambda;
+        if (_parent != null) {
+            inLoop = _parent.inLoop;
+            inLambda = _parent.inLambda;
+        }
+        else {
+            inLoop = false;
+            inLambda = false;
+        }
     }
 
     public Scope getParent() { return parent; }

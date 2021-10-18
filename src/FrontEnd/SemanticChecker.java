@@ -67,7 +67,6 @@ public class SemanticChecker implements ASTVisitor{
             declare.accept(this);
         }
         currentScope = currentScope.getParent();
-        globalScope.updateClassDef(node.name, currentClass,node.pos);
         currentClass = null;
     }
 
@@ -234,21 +233,26 @@ public class SemanticChecker implements ASTVisitor{
         node.ifStmt.accept(this);
         currentScope = currentScope.getParent();
 
-        currentScope = new Scope(currentScope);
-        node.elseStmt.accept(this);
-        currentScope = currentScope.getParent();
+        if (node.elseStmt != null) {
+            currentScope = new Scope(currentScope);
+            node.elseStmt.accept(this);
+            currentScope = currentScope.getParent();
 
-        if (node.ifStmt.retType.isNull() && node.elseStmt.retType.isNull())
-            node.retType = new Type("null", 0);
-        else if (!node.ifStmt.retType.isNull()&&!node.elseStmt.retType.isNull()) {
-            if (!node.ifStmt.retType.equalwith(node.elseStmt.retType))
-                throw new semanticError("[ERROR]return-type should be consensus: ", node.pos);
+            if (node.ifStmt.retType.isNull() && node.elseStmt.retType.isNull())
+                node.retType = new Type("null", 0);
+            else if (!node.ifStmt.retType.isNull()&&!node.elseStmt.retType.isNull()) {
+                if (!node.ifStmt.retType.equalwith(node.elseStmt.retType))
+                    throw new semanticError("[ERROR]return-type should be consensus: ", node.pos);
+                node.retType = new Type(node.ifStmt.retType);
+            }
+            else if (!node.ifStmt.retType.isNull()&&node.elseStmt.retType.isNull())
+                node.retType = new Type(node.ifStmt.retType);
+            else if (node.ifStmt.retType.isNull()&&!node.elseStmt.retType.isNull())
+                node.retType = new Type(node.elseStmt.retType);
+        }
+        else {
             node.retType = new Type(node.ifStmt.retType);
         }
-        else if (!node.ifStmt.retType.isNull()&&node.elseStmt.retType.isNull())
-            node.retType = new Type(node.ifStmt.retType);
-        else if (node.ifStmt.retType.isNull()&&!node.elseStmt.retType.isNull())
-            node.retType = new Type(node.elseStmt.retType);
     }
 
     @Override public void visit(ForStNode node) {
@@ -338,9 +342,10 @@ public class SemanticChecker implements ASTVisitor{
     @Override public void visit(IndexExprNode node) {
         node.array.accept(this);
         node.index.accept(this);
-        if (!Objects.equals(node.index.type.name, "int"))
+        if (!node.index.type.isInt())
             throw new semanticError("[ERROR]index must be int type: ", node.pos);
-
+        if (node.array.type.dims == 0)
+            throw new semanticError("[ERROR]index dimension error: ", node.pos);
         node.type = new Type(node.array.type.name, node.array.type.dims-1);
         node.catagory = ExprNode.Catagory.LVALUE;
     }
@@ -386,7 +391,7 @@ public class SemanticChecker implements ASTVisitor{
         node.lhs.accept(this);
         node.rhs.accept(this);
         switch (node.op) {
-            case ADD -> {
+            case ADD:
                 if (!node.lhs.type.equalwith(node.rhs.type))
                     throw new semanticError("[ERROR]lhs-type not equal to rhs-type: ", node.pos);
                 if (!node.lhs.type.isInt() && !node.lhs.type.isString())
@@ -394,24 +399,24 @@ public class SemanticChecker implements ASTVisitor{
                 if (node.lhs.type.isInt()) node.type = new Type("int", 0);
                 else node.type = new Type("string", 0);
                 node.catagory = ExprNode.Catagory.RVALUE;
-            }
-            case LT, GT, LEQ, REQ -> {
+                break;
+            case LT: case GT: case LEQ: case REQ:
                 if (!node.lhs.type.equalwith(node.rhs.type))
                     throw new semanticError("[ERROR]lhs-type not equal to rhs-type: ", node.pos);
                 if (!node.lhs.type.isInt() && !node.lhs.type.isString())
                     throw new semanticError("[ERROR]oprand need int/string type: ", node.pos);
                 node.type = new Type("bool", 0);
                 node.catagory = ExprNode.Catagory.RVALUE;
-            }
-            case SUB, MUL, DIV, MOD, LSH, RSH, AND, XOR, OR -> {
+                break;
+            case SUB: case MUL: case DIV: case MOD: case LSH: case RSH: case AND: case XOR: case OR:
                 if (!node.lhs.type.equalwith(node.rhs.type))
                     throw new semanticError("[ERROR]lhs-type not equal to rhs-type: ", node.pos);
                 if (!node.lhs.type.isInt())
                     throw new semanticError("[ERROR]oprand need int type: ", node.pos);
                 node.type = new Type("int", 0);
                 node.catagory = ExprNode.Catagory.RVALUE;
-            }
-            case EQ, NEQ -> {
+                break;
+            case EQ: case NEQ:
                 if (node.lhs.type.isArray()) {
                     if (node.rhs.type.isArray()) {
                         if (!node.lhs.type.equalwith(node.rhs.type))
@@ -432,16 +437,16 @@ public class SemanticChecker implements ASTVisitor{
                 }
                 node.type = new Type("bool", 0);
                 node.catagory = ExprNode.Catagory.RVALUE;
-            }
-            case ANDAND, OROR -> {
+                break;
+            case ANDAND: case OROR:
                 if (!node.lhs.type.equalwith(node.rhs.type))
                     throw new semanticError("[ERROR]lhs-type not equal to rhs-type: ", node.pos);
                 if (!node.lhs.type.isBool())
                     throw new semanticError("[ERROR]oprand need bool type: ", node.pos);
                 node.type = new Type("bool", 0);
                 node.catagory = ExprNode.Catagory.RVALUE;
-            }
-            case ASSIGN -> {
+                break;
+            case ASSIGN:
                 if (node.lhs.catagory == ExprNode.Catagory.RVALUE)
                     throw new semanticError("[ERROR]assign-lhs must be lvalue: ", node.pos);
                 if (node.lhs.type.isArray()) {
@@ -456,7 +461,7 @@ public class SemanticChecker implements ASTVisitor{
                 }
                 node.type = new Type(node.rhs.type);
                 node.catagory = ExprNode.Catagory.LVALUE;
-            }
+                break;
         }
     }
 
@@ -508,6 +513,11 @@ public class SemanticChecker implements ASTVisitor{
 
     @Override public void visit(NewArrayNode node) {
         node.baseType.accept(this);
+        for (ExprNode exprNode : node.sizeofDim) {
+            exprNode.accept(this);
+            if (!exprNode.type.isInt())
+                throw new semanticError("[ERROR]index must be int type: ", node.pos);
+        }
         node.type = new Type(node.baseType.typeOfNode.name, node.dims);
         node.catagory = ExprNode.Catagory.RVALUE;
     }
