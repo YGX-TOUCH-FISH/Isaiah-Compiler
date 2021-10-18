@@ -30,6 +30,12 @@ public class GlobalScope extends Scope{
     public ClassDef getClassByName(String _name) {
         return classDefs.get(_name);
     }
+    public void updateClassDef(String _name, ClassDef _classDef, position pos) {
+        if (!classDefs.containsKey(_name))
+            throw new semanticError("[ERROR]class "+_name+" not exists: ", pos);
+        classDefs.remove(_name);
+        classDefs.put(_name, _classDef);
+    }
 
     public void addFuncDef(FunctionDef _funcDef, position pos) {
         if (functionDefs.containsKey(_funcDef))

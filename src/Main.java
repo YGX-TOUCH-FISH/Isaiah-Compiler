@@ -31,9 +31,7 @@ public class Main {
 
             ASTBuilder astBuilder = new ASTBuilder(gScope);
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
-
-//            new SymbolCollector(gScope).visit(ASTRoot);
-//            new SemanticChecker(gScope).visit(ASTRoot);
+            new SemanticChecker(gScope).visit(ASTRoot);
             int a = 1;
         } catch (error er) {
             System.err.println(er.toString());

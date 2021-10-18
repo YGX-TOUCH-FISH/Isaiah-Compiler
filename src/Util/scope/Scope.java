@@ -21,13 +21,6 @@ public class Scope {
         inLoop = _parent.inLoop;
         inLambda = _parent.inLambda;
     }
-//    public Scope(Scope _parent, boolean _inLoop, boolean _inConstruct, boolean _inLambda) {
-//        define = new HashMap<>();
-//        parent = _parent;
-//        inLoop = _inLoop;
-//        inConstruct = _inConstruct;
-//        inLambda = _inLambda;
-//    }
 
     public Scope getParent() { return parent; }
 

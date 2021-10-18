@@ -33,6 +33,7 @@ public class SemanticChecker implements ASTVisitor{
     }
 
     // TODO: 2021/10/17 如何确保函数必有返回值？ （部分有，部分没有）
+    // TODO: 2021/10/18 函数形参可作为左值
     @Override public void visit(RootNode node) {
         for (DeclrNode declare : node.declrs) {
             if (declare instanceof ClassDeclrNode) {
@@ -45,7 +46,7 @@ public class SemanticChecker implements ASTVisitor{
                 FuncDeclrNode funcDeclare = (FuncDeclrNode) declare;
                 funcDeclare.retType.accept(this);
                 funcDeclare.paraList.accept(this);
-                globalScope.addFuncDef(new FunctionDef(funcDeclare.retType.typeOfNode, funcDeclare.name,funcDeclare.paraList.types), node.pos);
+                globalScope.addFuncDef(new FunctionDef(funcDeclare.retType.typeOfNode, funcDeclare.name, funcDeclare.paraList.types), node.pos);
             }
         }
         FunctionDef mainDef = new FunctionDef(new Type(), "main", null);
@@ -53,7 +54,6 @@ public class SemanticChecker implements ASTVisitor{
             throw new semanticError("[ERROR]main function not found: ", node.pos);
         if (!globalScope.getFuncType(mainDef).isInt())
             throw new semanticError("[ERROR]main function return-type error not match: ", node.pos);
-
 
         for (DeclrNode declare : node.declrs) {
             declare.accept(this);
@@ -67,8 +67,8 @@ public class SemanticChecker implements ASTVisitor{
             declare.accept(this);
         }
         currentScope = currentScope.getParent();
+        globalScope.updateClassDef(node.name, currentClass,node.pos);
         currentClass = null;
-        //先add，再进declare，保证在类内定义类成员合法（链表）
     }
 
     @Override public void visit(FuncDeclrNode node) {
@@ -80,6 +80,7 @@ public class SemanticChecker implements ASTVisitor{
             currentClass.addFuncDef(funcDef, node.pos);     //class private function
         }
         else {
+            //已经遍历过一次
             funcDef = new FunctionDef(node.retType.typeOfNode, node.name, node.paraList.types);
         }
         currentFunc = funcDef;
@@ -88,13 +89,12 @@ public class SemanticChecker implements ASTVisitor{
         currentScope = currentScope.getParent();
         currentFunc = null;
 
-        if (node.block.retType.isNull()) {
-            if (!funcDef.retType.isVoid()) {
-                FunctionDef mainDef = new FunctionDef(new Type("int", 0), "main", null);
-                if (!funcDef.equalwith(mainDef))
-                    throw new semanticError("[ERROR]non-void function "+funcDef.name+" need return-sentence: ", node.pos);
-            }
+        if (node.block.retType.isNull() && !funcDef.retType.isVoid()) {
+            FunctionDef mainDef = new FunctionDef(new Type("int", 0), "main", null);
+            if (!funcDef.equalwith(mainDef))
+                throw new semanticError("[ERROR]non-void function "+funcDef.name+" need return-sentence: ", node.pos);
         }
+        //
     }
 
     @Override public void visit(EmptyDeclrNode node) {}
@@ -124,6 +124,7 @@ public class SemanticChecker implements ASTVisitor{
         for (StmtNode stmt : node.stmts) {
             stmt.accept(this);
         }
+        //check all return type legal
         node.retType = new Type("null", 0);
         if (currentScope.isInLambda()) {
             for (StmtNode stmt : node.stmts) {
@@ -144,31 +145,34 @@ public class SemanticChecker implements ASTVisitor{
                 }
             }
         }
+        // lambda function:  void/type
+        // simple function:  void/null/type
+        // constr function:  class/null
     }
 
-    @Override public void visit(AssignDeclrNode assignNode) {
-        assignNode.value.accept(this);
-        assignNode.type.accept(this);
+    @Override public void visit(AssignDeclrNode node) {
+        node.value.accept(this);
+        node.type.accept(this);
 
-        if (!assignNode.type.typeOfNode.equalwith(assignNode.value.type))
-            throw new semanticError("[ERROR]assign type not matched: ", assignNode.pos);
+        if (!node.type.typeOfNode.equalwith(node.value.type))
+            throw new semanticError("[ERROR]assign type not matched: ", node.pos);
 
-        currentScope.defineVar(assignNode.id, assignNode.type.typeOfNode, assignNode.pos);
+        currentScope.defineVar(node.id, node.type.typeOfNode, node.pos);
 
         if (currentClass != null)
-            currentClass.addMember(assignNode.id, assignNode.type.typeOfNode, assignNode.pos);
+            currentClass.addMember(node.id, node.type.typeOfNode, node.pos);
     }
 
-    @Override public void visit(ListDeclrNode listDeclrNode) {
-        listDeclrNode.type.accept(this);
+    @Override public void visit(ListDeclrNode node) {
+        node.type.accept(this);
 
-        for (String id : listDeclrNode.ids) {
-            currentScope.defineVar(id, listDeclrNode.type.typeOfNode, listDeclrNode.pos);
+        for (String id : node.ids) {
+            currentScope.defineVar(id, node.type.typeOfNode, node.pos);
         }
 
         if (currentClass != null) {
-            for (String id : listDeclrNode.ids)
-                currentClass.addMember(id, listDeclrNode.type.typeOfNode, listDeclrNode.pos);
+            for (String id : node.ids)
+                currentClass.addMember(id, node.type.typeOfNode, node.pos);
         }
     }
 
@@ -203,26 +207,19 @@ public class SemanticChecker implements ASTVisitor{
     @Override public void visit(EmptyStNode node) {}
 
     @Override public void visit(AssignStNode node) {
-        if (currentScope.containVar(node.name, false))
-            throw new semanticError("[ERROR]redefinition of variable "+node.name+": ", node.pos);
         node.type.accept(this);
         node.value.accept(this);
-        if (!globalScope.containsClass(node.type.typeOfNode.name))
-            throw new semanticError("[ERROR]cannot find classType "+ node.type.typeOfNode.name+": ", node.pos);
         if (!node.type.typeOfNode.equalwith(node.value.type))
             throw new semanticError("[ERROR]assign type not matched: ", node.pos);
 
+        currentScope.defineVar(node.name, node.type.typeOfNode, node.pos);
     }
 
     @Override public void visit(ListStNode node) {
-        for (String id : node.ids) {
-            if (currentScope.containVar(id, false))
-                throw new semanticError("[ERROR]redefinition of variable "+id+": ", node.pos);
-        }
         node.type.accept(this);
-        if (!globalScope.containsClass(node.type.typeOfNode.name))
-            throw new semanticError("[ERROR]cannot find classType "+ node.type.typeOfNode.name+": ", node.pos);
-
+        for (String id : node.ids) {
+            currentScope.defineVar(id, node.type.typeOfNode, node.pos);
+        }
     }
 
     @Override public void visit(ExprStNode node) {
@@ -245,12 +242,12 @@ public class SemanticChecker implements ASTVisitor{
             node.retType = new Type("null", 0);
         else if (!node.ifStmt.retType.isNull()&&!node.elseStmt.retType.isNull()) {
             if (!node.ifStmt.retType.equalwith(node.elseStmt.retType))
-                throw new semanticError("[ERROR]return-type shoule be consensus: ", node.pos);
+                throw new semanticError("[ERROR]return-type should be consensus: ", node.pos);
             node.retType = new Type(node.ifStmt.retType);
         }
-        else if (node.ifStmt.retType.isNull() &&!node.elseStmt.retType.isNull())
+        else if (!node.ifStmt.retType.isNull()&&node.elseStmt.retType.isNull())
             node.retType = new Type(node.ifStmt.retType);
-        else if (!node.ifStmt.retType.isNull()&& node.elseStmt.retType.isNull())
+        else if (node.ifStmt.retType.isNull()&&!node.elseStmt.retType.isNull())
             node.retType = new Type(node.elseStmt.retType);
     }
 
@@ -289,15 +286,13 @@ public class SemanticChecker implements ASTVisitor{
 
     @Override public void visit(RetStNode node) {
         if (currentScope.isInLambda()) {
-            //in lambda-function (higher privilege)
             if (node.retType == null) node.retType = new Type("void", 0);
             else {
                 node.retExpr.accept(this);
                 node.retType = new Type(node.retExpr.type);
             }
-        }
+        } //out lambda?
         else {
-            //in function declaration
             if (currentFunc == null)
                 throw new semanticError("[ERROR]return-sentence must be in function field: ", node.pos);
 
@@ -308,9 +303,14 @@ public class SemanticChecker implements ASTVisitor{
                 node.retType = new Type(node.retExpr.type);
             }
             else {
-                if (!currentFunc.retType.isVoid())
-                    throw new semanticError("[ERROR]return-type not match: ", node.pos);
-                node.retType = new Type("void", 0);
+                if (currentFunc.retType.isConstructor()) {
+                    node.retType = new Type("class", 0);
+                }
+                else if (currentFunc.retType.isVoid()) {
+                    node.retType = new Type("void", 0);
+                }
+                else throw new semanticError("[ERROR]return-type not match: ", node.pos);
+
             }
         }
     }
@@ -346,7 +346,7 @@ public class SemanticChecker implements ASTVisitor{
     }
     @Override public void visit(CallExprNode node) {
         node.object.accept(this);
-        if (globalScope.containsClass(node.object.type.name))
+        if (!globalScope.containsClass(node.object.type.name))
             throw new semanticError("[ERROR]failed to find classType "+node.object.type.name+": ", node.pos);
 
         ClassDef classDef = globalScope.getClassByName(node.object.type.name);
