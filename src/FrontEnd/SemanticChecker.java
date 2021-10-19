@@ -35,6 +35,7 @@ public class SemanticChecker implements ASTVisitor{
         globalScope.initialize();
     }
     // TODO: 2021/10/17 如何确保函数必有返回值？ （部分有，部分没有）
+    // TODO: 2021/10/19 添加assignable函数，之前写的太丑了
     @Override public void visit(RootNode node) {
         ArrayList<Integer> classDeclrIndex = new ArrayList<>();
         ArrayList<Integer> funcDeclrIndex = new ArrayList<>();
@@ -364,8 +365,15 @@ public class SemanticChecker implements ASTVisitor{
 
             if (node.retExpr != null) {
                 node.retExpr.accept(this);
-                if (!node.retExpr.type.equalwith(currentFunc.retType))
-                    throw new semanticError("[ERROR]return-type not match: ", node.pos);
+                if (node.retExpr.type.isNull()) {
+                    if (!currentFunc.retType.isArray() && !currentFunc.retType.isClass())
+                        throw new semanticError("[ERROR]return-type not match: ", node.pos);
+
+                }
+                else {
+                    if (!node.retExpr.type.equalwith(currentFunc.retType))
+                        throw new semanticError("[ERROR]return-type not match: ", node.pos);
+                }
                 node.retType = new Type(node.retExpr.type);
             }
             else {
@@ -482,23 +490,17 @@ public class SemanticChecker implements ASTVisitor{
                 node.catagory = ExprNode.Catagory.RVALUE;
                 break;
             case EQ: case NEQ:
-                if (node.lhs.type.isArray()) {
-                    if (node.rhs.type.isArray()) {
-                        if (!node.lhs.type.equalwith(node.rhs.type))
-                            throw new semanticError("[ERROR]lhs-type not equal to rhs-type: ", node.pos);
-                    } else if (!node.rhs.type.isNull())
-                        throw new semanticError("[ERROR]array (N)EQ need array-type or null-type: ", node.pos);
-                } else if (node.rhs.type.isArray()) {
-                    if (node.lhs.type.isArray()) {
-                        if (!node.lhs.type.equalwith(node.rhs.type))
-                            throw new semanticError("[ERROR]lhs-type not equal to rhs-type: ", node.pos);
-                    } else if (!node.lhs.type.isNull())
-                        throw new semanticError("[ERROR]array (N)EQ need array-type or null-type: ", node.pos);
-                } else {
+                if (node.lhs.type.isNull() && !node.rhs.type.isNull()) {
+                    if (!node.rhs.type.isArray() && !node.rhs.type.isClass())
+                        throw new semanticError("[ERROR]lhs-type(null) not equal to rhs-type: ", node.pos);
+                }
+                else if (!node.lhs.type.isNull() && node.rhs.type.isNull()) {
+                    if (!node.lhs.type.isArray() && !node.lhs.type.isClass())
+                        throw new semanticError("[ERROR]lhs-type not equal to rhs-type(null): ", node.pos);
+                }
+                else if (!node.lhs.type.isNull() && !node.rhs.type.isNull()) {
                     if (!node.lhs.type.equalwith(node.rhs.type))
                         throw new semanticError("[ERROR]lhs-type not equal to rhs-type: ", node.pos);
-//                    else if (!node.lhs.type.isInt() && !node.lhs.type.isString() && !node.lhs.type.isClass() && !node.lhs.type.isBool() && !node.lhs.type.isNull())
-//                        throw new semanticError("[ERROR](N)EQ oprand type error: ", node.pos);
                 }
                 node.type = new Type("bool", 0);
                 node.catagory = ExprNode.Catagory.RVALUE;

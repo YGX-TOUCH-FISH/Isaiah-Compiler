@@ -330,4 +330,16 @@ public interface IsaiahVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitForInit(IsaiahParser.ForInitContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link IsaiahParser#forCond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForCond(IsaiahParser.ForCondContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link IsaiahParser#forIncre}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForIncre(IsaiahParser.ForIncreContext ctx);
 }

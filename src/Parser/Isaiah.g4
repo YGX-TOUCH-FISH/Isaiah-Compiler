@@ -49,7 +49,7 @@ statement
     |   expression ';'                                  #exprStmt
     |   If '('expression')' statement (Else statement)? #condStmt
     |   While '('expression')' statement                #whileStmt
-    |   For '('forInit';'expression?';'expression?')' statement #forStmt
+    |   For '('forInit';'forCond?';'forIncre?')' statement #forStmt
     |   Return expression? ';'                          #retStmt
     |   Break ';'                                       #breakStmt
     |   Continue ';'                                    #continStmt
@@ -80,9 +80,9 @@ expression
     |   <assoc=right> expression '=' expression         #binaryExpr
     ;
 
-forInit
-    :   (expression(','expression)*)?       //maybe empty
-    ;
+forInit: (expression(','expression)*)? ;       //maybe empty
+forCond:  expression ;
+forIncre: expression;
 
 Int: 'int';
 Bool: 'bool';

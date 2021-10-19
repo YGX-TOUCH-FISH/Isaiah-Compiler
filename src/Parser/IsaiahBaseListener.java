@@ -575,6 +575,30 @@ public class IsaiahBaseListener implements IsaiahListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitForInit(IsaiahParser.ForInitContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterForCond(IsaiahParser.ForCondContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitForCond(IsaiahParser.ForCondContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterForIncre(IsaiahParser.ForIncreContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitForIncre(IsaiahParser.ForIncreContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

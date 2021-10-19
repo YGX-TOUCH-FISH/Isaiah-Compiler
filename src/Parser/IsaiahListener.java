@@ -553,4 +553,24 @@ public interface IsaiahListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForInit(IsaiahParser.ForInitContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link IsaiahParser#forCond}.
+	 * @param ctx the parse tree
+	 */
+	void enterForCond(IsaiahParser.ForCondContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IsaiahParser#forCond}.
+	 * @param ctx the parse tree
+	 */
+	void exitForCond(IsaiahParser.ForCondContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link IsaiahParser#forIncre}.
+	 * @param ctx the parse tree
+	 */
+	void enterForIncre(IsaiahParser.ForIncreContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IsaiahParser#forIncre}.
+	 * @param ctx the parse tree
+	 */
+	void exitForIncre(IsaiahParser.ForIncreContext ctx);
 }

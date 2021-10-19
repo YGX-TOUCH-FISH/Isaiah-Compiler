@@ -207,6 +207,14 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         }
         return node;
     }
+    @Override public ASTNode visitForCond(IsaiahParser.ForCondContext ctx) {
+        if (ctx.expression() != null) return visit(ctx.expression());
+        else return null;
+    }
+    @Override public ASTNode visitForIncre(IsaiahParser.ForIncreContext ctx) {
+        if (ctx.expression() != null) return visit(ctx.expression());
+        else return null;
+    }
     @Override public ASTNode visitBlock(IsaiahParser.BlockContext ctx) {
         BlockNode node = new BlockNode(new position(ctx));
         if (ctx.statement() != null) {
@@ -253,13 +261,19 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
     }
     @Override public ASTNode visitForStmt(IsaiahParser.ForStmtContext ctx) {
         // TODO: 2021/10/11 add ForInitNode
-        int exprSize = ctx.expression().size();
-        assert exprSize < 3;
-
+//        int exprSize = ctx.expression().size();
+//        assert exprSize < 3;
+//
+//        ForInitNode init = (ForInitNode) visit(ctx.forInit());
+//        ExprNode cond = null, incre = null;
+//        if (exprSize > 0) cond = (ExprNode) visit(ctx.expression(0));
+//        if (exprSize > 1) incre = (ExprNode) visit(ctx.expression(1));
+//        StmtNode stmt = (StmtNode) visit(ctx.statement());
         ForInitNode init = (ForInitNode) visit(ctx.forInit());
-        ExprNode cond = null, incre = null;
-        if (exprSize > 0) cond = (ExprNode) visit(ctx.expression(0));
-        if (exprSize > 1) incre = (ExprNode) visit(ctx.expression(1));
+        ExprNode cond = null;
+        if (ctx.forCond() != null) cond = (ExprNode) visit(ctx.forCond());
+        ExprNode incre = null;
+        if (ctx.forIncre() != null) incre = (ExprNode) visit(ctx.forIncre());
         StmtNode stmt = (StmtNode) visit(ctx.statement());
         return new ForStNode(init, cond, incre, stmt, new position(ctx));
     }
