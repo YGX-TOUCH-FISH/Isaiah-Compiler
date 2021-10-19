@@ -26,6 +26,7 @@ public class ClassDef {
 //        ids.add(_id);
         if (varDefs.containsKey(_id))
             throw new semanticError("[ERROR]redefinition of member variable in class "+ identifier + ": ", _pos);
+
         varDefs.put(_id, _type);
 
     }

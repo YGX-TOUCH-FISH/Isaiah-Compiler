@@ -31,8 +31,8 @@ value : Identifier                                      #variVal
       | New digitType ('['expression']')+ ('['']')+ ('['expression']')+     #newWrong
       | New digitType ('['expression']')+ ('['']')*                         #newArray//static array
       | New Identifier ('('')')?                                            #newClass
-      | Identifier expressionList                       #funcVal
-      | '[&]'parameterList'->'block expressionList      #lambdaVal
+      | Identifier expressionList                       #funcVal            //调用时的define
+      | '[&]'parameterList'->'block expressionList      #lambdaVal          //同上
       | This                                            #thisVal
       ;
 

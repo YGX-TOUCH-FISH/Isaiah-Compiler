@@ -1,22 +1,14 @@
 /*
 Test Package: Sema_Local_Preview
 Test Target: Basic
-Author: 16' Yunfeng Lin
-Time: 2019-11-11
-Verdict: Fail
-Comment: Illegal member access.
-Origin Package: Semantic Pretest
+Author: 15' Zhuolin Yang
+Time: 2019-10-20
+Verdict: Success
+Origin Package: Semantic Extended
 */
-class A{
-    int a;
-    A ptr;
-    B alt;
-    B af(){
-        return alt.pf();
-    }
-    A pf(){
-        return alt.af();
-    }
-};
-int main(){
+int main( ) {
+     int a;
+     int b;
+     a = 0; b = 0;
+     return a + b;
 }

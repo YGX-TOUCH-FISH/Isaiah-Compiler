@@ -319,7 +319,7 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         VariValNode variable =  new VariValNode(null, new position(ctx));
         variable.type = new Type(ctx.Identifier().toString(), 0);
         return variable;
-        //
+        //返回匿名类变量
     }
     @Override public ASTNode visitFuncVal(IsaiahParser.FuncValContext ctx) {
         String name = ctx.Identifier().toString();
