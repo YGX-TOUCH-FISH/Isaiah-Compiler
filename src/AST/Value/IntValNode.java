@@ -4,9 +4,9 @@ import AST.ASTVisitor;
 import Util.position;
 
 public class IntValNode extends ValueNode{
-    public int value;
+    public long value;
 
-    public IntValNode(int _value, position pos) {
+    public IntValNode(long _value, position pos) {
         super(pos);
         value = _value;
     }

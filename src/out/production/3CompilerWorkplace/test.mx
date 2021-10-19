@@ -1,14 +1,17 @@
 /*
 Test Package: Sema_Local_Preview
-Test Target: Basic
-Author: 15' Zhuolin Yang
+Test Target: If
+Author: 10' Youer Pu
 Time: 2019-10-20
-Verdict: Success
-Origin Package: Semantic Extended
+Verdict: Fail
+Comment: condition cannot be non-bool objects
+Origin Package: Semantic Pretest
 */
-int main( ) {
-     int a;
-     int b;
-     a = 0; b = 0;
-     return a + b;
+
+class A { int a; };
+
+int main() {
+    A a = new A;
+    if (a) {}
+    return 0;
 }

@@ -40,6 +40,8 @@ public class ClassDef {
     public void addFuncDef(FunctionDef _def, position _pos) {
         if (funcDefs.containsKey(_def))
             throw new semanticError("[ERROR]redefinition of member function in class "+ identifier + ": ", _pos);
+        if (_def.name.equals(identifier) && !_def.retType.isConstructor())
+            throw new semanticError("[ERROR]constructor return-type error: ", _pos);
         funcDefs.put(_def, _def.retType);
     }
     public boolean containsFunc(FunctionDef _def) {

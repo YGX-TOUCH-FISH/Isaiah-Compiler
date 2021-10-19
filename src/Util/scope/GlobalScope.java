@@ -49,6 +49,9 @@ public class GlobalScope extends Scope{
     }
     public Type getFuncType(FunctionDef _funcDef) { return functionDefs.get(_funcDef); }
 
+    public boolean inCollection(String _name) {
+        return nameCollection.contains(_name);
+    }
     public void initialize() {
         ClassDef strDef = new ClassDef("string");
         FunctionDef length = new FunctionDef(new Type("int", 0), "length", null);

@@ -18,6 +18,7 @@ public class Main {
         InputStream input = new FileInputStream(name);
 
         try {
+//            int value = Integer.parseInt("-2147483648");
             RootNode ASTRoot;
             GlobalScope gScope = new GlobalScope(null);
 
@@ -37,9 +38,5 @@ public class Main {
             System.err.println(er.toString());
             throw new RuntimeException();
         }
-        // TODO: 2021/10/14
-        //  1 hashmap check                                     over
-        //  2 definition check
-        //  4 null element? throw error in SemanticChecker
     }
 }

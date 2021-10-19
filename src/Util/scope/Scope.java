@@ -6,10 +6,13 @@ import Util.obj.Entity;
 import Util.position;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Scope {
     private HashMap<String, Type> define;
     private HashMap<String, Entity> entity = new HashMap<>();
+
+    //only used by globalScope
     // TODO: 2021/10/14 Waiting for IR implement
     private Scope parent;
 

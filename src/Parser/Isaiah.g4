@@ -61,11 +61,12 @@ expression
     |   '('expression')'                                #parenExpr
     |   expression '['expression']'                     #indexExpr
     |   expression '.' Identifier expressionList?       #callExpr
+    |   expression '.''(' Identifier expressionList?')' #callExpr
 //    |   expression '.' expression                       #binaryExpr
     |   <assoc=right> op=('!'|'~')   expression         #unaryExpr
     |   <assoc=right> op=('+'|'-')   expression         #unaryExpr
     |   <assoc=right> op=('++'|'--') expression         #prefixExpr
-    |   <assoc=right> expression op=('++'|'--')         #suffixExpr
+    |   expression op=('++'|'--')                       #suffixExpr
     |   expression op=('*'|'/'|'%')   expression        #binaryExpr
     |   expression op=('+'|'-')   expression            #binaryExpr
     |   expression op=('<<'|'>>') expression            #binaryExpr
@@ -158,4 +159,5 @@ LineComment
     ;
 Identifier: [a-zA-Z][a-zA-Z0-9_]*;
 IntConst: [1-9][0-9]* | '0';
-StringConst: '"'([ -~]|([\\][\\])|[\\n]|([\\]["]))*'"';
+//StringConst: '"'([ -~]|([\\][\\])|[\\n]|([\\]["]))*?'"';
+StringConst: '"' (~["\n\r\\] | '\\' ["nr\\])*? '"';

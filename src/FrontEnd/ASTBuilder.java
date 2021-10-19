@@ -284,7 +284,8 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
     }
     @Override public ASTNode visitIntVal(IsaiahParser.IntValContext ctx) {
         String intStrVal = ctx.IntConst().toString();
-        int value = Integer.parseInt(intStrVal);
+        long value = Long.parseLong(intStrVal);
+//        int value = Integer.parseInt(intStrVal);
         return new IntValNode(value, new position(ctx));
     }
     @Override public ASTNode visitStringVal(IsaiahParser.StringValContext ctx) {
@@ -318,6 +319,8 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
     @Override public ASTNode visitNewClass(IsaiahParser.NewClassContext ctx) {
         VariValNode variable =  new VariValNode(null, new position(ctx));
         variable.type = new Type(ctx.Identifier().toString(), 0);
+        if (variable.type.isVoid() || variable.type.isNull())
+            throw new semanticError("[ERROR]cannot build a void/null type variable: ", new position(ctx));
         return variable;
         //返回匿名类变量
     }

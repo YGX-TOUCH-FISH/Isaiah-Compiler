@@ -17,7 +17,7 @@ import Util.Type;
 import Util.error.semanticError;
 import Util.scope.GlobalScope;
 import Util.scope.Scope;
-import com.sun.xml.internal.stream.events.NamedEvent;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -35,7 +35,6 @@ public class SemanticChecker implements ASTVisitor{
         globalScope.initialize();
     }
     // TODO: 2021/10/17 如何确保函数必有返回值？ （部分有，部分没有）
-    // TODO: 2021/10/18 basic-66, 67 failed
     @Override public void visit(RootNode node) {
         ArrayList<Integer> classDeclrIndex = new ArrayList<>();
         ArrayList<Integer> funcDeclrIndex = new ArrayList<>();
@@ -136,6 +135,8 @@ public class SemanticChecker implements ASTVisitor{
         currentScope = new Scope(currentScope);
         FunctionDef funcDef = new FunctionDef(node.retType.typeOfNode, node.name, node.paraList.types);
         for (int i = 0 ; i < node.paraList.para.size() ; i++) {
+            if (globalScope.inCollection(node.paraList.ids.get(i)))
+                throw new semanticError("[ERROR]duplicated name: ", node.paraList.pos);
             currentScope.defineVar(node.paraList.ids.get(i), node.paraList.types.get(i), node.paraList.para.get(i).pos);
         }
         currentFunc = funcDef;
@@ -161,8 +162,9 @@ public class SemanticChecker implements ASTVisitor{
         currentScope = currentScope.getParent();
         currentFunc = null;
 
-        if (!node.block.retType.isNull() && node.block.stmts.size() != 1)
-            throw new semanticError("[ERROR]only single return-sentence is permitted: ", node.pos);
+        //Mx*, ntmd
+//        if (!node.block.retType.isNull() && node.block.stmts.size() != 1)
+//            throw new semanticError("[ERROR]only single return-sentence is permitted: ", node.pos);
     }
 
     @Override public void visit(BlockNode node) {
@@ -207,7 +209,8 @@ public class SemanticChecker implements ASTVisitor{
             if (!node.type.typeOfNode.equalwith(node.value.type))
                 throw new semanticError("[ERROR]assign type not matched: ", node.pos);
         }
-
+        if (globalScope.inCollection(node.id))
+            throw new semanticError("[ERROR]duplicated variable name:", node.pos);
         currentScope.defineVar(node.id, node.type.typeOfNode, node.pos);
     }
 
@@ -215,6 +218,8 @@ public class SemanticChecker implements ASTVisitor{
         node.type.accept(this);
 
         for (String id : node.ids) {
+            if (globalScope.inCollection(id))
+                throw new semanticError("[ERROR]duplicated variable name:", node.pos);
             currentScope.defineVar(id, node.type.typeOfNode, node.pos);
         }
     }
@@ -261,13 +266,16 @@ public class SemanticChecker implements ASTVisitor{
             if (!node.type.typeOfNode.equalwith(node.value.type))
                 throw new semanticError("[ERROR]assign type not matched: ", node.pos);
         }
-
+        if (globalScope.inCollection(node.name))
+            throw new semanticError("[ERROR]duplicated variable name:", node.pos);
         currentScope.defineVar(node.name, node.type.typeOfNode, node.pos);
     }
 
     @Override public void visit(ListStNode node) {
         node.type.accept(this);
         for (String id : node.ids) {
+            if (globalScope.inCollection(id))
+                throw new semanticError("[ERROR]duplicated variable name:", node.pos);
             currentScope.defineVar(id, node.type.typeOfNode, node.pos);
         }
     }
@@ -402,6 +410,7 @@ public class SemanticChecker implements ASTVisitor{
             throw new semanticError("[ERROR]index dimension error: ", node.pos);
         node.type = new Type(node.array.type.name, node.array.type.dims-1);
         node.catagory = ExprNode.Catagory.LVALUE;
+        //数组及其下标调用都为右值
     }
     @Override public void visit(CallExprNode node) {
         node.object.accept(this);
@@ -505,17 +514,16 @@ public class SemanticChecker implements ASTVisitor{
             case ASSIGN:
                 if (node.lhs.catagory == ExprNode.Catagory.RVALUE)
                     throw new semanticError("[ERROR]assign-lhs must be lvalue: ", node.pos);
-                if (node.lhs.type.isArray()) {
-                    if (node.rhs.type.isArray()) {
-                        if (!node.lhs.type.equalwith(node.rhs.type))
-                            throw new semanticError("[ERROR]lhs-type not equal to rhs-type: ", node.pos);
-                    } else if (!node.rhs.type.isNull())
-                        throw new semanticError("[ERROR]array assign value must be array-type/null: ", node.pos);
-                } else {
-                    if (!node.lhs.type.equalwith(node.rhs.type))
-                        throw new semanticError("[ERROR]lhs-type not equal to rhs-type: ", node.pos);
+                if (node.rhs.type.isNull()) {
+                    if (!node.lhs.type.isArray() && !node.lhs.type.isClass())
+                        throw new semanticError("[ERROR]assign type not matched(null-assign): ", node.pos);
                 }
-                node.type = new Type(node.rhs.type);
+                else {
+                    if (!node.lhs.type.equalwith(node.rhs.type))
+                        throw new semanticError("[ERROR]assign type not matched: ", node.pos);
+                }
+                node.type = new Type(node.lhs.type);
+                //被赋值为null后类型不变
                 node.catagory = ExprNode.Catagory.LVALUE;
                 break;
         }
@@ -589,38 +597,44 @@ public class SemanticChecker implements ASTVisitor{
                 throw new semanticError("[ERROR]index must be int type: ", node.pos);
         }
         node.type = new Type(node.baseType.typeOfNode.name, node.dims);
-        node.catagory = ExprNode.Catagory.RVALUE;
+        node.catagory = ExprNode.Catagory.LVALUE;
     }
 
     @Override public void visit(FuncValNode node) {
         node.exprList.accept(this);
 
         FunctionDef funcDef = new FunctionDef(new Type(), node.name, node.exprList.types);
-        //only need to consider global function
-        if (!globalScope.containsFunc(funcDef))
-            throw new semanticError("[ERROR]cannot find function "+node.name+": ", node.pos);
+        if (currentClass != null) {
+            if (!globalScope.containsFunc(funcDef) && !currentClass.containsFunc(funcDef))
+                throw new semanticError("[ERROR]cannot find function "+node.name+" :", node.pos);
+            else if (globalScope.containsFunc(funcDef)) node.type = new Type(globalScope.getFuncType(funcDef));
+            else node.type = new Type(currentClass.getFuncType(funcDef));
+        }
+        else {
+            if (!globalScope.containsFunc(funcDef))
+                throw new semanticError("[ERROR]cannot find function "+node.name+" :", node.pos);
+            node.type = new Type(globalScope.getFuncType(funcDef));
+        }
 
-        node.type = new Type(globalScope.getFuncType(funcDef));
         node.catagory = ExprNode.Catagory.LVALUE;
         currentScope.defineVar(UUID.randomUUID().toString(), node.type, node.pos);
-        // TODO: 2021/10/19 define? 动态定义
-
     }
 
     @Override public void visit(LambdaValNode node) {
         currentScope = new Scope(currentScope);
         node.paraList.accept(this);
         for (int i = 0 ; i < node.paraList.para.size() ; i++) {
+            if (globalScope.inCollection(node.paraList.ids.get(i)))
+                throw new semanticError("[ERROR]duplicated variable name:", node.pos);
             currentScope.defineVar(node.paraList.ids.get(i), node.paraList.types.get(i), node.paraList.para.get(i).pos);
         }
         currentScope.intoLambda();
         node.block.accept(this);
         currentScope = currentScope.getParent();
-
         node.exprList.accept(this);
-
         node.type = node.block.retType;
         node.catagory = ExprNode.Catagory.RVALUE;
+        currentScope.defineVar(UUID.randomUUID().toString(), node.type, node.pos);
     }
 
     @Override public void visit(ThisValNode node) {
