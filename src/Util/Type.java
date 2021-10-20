@@ -62,4 +62,8 @@ public class Type {
         return Objects.equals(name, etc.name) && dims == etc.dims;
     }
 
+    public boolean assignable(Type etc) {
+        if (etc.isNull()) return (isClass() || isArray());
+        else return equalwith(etc);
+    }
 }

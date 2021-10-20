@@ -6,6 +6,7 @@ import Util.FunctionDef;
 import Util.error.semanticError;
 import Util.position;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -14,7 +15,7 @@ public class GlobalScope extends Scope{
     //      because of cannot define Class in any Function
 
     HashMap<String, ClassDef> classDefs = new HashMap<>();
-    HashMap<FunctionDef, Type> functionDefs = new HashMap<>();
+    HashMap<String, FunctionDef> functionDefs = new HashMap<>();
     HashSet<String> nameCollection = new HashSet<>();
 
     public GlobalScope(Scope _parent) {
@@ -41,14 +42,19 @@ public class GlobalScope extends Scope{
             throw new semanticError("[ERROR]redefinition FUNCTION of " + _funcDef.name+": ", pos);
         if (nameCollection.contains(_funcDef.name))
             throw new semanticError("[ERROR]duplicated name for "+_funcDef.name+": ", pos);
-        nameCollection.add(_funcDef.name);
-        functionDefs.put(_funcDef, _funcDef.retType);
+//        nameCollection.add(_funcDef.name);
+        functionDefs.put(_funcDef.name, _funcDef);
     }
-    public boolean containsFunc(FunctionDef _funcDef) {
-        return functionDefs.containsKey(_funcDef);
+    public boolean containsFunc(String _funcName) {
+        return functionDefs.containsKey(_funcName);
     }
-    public Type getFuncType(FunctionDef _funcDef) { return functionDefs.get(_funcDef); }
+//    public Type getFuncType(String _funcName) { return functionDefs.get(_funcName).retType; }
 
+    public FunctionDef getFunc(String _funcName) {
+        return functionDefs.get(_funcName);
+    }
+//    public ArrayList<Type> getFuncPara(String _funcName) {return functionDefs.get(_funcName).paraType;}
+    //getFuncType(String)
     public boolean inCollection(String _name) {
         return nameCollection.contains(_name);
     }

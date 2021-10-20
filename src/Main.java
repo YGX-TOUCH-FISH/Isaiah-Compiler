@@ -33,7 +33,7 @@ public class Main {
             ASTBuilder astBuilder = new ASTBuilder(gScope);
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
             new SemanticChecker(gScope).visit(ASTRoot);
-            int a = 1;
+            System.out.print("Semantic Check passed.");
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();

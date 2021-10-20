@@ -41,4 +41,15 @@ public class FunctionDef {
     public boolean equalwith(FunctionDef _def) {
         return equals(_def) && retType.equalwith(_def.retType);
     }
+    public boolean assignBy (ArrayList<Type> exprs) {
+        if (exprs == null) return false;
+        if (paraType.size() != exprs.size()) return false;
+        for (int i = 0 ; i < paraType.size() ; i++) {
+            Type paraListType = paraType.get(i);
+            Type exprListType = exprs.get(i);
+            if (!paraListType.assignable(exprListType)) return false;
+        }
+        return true;
+
+    }
 }
