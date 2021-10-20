@@ -172,7 +172,7 @@ public class SemanticChecker implements ASTVisitor{
                         throw new semanticError("[ERROR]lambda function return-type should be consensus: ", node.pos);
                 }
             }
-            if (node.retType.isNull()) node.retType = new Type("void", 0);
+//            if (node.retType.isNull()) node.retType = new Type("void", 0);
         }   //优先级lambda > function
         else if (currentFunc != null) {
             for (StmtNode stmt : node.stmts) {
@@ -599,7 +599,7 @@ public class SemanticChecker implements ASTVisitor{
             node.type = new Type(globalFunc.retType);
         }
 
-        node.catagory = ExprNode.Catagory.LVALUE;
+        node.catagory = ExprNode.Catagory.RVALUE;
         currentScope.defineVar(UUID.randomUUID().toString(), node.type, node.pos);
     }
 
@@ -613,7 +613,9 @@ public class SemanticChecker implements ASTVisitor{
         node.block.accept(this);
         currentScope = currentScope.getParent();
         node.exprList.accept(this);
-        node.type = node.block.retType;
+        if (node.block.retType.isNull()) node.type = new Type("void", 0);
+        else node.type = node.block.retType;
+        //no return-sentence: void-type
         node.catagory = ExprNode.Catagory.RVALUE;
         for (int i = 0 ; i < node.paraList.para.size() ; i++) {
             Type paraType = node.paraList.types.get(i);
