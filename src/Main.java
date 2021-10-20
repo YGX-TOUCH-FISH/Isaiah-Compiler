@@ -14,9 +14,9 @@ import java.io.InputStream;
 // TODO: 2021/10/14 single return is permitted in constructor
 public class Main {
     public static void main(String[] args) throws Exception{
-        String name = "test.mx";
-        InputStream input = new FileInputStream(name);
-
+//        String name = "test.mx";
+//        InputStream input = new FileInputStream(name);
+        InputStream input = System.in;
         try {
 //            int value = Integer.parseInt("-2147483648");
             RootNode ASTRoot;
