@@ -11,7 +11,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-// TODO: 2021/10/14 single return is permitted in constructor
 public class Main {
     public static void main(String[] args) throws Exception{
 //        String name = "test.mx";
@@ -21,7 +20,6 @@ public class Main {
 //            int value = Integer.parseInt("-2147483648");
             RootNode ASTRoot;
             GlobalScope gScope = new GlobalScope(null);
-
             IsaiahLexer lexer = new IsaiahLexer(CharStreams.fromStream(input));
             lexer.removeErrorListeners();
             lexer.addErrorListener(new IsaiahErrorListener());

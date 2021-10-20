@@ -1,8 +1,5 @@
 package Util;
 
-import Util.error.semanticError;
-import org.omg.CORBA.PUBLIC_MEMBER;
-
 import java.util.Objects;
 
 public class Type {
