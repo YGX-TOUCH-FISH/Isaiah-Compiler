@@ -13,9 +13,9 @@ import java.io.InputStream;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-//        String name = "test.mx";
-//        InputStream input = new FileInputStream(name);
-        InputStream input = System.in;
+        String name = "test.mx";
+        InputStream input = new FileInputStream(name);
+//        InputStream input = System.in;
         try {
 //            int value = Integer.parseInt("-2147483648");
             RootNode ASTRoot;
@@ -32,6 +32,8 @@ public class Main {
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
             new SemanticChecker(gScope).visit(ASTRoot);
             System.out.print("Semantic Check passed.");
+
+
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();

@@ -333,6 +333,8 @@ public class SemanticChecker implements ASTVisitor{
             if (node.retType == null) node.retType = new Type("void", 0);
             else {
                 node.retExpr.accept(this);
+                if (node.retExpr.type.isNull())
+                    throw new semanticError("[ERROR]null-type cannot be lambda function return-type: ", node.pos);
                 node.retType = new Type(node.retExpr.type);
             }
         } //out lambda?
@@ -345,13 +347,12 @@ public class SemanticChecker implements ASTVisitor{
                 if (node.retExpr.type.isNull()) {
                     if (!currentFunc.retType.isArray() && !currentFunc.retType.isClass())
                         throw new semanticError("[ERROR]return-type not match: ", node.pos);
-
                 }
                 else {
                     if (!node.retExpr.type.equalwith(currentFunc.retType))
                         throw new semanticError("[ERROR]return-type not match: ", node.pos);
                 }
-                node.retType = new Type(node.retExpr.type);
+                node.retType = new Type(currentFunc.retType);
             }
             else {
                 if (currentFunc.retType.isConstructor()) {
