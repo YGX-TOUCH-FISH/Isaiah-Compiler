@@ -1,14 +1,4 @@
-/*
-Test Package: Sema_Local_Preview
-Test Target: Lambda-1
-Author: 17' zwx
-Verdict: Success
-Origin Package: Semantic Pretest
-*/
-
-class A {}
-A func() {return null;}
-int main(){
-    func();
-    int a = [&](int a)->{ return null; }(1);
+int main() {
+    int a = 1;
+    ++a++;
 }
