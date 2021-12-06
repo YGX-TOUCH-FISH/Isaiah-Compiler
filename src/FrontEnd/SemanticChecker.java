@@ -39,8 +39,7 @@ public class SemanticChecker implements ASTVisitor{
         for (int i = 0 ; i < node.declrs.size() ; i++) {
             //collect all classes
             DeclrNode declare = node.declrs.get(i);
-            if (declare instanceof ClassDeclrNode) {
-                classDeclrIndex.add(i);
+            if (declare instanceof ClassDeclrNode) {classDeclrIndex.add(i);
                 ClassDeclrNode classDeclare = (ClassDeclrNode) declare;
                 globalScope.addClassDef(classDeclare.name, new ClassDef(classDeclare.name), node.pos);
                 continue;

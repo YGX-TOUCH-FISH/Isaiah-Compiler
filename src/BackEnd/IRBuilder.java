@@ -11,11 +11,41 @@ import AST.RootNode;
 import AST.Stmt.*;
 import AST.Type.*;
 import AST.Value.*;
+import LLVMIR.BasicBlock;
+import LLVMIR.Function;
+import LLVMIR.IRRoot;
+import LLVMIR.Type.ClassType;
+import Util.scope.IRScope;
+
+import java.util.ArrayList;
 
 public class IRBuilder implements ASTVisitor {
-    @Override
-    public void visit(RootNode node) {
+    public IRRoot     root;
+//    public IRScope    currentScope;
+    public Function   currentFunction;
+    public BasicBlock currentBlock;
+    public ClassType  currentClass;
 
+    public IRBuilder() {
+        root = null;
+//        currentScope = null;
+        currentClass = null;
+        currentBlock = null;
+        currentFunction = null;
+    }
+
+    @Override public void visit(RootNode node) {
+        root = new IRRoot();
+        ArrayList<Integer> classDeclrIndex = new ArrayList<>();
+        ArrayList<Integer> funcDeclrIndex = new ArrayList<>();
+        ArrayList<Integer> otherDeclrIndex = new ArrayList<>();
+
+        for (int i = 0 ; i < node.declrs.size() ; i++) {
+            DeclrNode declare = node.declrs.get(i);
+            if (declare instanceof ClassDeclrNode) {
+
+            }
+        }
     }
 
     @Override

@@ -34,6 +34,7 @@ public class Main {
             System.out.print("Semantic Check passed.");
 
 
+
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();
