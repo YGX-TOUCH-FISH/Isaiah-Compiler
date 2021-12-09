@@ -27,12 +27,15 @@ public class Main {
             parser.removeErrorListeners();
             parser.addErrorListener(new IsaiahErrorListener());
             ParseTree parseTreeRoot = parser.program();
-
+            // Semantic Part.
             ASTBuilder astBuilder = new ASTBuilder(gScope);
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
             new SemanticChecker(gScope).visit(ASTRoot);
-            System.out.print("Semantic Check passed.");
-
+            System.out.println("Semantic Check passed.");
+            // IR generate & Print
+//            IRBuilder irBuilder = new IRBuilder();
+//            ASTRoot.accept(irBuilder);
+//            IRRoot irRoot = irBuilder.BuiltRoot();;
 
 
         } catch (error er) {

@@ -5,7 +5,7 @@ import LLVMIR.Oprand.VirtualReg;
 
 public class IcmpInst extends Inst{
     // always comparing same type
-    enum CompareType {
+    public enum CompareType {
         eq, ne, sgt, slt, sge, sle
     }
     CompareType cmpType;
@@ -18,7 +18,7 @@ public class IcmpInst extends Inst{
         rhs = _rhs;
     }
     @Override public String toString() {
-        return resultReg.toName()+" = icmp "+cmpType.toString()+lhs.type.toString()+" "+lhs.toName()+", "+rhs.toName();
+        return resultReg.toName()+" = icmp "+cmpType.toString()+lhs.baseType.toString()+" "+lhs.toName()+", "+rhs.toName();
     }
 
 }

@@ -1,4 +1,17 @@
-int main() {
+/*
+Test Package: Sema_Local_Preview
+Test Target: Classes
+Author: 15' Lianming Zheng
+Time: 2019-10-20
+Verdict: Success
+Origin Package: Semantic Extended
+*/
+int [][] b;
+int [][] a = b;
+class test{
     int a = 1;
-    ++a++;
+}
+int main() {
+    int y;
+    ++(y = 1+1);
 }

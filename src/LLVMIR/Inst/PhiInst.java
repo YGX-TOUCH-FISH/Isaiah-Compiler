@@ -5,7 +5,6 @@ import LLVMIR.Oprand.Oprand;
 import LLVMIR.Oprand.VirtualReg;
 import org.antlr.v4.runtime.misc.Pair;
 
-import java.util.Map;
 import java.util.Set;
 
 public class PhiInst extends Inst{
@@ -16,7 +15,7 @@ public class PhiInst extends Inst{
         prevPaths = _prevPaths;
     }
     public String toString() {
-        StringBuilder ret = new StringBuilder(resultReg.toName() + " = phi " + resultReg.type.toString());
+        StringBuilder ret = new StringBuilder(resultReg.toName() + " = phi " + resultReg.baseType.toString());
         int iter = 0;
         for (Pair<BasicBlock, Oprand> prevPath : prevPaths) {
             ret.append(" [ ");

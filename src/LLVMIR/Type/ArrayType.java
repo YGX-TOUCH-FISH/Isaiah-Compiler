@@ -1,5 +1,8 @@
 package LLVMIR.Type;
 
+import LLVMIR.Oprand.ConstNull;
+import LLVMIR.Oprand.Oprand;
+
 public class ArrayType extends BaseType{
     public BaseType elementType;
     public Integer  dimSize;
@@ -9,5 +12,9 @@ public class ArrayType extends BaseType{
     }
     @Override public String toString() {
         return " ["+dimSize.toString()+" x "+elementType.toString()+"] ";
+    }
+
+    @Override public Oprand getZeroInit() {
+        return new ConstNull();
     }
 }

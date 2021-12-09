@@ -1,16 +1,16 @@
 package LLVMIR.Oprand;
 
-import LLVMIR.Type.BaseType;
+import LLVMIR.Type.IntType;
 
 public class ConstInt extends Oprand{
-    Integer value;
-    public ConstInt(BaseType _type, int _value) {
-        super(_type);
+    public Integer value;
+    public ConstInt(int _width, int _value) {
+        super(new IntType(_width));
         value = _value;
     }
-
+    public int getIntValue() { return value; }
     @Override public String toString() {
-        return type.toString()+" "+value.toString();
+        return baseType.toString()+" "+value.toString();
     }
 
     @Override

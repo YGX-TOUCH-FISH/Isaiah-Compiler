@@ -6,14 +6,14 @@ import AST.Type.TypeNode;
 import Util.position;
 
 public class AssignStNode extends StmtNode{
-    public TypeNode type;
+    public TypeNode typeNode;
     public String name;
-    public ExprNode value;
-    public AssignStNode(TypeNode _type, String _name, ExprNode _value, position pos) {
+    public ExprNode valueNode;
+    public AssignStNode(TypeNode _typeNode, String _name, ExprNode _valueNode, position pos) {
         super(pos);
-        type = _type;
+        typeNode = _typeNode;
         name = _name;
-        value = _value;
+        valueNode = _valueNode;
     }
     public void accept(ASTVisitor visitor) {visitor.visit(this);}
 }

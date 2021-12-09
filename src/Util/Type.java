@@ -1,5 +1,7 @@
 package Util;
 
+import LLVMIR.Type.BaseType;
+
 import java.util.Objects;
 
 public class Type {
@@ -63,4 +65,5 @@ public class Type {
         if (etc.isNull()) return (isClass() || isArray());
         else return equalwith(etc);
     }
+
 }

@@ -1,14 +1,13 @@
 package LLVMIR.Inst;
 
 import LLVMIR.BasicBlock;
-import LLVMIR.Oprand.ConstBool;
-import LLVMIR.Oprand.Oprand;
+import LLVMIR.Oprand.ConstInt;
 
 // conditional branch
 public class BrInst extends Inst{
-    public ConstBool  cond;  //always i1
+    public ConstInt cond;  //always i1
     public BasicBlock iftrue, iffalse;
-    public BrInst(ConstBool _cond, BasicBlock _iftrue, BasicBlock _iffalse) {
+    public BrInst(ConstInt _cond, BasicBlock _iftrue, BasicBlock _iffalse) {
         cond    = _cond;
         iftrue  = _iftrue;
         iffalse = _iffalse;

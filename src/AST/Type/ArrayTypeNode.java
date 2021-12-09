@@ -1,23 +1,22 @@
 package AST.Type;
 
 import AST.ASTVisitor;
-import Util.error.semanticError;
 import Util.position;
 
 public class ArrayTypeNode extends TypeNode{
     //TODO  1 dimension
     //      2 baseType
     //
-    public TypeNode baseType;
+    public TypeNode elementType;
     public int dims;
-    public ArrayTypeNode(TypeNode _baseType, position pos) {
+    public ArrayTypeNode(TypeNode _elementType, position pos) {
         super(pos);
-        if (_baseType instanceof ArrayTypeNode){
-            baseType = ((ArrayTypeNode) _baseType).baseType;
-            dims = ((ArrayTypeNode) _baseType).dims + 1;
+        if (_elementType instanceof ArrayTypeNode){
+            elementType = ((ArrayTypeNode) _elementType).elementType;
+            dims = ((ArrayTypeNode) _elementType).dims + 1;
         }
         else {
-            baseType = _baseType;
+            elementType = _elementType;
             dims = 1;
         }
     }

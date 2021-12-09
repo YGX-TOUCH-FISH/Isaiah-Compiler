@@ -3,16 +3,16 @@ package LLVMIR.Oprand;
 import LLVMIR.Type.BaseType;
 
 public class VirtualReg extends Oprand{
-    public Integer number;
-    public VirtualReg(BaseType _type, int _number) {
+    public Integer label;
+    public VirtualReg(BaseType _type, int _label) {
         super(_type);
-        number  = _number;
+        label = _label;
     }
     public String toString() {
         //print Type & name
-        return type.toString()+" %"+number.toString();
+        return baseType.toString()+" %"+ label.toString();
     }
     public String toName() {
-        return "%"+number.toString();
+        return "%"+ label.toString();
     }
 }

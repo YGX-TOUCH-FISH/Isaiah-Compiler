@@ -19,7 +19,7 @@ public class GetElementPtrInst extends Inst{
     @Override
     public String toString() {
         // indexSrc must be pointer type
-        PointerType srcPointerType = (PointerType) indexSrc.type;
+        PointerType srcPointerType = (PointerType) indexSrc.baseType;
         if (srcPointerType.referType instanceof ArrayType) {
             // 2 parameters: first: 0 offset from array pointer
             return resultReg.toName()+" = getelementptr inbounds "+srcPointerType.referType.toString()+", "+indexSrc.toString()+", i64 0, "+indexOffset.toString();

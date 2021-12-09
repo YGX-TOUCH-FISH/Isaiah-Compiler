@@ -14,6 +14,5 @@ public class CondStNode extends StmtNode{
         ifStmt = _if;
         elseStmt = _else;
     }
-    @Override
-    public void accept(ASTVisitor visitor) {visitor.visit(this);}
+    @Override public void accept(ASTVisitor visitor) {visitor.visit(this);}
 }

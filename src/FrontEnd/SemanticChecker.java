@@ -16,7 +16,6 @@ import Util.scope.GlobalScope;
 import Util.scope.Scope;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.UUID;
 
 public class SemanticChecker implements ASTVisitor{
@@ -69,16 +68,17 @@ public class SemanticChecker implements ASTVisitor{
             for (DeclrNode classDeclrNode : classDeclare.declrs) {
                 if (classDeclrNode instanceof AssignDeclrNode) {
                     AssignDeclrNode classAssignDeclrNode = (AssignDeclrNode) classDeclrNode;
-                    classAssignDeclrNode.type.accept(this);
+                    classAssignDeclrNode.typeNode.accept(this);
                     //不要再visit value了 type-equal check交给visit
-                    classDef.addMember(classAssignDeclrNode.id, classAssignDeclrNode.type.typeOfNode, classAssignDeclrNode.pos);
+                    classDef.addMember(classAssignDeclrNode.id, classAssignDeclrNode.typeNode.typeOfNode, classAssignDeclrNode.pos);
                 }
                 else if (classDeclrNode instanceof ListDeclrNode) {
-                    ListDeclrNode classListDeclrNode = (ListDeclrNode) classDeclrNode;
-                    classListDeclrNode.type.accept(this);
-                    for (String id : classListDeclrNode.ids) {
-                        classDef.addMember(id, classListDeclrNode.type.typeOfNode, classListDeclrNode.pos);
-                    }
+                    throw new semanticError("[ERROR] class member must be initialized: ", classDeclrNode.pos);
+//                    ListDeclrNode classListDeclrNode = (ListDeclrNode) classDeclrNode;
+//                    classListDeclrNode.type.accept(this);
+//                    for (String id : classListDeclrNode.ids) {
+//                        classDef.addMember(id, classListDeclrNode.type.typeOfNode, classListDeclrNode.pos);
+//                    }
                 }
                 else if (classDeclrNode instanceof FuncDeclrNode) {
                     FuncDeclrNode classFuncDeclrNode = (FuncDeclrNode) classDeclrNode;
@@ -188,13 +188,13 @@ public class SemanticChecker implements ASTVisitor{
     }
 
     @Override public void visit(AssignDeclrNode node) {
-        node.value.accept(this);
-        node.type.accept(this);
-        if (!node.type.typeOfNode.assignable(node.value.type))
+        node.valueNode.accept(this);
+        node.typeNode.accept(this);
+        if (!node.typeNode.typeOfNode.assignable(node.valueNode.type))
             throw new semanticError("[ERROR]lhs-type cannot be assigned by rhs-type: ", node.pos);
         if (globalScope.inCollection(node.id))
             throw new semanticError("[ERROR]duplicated variable name:", node.pos);
-        currentScope.defineVar(node.id, node.type.typeOfNode, node.pos);
+        currentScope.defineVar(node.id, node.typeNode.typeOfNode, node.pos);
     }
 
     @Override public void visit(ListDeclrNode node) {
@@ -230,22 +230,22 @@ public class SemanticChecker implements ASTVisitor{
     }
 
     @Override public void visit(ArrayTypeNode node) {
-        node.baseType.accept(this);
+        node.elementType.accept(this);
         //recursion to find baseType
-        node.typeOfNode = new Type(node.baseType.typeOfNode.name, node.dims);
+        node.typeOfNode = new Type(node.elementType.typeOfNode.name, node.dims);
     }
 
     @Override public void visit(EmptyStNode node) {}
 
     @Override public void visit(AssignStNode node) {
-        node.type.accept(this);
-        node.value.accept(this);
+        node.typeNode.accept(this);
+        node.valueNode.accept(this);
 
-        if (!node.type.typeOfNode.assignable(node.value.type))
+        if (!node.typeNode.typeOfNode.assignable(node.valueNode.type))
             throw new semanticError("[ERROR]lhs-type cannot be assigned by rhs-type: ", node.pos);
         if (globalScope.inCollection(node.name))
             throw new semanticError("[ERROR]duplicated variable name:", node.pos);
-        currentScope.defineVar(node.name, node.type.typeOfNode, node.pos);
+        currentScope.defineVar(node.name, node.typeNode.typeOfNode, node.pos);
     }
 
     @Override public void visit(ListStNode node) {
@@ -395,7 +395,7 @@ public class SemanticChecker implements ASTVisitor{
             throw new semanticError("[ERROR]index dimension error: ", node.pos);
         node.type = new Type(node.array.type.name, node.array.type.dims-1);
         node.catagory = ExprNode.Catagory.LVALUE;
-        //数组及其下标调用都为右值
+        //数组及其下标调用都为左值
     }
     @Override public void visit(CallExprNode node) {
         node.object.accept(this);
@@ -448,7 +448,7 @@ public class SemanticChecker implements ASTVisitor{
                 else node.type = new Type("string", 0);
                 node.catagory = ExprNode.Catagory.RVALUE;
                 break;
-            case LT: case GT: case LEQ: case REQ:
+            case LT: case GT: case LEQ: case GEQ:
                 if (!node.lhs.type.equalwith(node.rhs.type))
                     throw new semanticError("[ERROR]lhs-type not equal to rhs-type: ", node.pos);
                 if (!node.lhs.type.isInt() && !node.lhs.type.isString())

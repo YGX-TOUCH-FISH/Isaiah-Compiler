@@ -3,9 +3,9 @@ package LLVMIR.Oprand;
 import LLVMIR.Type.BaseType;
 
 public abstract class Oprand {
-    public BaseType type;
-    public Oprand(BaseType _type) {
-        type = _type;
+    public BaseType baseType;
+    public Oprand(BaseType _baseType) {
+        baseType = _baseType;
     }
     public abstract String toString() ;
     public abstract String toName() ;
