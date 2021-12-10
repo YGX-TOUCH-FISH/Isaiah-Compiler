@@ -30,7 +30,6 @@ public class SemanticChecker implements ASTVisitor{
         globalScope.initialize();
     }
     // TODO: 2021/10/17 如何确保函数必有返回值？ （部分有，部分没有）
-    // TODO: 2021/10/20 collection重写
     @Override public void visit(RootNode node) {
         ArrayList<Integer> classDeclrIndex = new ArrayList<>();
         ArrayList<Integer> funcDeclrIndex = new ArrayList<>();
@@ -73,12 +72,12 @@ public class SemanticChecker implements ASTVisitor{
                     classDef.addMember(classAssignDeclrNode.id, classAssignDeclrNode.typeNode.typeOfNode, classAssignDeclrNode.pos);
                 }
                 else if (classDeclrNode instanceof ListDeclrNode) {
-                    throw new semanticError("[ERROR] class member must be initialized: ", classDeclrNode.pos);
-//                    ListDeclrNode classListDeclrNode = (ListDeclrNode) classDeclrNode;
-//                    classListDeclrNode.type.accept(this);
-//                    for (String id : classListDeclrNode.ids) {
-//                        classDef.addMember(id, classListDeclrNode.type.typeOfNode, classListDeclrNode.pos);
-//                    }
+//                    throw new semanticError("[ERROR] class member must be initialized: ", classDeclrNode.pos);
+                    ListDeclrNode classListDeclrNode = (ListDeclrNode) classDeclrNode;
+                    classListDeclrNode.typeNode.accept(this);
+                    for (String id : classListDeclrNode.ids) {
+                        classDef.addMember(id, classListDeclrNode.typeNode.typeOfNode, classListDeclrNode.pos);
+                    }
                 }
                 else if (classDeclrNode instanceof FuncDeclrNode) {
                     FuncDeclrNode classFuncDeclrNode = (FuncDeclrNode) classDeclrNode;
@@ -198,12 +197,12 @@ public class SemanticChecker implements ASTVisitor{
     }
 
     @Override public void visit(ListDeclrNode node) {
-        node.type.accept(this);
+        node.typeNode.accept(this);
 
         for (String id : node.ids) {
             if (globalScope.inCollection(id))
                 throw new semanticError("[ERROR]duplicated variable name:", node.pos);
-            currentScope.defineVar(id, node.type.typeOfNode, node.pos);
+            currentScope.defineVar(id, node.typeNode.typeOfNode, node.pos);
         }
     }
 
@@ -381,9 +380,9 @@ public class SemanticChecker implements ASTVisitor{
     }
 
     @Override public void visit(ValueExprNode node) {
-        node.value.accept(this);
-        node.type = node.value.type;
-        node.catagory = node.value.catagory;
+        node.valueNode.accept(this);
+        node.type = node.valueNode.type;
+        node.catagory = node.valueNode.catagory;
     }
 
     @Override public void visit(IndexExprNode node) {

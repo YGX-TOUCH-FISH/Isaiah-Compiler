@@ -5,10 +5,10 @@ import AST.Value.ValueNode;
 import Util.position;
 
 public class ValueExprNode extends ExprNode{
-    public ValueNode value;
+    public ValueNode valueNode;
     public ValueExprNode(ValueNode _value, position pos) {
         super(pos);
-        value = _value;
+        valueNode = _value;
     }
     @Override
     public void accept(ASTVisitor visitor) {

@@ -15,10 +15,17 @@ struct test just_ret[3];
 int **a;
 int sum(int x) {return false;}
 int main() {
-    struct test a, b;
-    void *x = &a;
-    void *y = &b;
-    if (x != 0) return 1;
+//    char p = "hello"[1];
+//    char q = "hel"[2];
+//    char x = "dfsdfsfsd"[2];
+    char *y = "dddd";
+
+    int x = strlen(y);
+//    struct test a, b;
+//    void *x = &a;
+//    void *y = &b;
+//    int q, r;
+//    q = r;
 //    if (a != null) {
 //        return 1;
 //    }

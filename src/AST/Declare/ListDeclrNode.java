@@ -7,11 +7,11 @@ import Util.position;
 import java.util.ArrayList;
 
 public class ListDeclrNode extends DeclrNode{
-    public TypeNode type;
+    public TypeNode typeNode;
     public ArrayList<String> ids = new ArrayList<>();
     public ListDeclrNode(TypeNode _type, position pos) {
         super(pos);
-        type = _type;
+        typeNode = _type;
     }
     @Override
     public void accept(ASTVisitor visitor) {visitor.visit(this);}

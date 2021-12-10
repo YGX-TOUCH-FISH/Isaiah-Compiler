@@ -3,18 +3,18 @@ package LLVMIR.Oprand;
 import LLVMIR.Type.IntType;
 
 public class ConstInt extends Oprand{
-    public Integer value;
-    public ConstInt(int _width, int _value) {
+    public Long intValue;
+    public ConstInt(int _width, long _value) {
         super(new IntType(_width));
-        value = _value;
+        intValue = _value;
     }
-    public int getIntValue() { return value; }
+    public long getIntValue() { return intValue; }
     @Override public String toString() {
-        return baseType.toString()+" "+value.toString();
+        return baseType.toString()+" "+ intValue.toString();
     }
 
     @Override
     public String toName() {
-        return value.toString();
+        return intValue.toString();
     }
 }

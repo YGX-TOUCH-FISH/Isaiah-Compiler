@@ -23,11 +23,16 @@ public class IRScope {
     public void defineVar(String name, VirtualReg reg) {
         varsReg.put(name, reg);
     }
-    public int getVarLabel(String name, boolean lookUpon) {
-        if (varsReg.containsKey(name)) return varsReg.get(name).label;
-        else if (lookUpon && parent != null) return parent.getVarLabel(name, true);
-        else return -1;
+    public VirtualReg getVarReg(String name, boolean lookUpon) {
+        if (varsReg.containsKey(name)) return varsReg.get(name);
+        else if (lookUpon && parent != null) return parent.getVarReg(name, true);
+        else return null;
     }
+//    public int getVarLabel(String name, boolean lookUpon) {
+//        if (varsReg.containsKey(name)) return varsReg.get(name).label;
+//        else if (lookUpon && parent != null) return parent.getVarLabel(name, true);
+//        else return -1;
+//    }
     public IRScope getParent() {
         return parent;
     }

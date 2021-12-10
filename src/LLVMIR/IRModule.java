@@ -19,7 +19,10 @@ public class IRModule {
     public HashSet<Function>  arrayBuiltInFunctions;
     public HashSet<Function>  customFunctions;
     public HashMap<String, ClassInfo> customClasses;
-    public HashMap<String, Pair<BaseType, Oprand>> staticData; // .data & .bss
+    public HashMap<String, BaseType> staticData; // .data & .bss
+
+    public Function length;
+    public Function substring;
     public IRModule() {
         // alloc space
         allocSpace();
@@ -50,20 +53,27 @@ public class IRModule {
     public void addCustomClass(String name) {
         customClasses.put(name, new ClassInfo());
     }
-    public void appendClassMember(String name, BaseType baseType, String id, Oprand initValue) {
-        customClasses.get(name).appendMember(baseType, id, initValue);
+    // only record member with init value.
+    public void appendClassMember(String name, BaseType baseType, String id) {
+        customClasses.get(name).appendMember(baseType, id);
     }
-    public void addStaticData(String name, BaseType baseType, Oprand oprand) {
-        staticData.put(name, new Pair<>(baseType, oprand));
+    public int getClassMemberIndex(String name, String id) {
+        return customClasses.get(name).getIndex(id);
+    }
+    public BaseType getClassMemberBaseType(String name, String id) {
+        return customClasses.get(name).getBaseType(id);
+    }
+    public ArrayList<String> getClassMemberIds(String name) {
+        return customClasses.get(name).getIDs();
+    }
+    public boolean classMemberInitialized(String name, String id) {
+        return customClasses.get(name).contains(id);
+    }
+    public void addStaticData(String name, BaseType baseType) {
+        staticData.put(name, baseType);
     }
     public boolean containVar(String name) {
         return staticData.containsKey(name);
-    }
-    public BaseType getVarType(String name) {
-        return staticData.get(name).a;
-    }
-    public Oprand getVarValue(String name) {
-        return staticData.get(name).b;
     }
     // check contain
 }
