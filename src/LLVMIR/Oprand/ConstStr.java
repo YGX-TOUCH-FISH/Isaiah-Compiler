@@ -5,7 +5,7 @@ import LLVMIR.Type.BaseType;
 import LLVMIR.Type.IntType;
 
 public class ConstStr extends Oprand{
-    String str;
+    public String str;
     public ConstStr(String _str) {
         super(new ArrayType(new IntType(8), _str.length()));
         str = _str;

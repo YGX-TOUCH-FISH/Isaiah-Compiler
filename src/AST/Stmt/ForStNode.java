@@ -21,6 +21,5 @@ public class ForStNode extends StmtNode{
         increment = _incre;
         stmt = _stmt;
     }
-    @Override
-    public void accept(ASTVisitor visitor) { visitor.visit(this);}
+    @Override public void accept(ASTVisitor visitor) { visitor.visit(this);}
 }

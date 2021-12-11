@@ -14,13 +14,29 @@ struct test just_ret[3];
 //int x = 1;
 int **a;
 int sum(int x) {return false;}
+struct c{
+int a, b, d, e;
+};
 int main() {
 //    char p = "hello"[1];
 //    char q = "hel"[2];
 //    char x = "dfsdfsfsd"[2];
-    char *y = "dddd";
+//    char *y = "dddd";
+//    struct c cc;
+//    char x;
+//    bool xx;
+//    int xxx[128];
+    int xx ;
+    int yy;
+    int zz;
+//    int p[xx][yy];
+//    int p[xx][3];
 
-    int x = strlen(y);
+
+//    int p[3][xx];
+    bool q = xx && yy;
+//    long z;
+//    int x = strlen(y);
 //    struct test a, b;
 //    void *x = &a;
 //    void *y = &b;

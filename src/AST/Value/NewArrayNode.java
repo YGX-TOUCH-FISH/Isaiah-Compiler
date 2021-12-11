@@ -8,14 +8,13 @@ import Util.position;
 import java.util.ArrayList;
 
 public class NewArrayNode extends ValueNode{
-    public TypeNode baseType;
+    public TypeNode elementType;
     public ArrayList<ExprNode> sizeofDim = new ArrayList<>();
     public int dims;
-    public NewArrayNode(TypeNode _baseType, int _dims, position pos) {
+    public NewArrayNode(TypeNode _elementType, int _dims, position pos) {
         super(pos);
-        baseType = _baseType;
+        elementType = _elementType;
         dims = _dims;
     }
-    @Override
-    public void accept(ASTVisitor visitor) {visitor.visit(this);}
+    @Override public void accept(ASTVisitor visitor) {visitor.visit(this);}
 }

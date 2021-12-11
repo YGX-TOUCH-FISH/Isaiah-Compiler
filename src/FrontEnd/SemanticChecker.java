@@ -559,13 +559,13 @@ public class SemanticChecker implements ASTVisitor{
     }
 
     @Override public void visit(NewArrayNode node) {
-        node.baseType.accept(this);
+        node.elementType.accept(this);
         for (ExprNode exprNode : node.sizeofDim) {
             exprNode.accept(this);
             if (!exprNode.type.isInt())
                 throw new semanticError("[ERROR]index must be int type: ", node.pos);
         }
-        node.type = new Type(node.baseType.typeOfNode.name, node.dims);
+        node.type = new Type(node.elementType.typeOfNode.name, node.dims);
         node.catagory = ExprNode.Catagory.LVALUE;
     }
 

@@ -54,8 +54,8 @@ public class BinaryExprNode extends ExprNode{
             case RSH: return ashr;
             case AND: return and;
             case XOR: return xor;
-            case OR: return or;
-            default: return null;
+            case OR:  return or;
+            default:  return null;
         }
     }
 }

@@ -7,13 +7,15 @@ import java.util.ArrayList;
 public class BasicBlock {
     Function fatherFunction;
     public Integer label;
-    public BasicBlock next;
+    public BasicBlock prev, next;
     ArrayList<BasicBlock> prevPaths;
     ArrayList<Inst> insts;
-    public BasicBlock() {
+    public BasicBlock(BasicBlock _prev, BasicBlock _next, int _label) {
         prevPaths = new ArrayList<>();
         insts     = new ArrayList<>();
-        next      = null;
+        prev      = _prev;
+        next      = _next;
+        label     = _label;
     }
 
     public String toString() {

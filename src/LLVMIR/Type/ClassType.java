@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 public class ClassType extends BaseType{
     public String className;
-    public ArrayList<String> ids;
+//    public ArrayList<String> ids;
 //    ArrayList<BaseType> memberType;
     public ClassType(String _className) {
         className = _className;
-        ids = new ArrayList<>();
+//        ids = new ArrayList<>();
 //        memberType = new ArrayList<>();
     }
     @Override public String toString() {
@@ -19,5 +19,10 @@ public class ClassType extends BaseType{
     }
     @Override public Oprand getZeroInit() {
         return new ConstNull();
+    }
+
+    @Override
+    public boolean isStringType() {
+        return false;
     }
 }

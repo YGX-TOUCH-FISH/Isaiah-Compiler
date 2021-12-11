@@ -29,10 +29,10 @@ value : Identifier                                      #variVal
       | Null                                            #nullVal
       | New digitType ('['']')+ ('['expression']')*                         #newWrong2
       | New digitType ('['expression']')+ ('['']')+ ('['expression']')+     #newWrong
-      | New digitType ('['expression']')+ ('['']')*                         #newArray//static array
+      | New digitType ('['expression']')+ ('['']')*                         #newArray
       | New Identifier ('('')')?                                            #newClass
-      | Identifier expressionList                       #funcVal            //调用时的define
-      | '[&]'parameterList'->'block expressionList      #lambdaVal          //同上
+      | Identifier expressionList                       #funcVal
+      | '[&]'parameterList'->'block expressionList      #lambdaVal
       | This                                            #thisVal
       ;
 

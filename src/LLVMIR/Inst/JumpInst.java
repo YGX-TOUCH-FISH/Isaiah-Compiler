@@ -2,7 +2,7 @@ package LLVMIR.Inst;
 
 import LLVMIR.BasicBlock;
 
-public class JumpInst {
+public class JumpInst extends Inst{
     BasicBlock dest;
     public JumpInst(BasicBlock _dest) {
         dest = _dest;

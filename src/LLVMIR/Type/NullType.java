@@ -13,4 +13,10 @@ public class NullType extends BaseType{
     @Override public Oprand getZeroInit() {
         return null;
     }
+
+    @Override
+    public boolean isStringType() {
+        return false;
+    }
+
 }

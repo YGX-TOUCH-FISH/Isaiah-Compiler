@@ -15,4 +15,9 @@ public class IntType extends BaseType{
     @Override public Oprand getZeroInit() {
         return new ConstInt(bitWidth, 0);
     }
+
+    @Override
+    public boolean isStringType() {
+        return false;
+    }
 }

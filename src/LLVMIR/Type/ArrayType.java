@@ -13,8 +13,12 @@ public class ArrayType extends BaseType{
     @Override public String toString() {
         return " ["+dimSize.toString()+" x "+elementType.toString()+"] ";
     }
-
     @Override public Oprand getZeroInit() {
         return new ConstNull();
+    }
+
+    @Override
+    public boolean isStringType() {
+        return false;
     }
 }
