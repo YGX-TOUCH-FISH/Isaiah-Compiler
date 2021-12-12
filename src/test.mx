@@ -12,6 +12,6 @@ class test{
     int a = 1;
 }
 int main() {
-    int y;
-    ++(y = 1+1);
+    int **y;
+    int x = y[2][3];
 }

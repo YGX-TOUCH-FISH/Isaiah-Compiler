@@ -331,7 +331,7 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         return node;
     }
     @Override public ASTNode visitNewClass(IsaiahParser.NewClassContext ctx) {
-        VariValNode variable =  new VariValNode(null, new position(ctx));
+        VariValNode variable = new VariValNode(null, new position(ctx));
         variable.type = new Type(ctx.Identifier().toString(), 0);
         if (variable.type.isVoid() || variable.type.isNull())
             throw new semanticError("[ERROR]cannot build a void/null type variable: ", new position(ctx));

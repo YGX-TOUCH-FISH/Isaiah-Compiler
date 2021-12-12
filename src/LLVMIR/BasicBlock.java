@@ -8,11 +8,11 @@ public class BasicBlock {
     Function fatherFunction;
     public Integer label;
     public BasicBlock prev, next;
-    ArrayList<BasicBlock> prevPaths;
-    ArrayList<Inst> insts;
+//    ArrayList<BasicBlock> prevPaths;
+    public Inst headInst, tailInst;
     public BasicBlock(BasicBlock _prev, BasicBlock _next, int _label) {
-        prevPaths = new ArrayList<>();
-        insts     = new ArrayList<>();
+//        prevPaths = new ArrayList<>();
+        headInst  = null;
         prev      = _prev;
         next      = _next;
         label     = _label;
@@ -20,22 +20,16 @@ public class BasicBlock {
 
     public String toString() {
         StringBuilder ret = new StringBuilder(label.toString()+": ; preds = ");
-        int prevCounter = 0;
-        for (BasicBlock basicBlock : prevPaths) {
-            ret.append(basicBlock.toName());
-            prevCounter++;
-            if (prevCounter != prevPaths.size()) ret.append(", ");
-        }
         ret.append('\n');
-        for (Inst inst : insts) {
-            ret.append(inst.toString());
-        }
+        for (Inst inst = headInst ; inst != null ; inst = inst.next) ret.append(inst);
         return ret.toString();
     }
     public String toName() {
         return "%"+label.toString();
     }
     public void append(Inst _inst) {
-        insts.add(_inst);
+        if (headInst == null) headInst = _inst;
+        else tailInst.next = _inst;
+        tailInst = _inst;
     }
 }

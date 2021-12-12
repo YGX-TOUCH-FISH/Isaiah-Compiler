@@ -1,13 +1,14 @@
 package LLVMIR.Inst;
 
-import LLVMIR.Oprand.VirtualReg;
+import LLVMIR.Oprand.Oprand;
 
 public class RetInst extends Inst{
-    VirtualReg destReg;
-    public RetInst(VirtualReg _destReg) {
-        destReg = _destReg;
+    Oprand retValue;
+    public RetInst(Oprand _retValue) {
+        retValue = _retValue;
     }
     @Override public String toString() {
-        return "ret "+destReg.toString();
+        String retValueStr = retValue != null ? retValue.toString() : "void";
+        return "ret "+retValueStr;
     }
 }

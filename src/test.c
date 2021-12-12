@@ -1,58 +1,15 @@
-#include <stdbool.h>
-#include<stdio.h>
-struct test{
-    int a;
-    int b[3];
-    double x;
-};
-//int function(int P[][][][3]) {
-////    P[3].a = P[2].b[2]+P[1].x;
-//    return P[1];
-//}
-struct test just_ret[3];
-//struct test just_array[32];
-//int x = 1;
-int **a;
-int sum(int x) {return false;}
-struct c{
-int a, b, d, e;
-};
+#include <stdio.h>
+#include <string.h>
+int sum(int x) { return 0;}
+int test(int y ) {
+    if (sum(y-1) >= 0 ) return sum(y);
+    else return sum(y-1);
+}
+void *_malloc(int x) {
+    return malloc(x);
+}
 int main() {
-//    char p = "hello"[1];
-//    char q = "hel"[2];
-//    char x = "dfsdfsfsd"[2];
-//    char *y = "dddd";
-//    struct c cc;
-//    char x;
-//    bool xx;
-//    int xxx[128];
-    int xx ;
-    int yy;
-    int zz;
-//    int p[xx][yy];
-//    int p[xx][3];
-
-
-//    int p[3][xx];
-    bool q = xx && yy;
-//    long z;
-//    int x = strlen(y);
-//    struct test a, b;
-//    void *x = &a;
-//    void *y = &b;
-//    int q, r;
-//    q = r;
-//    if (a != null) {
-//        return 1;
-//    }
-//    int *a = malloc(3);
-//    int b = a[3];
-//    int d = a[x][y];
-
+    int x = 1;
+    printf("%d\n", x+2);
     return 0;
 }
-//struct test just_another_array[32];
-//for loop:
-// print init
-// branch 1: compare part
-//

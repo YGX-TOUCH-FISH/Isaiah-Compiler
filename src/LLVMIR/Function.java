@@ -1,5 +1,7 @@
 package LLVMIR;
 
+import LLVMIR.Inst.Inst;
+import LLVMIR.Oprand.Oprand;
 import LLVMIR.Oprand.VirtualReg;
 import LLVMIR.Type.BaseType;
 import LLVMIR.Type.VoidType;
@@ -11,17 +13,20 @@ public class Function {
     public String       name;
     public BaseType     retType;
     public BasicBlock   entryBlock;
-    public ArrayList<VirtualReg> args;
-//    public Map<String, Integer> localVars;  // varName -> Virtual Reg
+    public ArrayList<VirtualReg> args = new ArrayList<>();
     //define alloca in the front of BB
+
+    // assign order: 1. paraReg 2. entry block
     public Function(String _name, BaseType _retType) {
         regCounter = 0;
         name       = _name;
         retType    = _retType;
-        entryBlock = new BasicBlock(null, null, 0);
-        args       = new ArrayList<>();
+        entryBlock = null;
     }
-    public BasicBlock getEntry() { return entryBlock; }
+    public BasicBlock getEntry() {
+        entryBlock = new BasicBlock(null, null, takeLabel());
+        return entryBlock;
+    }
     public String toString() {
         //
         StringBuilder ret = new StringBuilder("define dso_local "+retType.toString()+" @"+name);
