@@ -24,7 +24,7 @@ import java.util.Stack;
 
 //class member: add to type
 public class IRBuilder implements ASTVisitor {
-    IRModule   root             = null;
+    IRModule   root;
     IRScope    currentScope     = null;
     Function   currentFunction  = null;
     BasicBlock currentBlock     = null;

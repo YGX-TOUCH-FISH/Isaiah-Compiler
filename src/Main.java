@@ -1,5 +1,8 @@
 import AST.RootNode;
+import BackEnd.IRBuilder;
+import BackEnd.IRPrinter;
 import FrontEnd.*;
+import LLVMIR.IRModule;
 import Parser.*;
 import Util.error.IsaiahErrorListener;
 import Util.error.error;
@@ -33,7 +36,11 @@ public class Main {
             new SemanticChecker(gScope).visit(ASTRoot);
             System.out.println("Semantic Check passed.");
             // IR generate & Print
-//            IRBuilder irBuilder = new IRBuilder();
+            IRBuilder irBuilder = new IRBuilder();
+            ASTRoot.accept(irBuilder);
+            IRModule Module = irBuilder.BuiltRoot();
+            new IRPrinter().visit(Module);
+
 //            ASTRoot.accept(irBuilder);
 //            IRRoot irRoot = irBuilder.BuiltRoot();;
 

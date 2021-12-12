@@ -86,15 +86,8 @@ public class IRModule {
         return customClasses.get(name).getBaseType(id);
     }
     public boolean classContainsMember(String name, String id) {return customClasses.get(name).contains(id); }
-    public ArrayList<String> getClassMemberIds(String name) {
-        return customClasses.get(name).getIDs();
-    }
     // global variable info
     public void addStaticData(String name, BaseType baseType) {
         staticData.put(name, baseType);
     }
-    public boolean containVar(String name) {
-        return staticData.containsKey(name);
-    }
-
 }
