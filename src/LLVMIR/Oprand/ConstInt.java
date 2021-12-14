@@ -1,5 +1,6 @@
 package LLVMIR.Oprand;
 
+import LLVMIR.Inst.Inst;
 import LLVMIR.Type.IntType;
 
 public class ConstInt extends Oprand{
@@ -10,11 +11,16 @@ public class ConstInt extends Oprand{
     }
     public long getIntValue() { return intValue; }
     @Override public String toString() {
-        return baseType.toString()+" "+ intValue.toString();
+        if (((IntType) baseType).bitWidth == 1) {
+            String value = intValue == 0 ? "false" : "true";
+            return baseType.toString()+" "+value;
+        }
+        else return baseType.toString()+" "+ intValue.toString();
     }
 
     @Override
     public String toName() {
-        return intValue.toString();
+        if (((IntType) baseType).bitWidth == 1) return intValue == 0 ? "false" : "true";
+        else return intValue.toString();
     }
 }

@@ -18,7 +18,7 @@ public class IRPrinter implements IRVisitor {
     @Override public void visit(IRModule node) {
         for (String name : node.staticDataName) {
             BaseType baseType = node.staticData.get(name);
-            port.println("@"+name+" = dso_local global "+baseType.toString()+" "+baseType.getZeroInit().toString());
+            port.println("@"+name+" = dso_local global "+baseType.getZeroInit().toString());
         }
         port.print('\n');
         for (String name : node.buildInFunctionName) {
@@ -58,7 +58,10 @@ public class IRPrinter implements IRVisitor {
     }
 
     @Override public void visit(BasicBlock node) {
+//        int counter = 0;
         for (Inst inst = node.headInst; inst != null ; inst = inst.next){
+//            port.print(counter++);
+//            if (counter == 8) counter = counter+1;
             port.print('\t');
             port.println(inst);
         }
@@ -72,6 +75,6 @@ public class IRPrinter implements IRVisitor {
             argsCounter++;
             if (argsCounter != node.types.size()) port.print(", ");
         }
-        port.println('}');
+        port.println(" }");
     }
 }

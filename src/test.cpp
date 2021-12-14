@@ -1,23 +1,21 @@
 #include <iostream>
 #include <string.h>
-int r = 1;
-int sum(int x) {
-    if (x < 0 ) return 1;
-    else return x*sum(x-1);
-}
-int p;
-void test(int a, int b) {
-
-    for ( ; a < b ; a--) {
-        p = p + (a-b);
+class test_class{
+public:
+    int p = 3;
+    test_class() {
+        p = 4;
     }
+    int show(int a, int b) { return a+b;}
+};
+int sum_function(int x) {
+    if (x > 0) return x*sum_function(x-1);
+    else return 1;
 }
+int r;
 int main() {
-    int x = 1;
-    return x*3;
-    for (x = 0 ; x < r ; x++) {
-
-        x = x+1;
-    }
-    return 1;
+    test_class t;
+//    if (t.p == t.show(3, 4) && sum_function(3) + sum_function(4) != sum_function(7)) r= 3;
+//    bool x = t.p == t.show(3, 4) || sum_function(3) + sum_function(4) != sum_function(7);
+    int x = t.p;
 }

@@ -1,8 +1,13 @@
 #include <stdio.h>
 #include <string.h>
 int r = 1;
+class test_class {
+    public:
+    int p = 3;
+    test_class() {
+        p = 4;
+    }
+}
 int main() {
-    int x = 1;
-    if (x > 1) return 1;
-    else return x;
+    test_class p;
 }

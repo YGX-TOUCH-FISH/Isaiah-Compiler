@@ -2,7 +2,6 @@ package Util.scope;
 
 import Util.Type;
 import Util.error.semanticError;
-import Util.obj.Entity;
 import Util.position;
 
 import java.util.HashMap;
@@ -10,7 +9,7 @@ import java.util.HashSet;
 
 public class Scope {
     private HashMap<String, Type> define;
-    private HashMap<String, Entity> entity = new HashMap<>();
+//    private HashMap<String, Entity> entity = new HashMap<>();
 
     //only used by globalScope
     // TODO: 2021/10/14 Waiting for IR implement
@@ -52,11 +51,11 @@ public class Scope {
         else return null;
     }
 
-    public Entity getEntity(String _name, boolean lookUpon) {
-        if (entity.containsKey(_name)) return entity.get(_name);
-        else if (lookUpon && parent != null) return parent.getEntity(_name, true);
-        else return null;
-    }
+//    public Entity getEntity(String _name, boolean lookUpon) {
+//        if (entity.containsKey(_name)) return entity.get(_name);
+//        else if (lookUpon && parent != null) return parent.getEntity(_name, true);
+//        else return null;
+//    }
 
     public void intoLoop() {
         inLoop = true;

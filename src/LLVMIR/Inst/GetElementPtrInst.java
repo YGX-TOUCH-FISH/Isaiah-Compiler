@@ -5,28 +5,32 @@ import LLVMIR.Oprand.VirtualReg;
 import LLVMIR.Type.ArrayType;
 import LLVMIR.Type.PointerType;
 
+import java.util.ArrayList;
+
 // dereference: load
 public class GetElementPtrInst extends Inst{
     VirtualReg resultReg;
     Oprand     indexSrc;
-    Oprand     indexOffset;
-    public GetElementPtrInst(VirtualReg _result, Oprand _indexSrc, Oprand _indexOffset) {
+    ArrayList<Oprand> indexOffsets = new ArrayList<>();
+    public GetElementPtrInst(VirtualReg _result, Oprand _indexSrc, ArrayList<Oprand> _indexOffsets) {
         resultReg   = _result;
         indexSrc    = _indexSrc;
-        indexOffset = _indexOffset;
+        indexOffsets = _indexOffsets;
     }
-
+    public GetElementPtrInst(VirtualReg _result, Oprand _indexSrc, Oprand indexOffset) {
+        resultReg   = _result;
+        indexSrc    = _indexSrc;
+        indexOffsets.add(indexOffset);
+    }
     @Override
     public String toString() {
         // indexSrc must be pointer type
         PointerType srcPointerType = (PointerType) indexSrc.baseType;
-        if (srcPointerType.referType instanceof ArrayType) {
-            // 2 parameters: first: 0 offset from array pointer
-            return resultReg.toName()+" = getelementptr inbounds "+srcPointerType.referType.toString()+", "+indexSrc.toString()+", i64 0, "+indexOffset.toString();
+        StringBuilder ret = new StringBuilder(resultReg.toName()+" = getelementptr inbounds "+srcPointerType.referType.toString()+", "+indexSrc.toString()+", ");
+        for (int i = 0 ; i < indexOffsets.size() ; i++) {
+            ret.append(indexOffsets.get(i).toString());
+            if (i != indexOffsets.size()-1) ret.append(", ");
         }
-        else {
-            // simply pointer, 1 parameter to support offset
-            return resultReg.toName()+" = getelementptr inbounds "+srcPointerType.referType.toString()+", "+indexSrc.toString()+", "+indexOffset.toString();
-        }
+        return ret.toString();
     }
 }

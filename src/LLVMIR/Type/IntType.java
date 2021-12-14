@@ -5,7 +5,7 @@ import LLVMIR.Oprand.Oprand;
 
 // i64, i32, i8, i1
 public class IntType extends BaseType{
-    Integer bitWidth;
+    public Integer bitWidth;
     public IntType(int _bitWidth) {
         bitWidth = _bitWidth;
     };

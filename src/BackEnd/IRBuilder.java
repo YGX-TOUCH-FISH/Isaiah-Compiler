@@ -19,8 +19,9 @@ import LLVMIR.Oprand.*;
 import LLVMIR.Type.*;
 import Util.error.irError;
 import Util.scope.IRScope;
+import org.antlr.v4.runtime.misc.Pair;
+
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Stack;
 
 //class member: add to type
@@ -74,12 +75,17 @@ public class IRBuilder implements ASTVisitor {
                 currentFunction.appendArgument(new PointerType(new ClassType(currentClass.className)));
                 currentBlock    = currentFunction.getEntry();
                 currentScope    = new IRScope(currentScope);
-                currentScope.defineVar("this", currentFunction.args.get(0));      // for declare in class
+                VirtualReg thisStoreReg = new VirtualReg(new PointerType(new ClassType(currentClass.className), 2), currentFunction.takeLabel());
+//                VirtualReg thisReg = new VirtualReg(new PointerType(new ClassType(currentClass.className)), currentFunction.takeLabel());
+                currentBlock.append(new AllocaInst(thisStoreReg));
+                currentBlock.append(new StoreInst(currentFunction.args.get(0), thisStoreReg));
+                currentScope.defineVar("this", thisStoreReg);
 
                 for (DeclrNode memberDeclr :  ((ClassDeclrNode) declare).declrs) {
-                    if (memberDeclr instanceof ConstructDeclrNode) constructor = (ConstructDeclrNode) declare;
-                    if (memberDeclr instanceof AssignDeclrNode || memberDeclr instanceof ListDeclrNode) declare.accept(this);
+                    if (memberDeclr instanceof ConstructDeclrNode) constructor = (ConstructDeclrNode) memberDeclr;
+                    if (memberDeclr instanceof AssignDeclrNode || memberDeclr instanceof ListDeclrNode) memberDeclr.accept(this);
                 }
+                currentScope.classInfo = root.getClassInfo(currentClass.className);
                 if (constructor != null) constructor.accept(this);
                 if (!currentBlock.hasTerminal) currentBlock.append(new RetInst(null));
                 root.addCustomFunction(currentFunction);
@@ -130,8 +136,6 @@ public class IRBuilder implements ASTVisitor {
             node.paraList.accept(this);
             node.block.accept(this);
             if (!currentBlock.hasTerminal) currentBlock.append(new RetInst(currentFunction.retType.getZeroInit())); // add efficient ret
-
-
             currentBlock    = null;
             currentFunction = null;
             currentScope    = currentScope.getParent();
@@ -143,7 +147,7 @@ public class IRBuilder implements ASTVisitor {
             node.typeNode.accept(this);
             node.valueNode.accept(this);    // no forward reference
             Oprand load;
-            VirtualReg ptrReg, thisReg, defReg;
+            VirtualReg ptrReg, thisStoreReg, thisReg, defReg;
             if (node.valueNode.isLvalue()) {
                 load = new VirtualReg(node.valueNode.getValueType(), currentFunction.takeLabel());
                 currentBlock.append(new LoadInst((VirtualReg) load, node.valueNode.address));
@@ -151,16 +155,21 @@ public class IRBuilder implements ASTVisitor {
 
             if (currentClass != null) {  // member declare, don't add to currentScope
                 root.appendClassMember(currentClass.className, node.typeNode.baseType, node.id);
+                thisStoreReg = currentScope.getVarReg("this", true);
+                thisReg = new VirtualReg(new PointerType(new ClassType(currentClass.className)), currentFunction.takeLabel());
                 ptrReg = new VirtualReg(new PointerType(node.typeNode.baseType), currentFunction.takeLabel());
-                thisReg = currentScope.getVarReg("this", true);
-                currentBlock.append(new GetElementPtrInst(ptrReg, thisReg, new ConstInt(32, root.getClassMemberIndex(currentClass.className, node.id))));
+                currentBlock.append(new LoadInst(thisReg, thisStoreReg));
+                ArrayList<Oprand> offsets = new ArrayList<>();
+                offsets.add(new ConstInt(32, 0));       // deference of 'this', get struct object
+                offsets.add(new ConstInt(32, root.getClassMemberIndex(currentClass.className, node.id)));
+                currentBlock.append(new GetElementPtrInst(ptrReg, thisReg, offsets));
                 currentBlock.append(new StoreInst(load, ptrReg));
             }
             else {  //global declare
                 defReg = new VirtualReg(new PointerType(node.valueNode.getValueType()), node.id);
                 currentBlock.append(new StoreInst(load, defReg));
                 currentScope.defineVar(node.id, defReg);
-                root.addStaticData(node.id, node.valueNode.getValueType()); // add global declare
+                root.addStaticData(node.id, node.valueNode.getValueType());
             }
         }
     }
@@ -229,6 +238,11 @@ public class IRBuilder implements ASTVisitor {
             VirtualReg allocReg = new VirtualReg(new PointerType(node.type.baseType), currentFunction.takeLabel());
             currentScope.defineVar(id, allocReg);
             currentBlock.append(new AllocaInst(allocReg));
+            if (node.type.baseType instanceof ClassType) {
+                Function constructor = root.getFunction(((ClassType) node.type.baseType).className);
+                ArrayList<Oprand> args = new ArrayList<>(); args.add(allocReg);
+                currentBlock.append(new CallInst(null, constructor, args));
+            }
         }
     }
 
@@ -375,6 +389,8 @@ public class IRBuilder implements ASTVisitor {
             continBlock.append(new JumpInst(condHeadBlock));
             continBlock.hasTerminal = true;
         }
+        currentBlock.next = exitBlock;
+        currentBlock = currentBlock.next;
     }
 
     @Override public void visit(BreakStNode node) {
@@ -432,10 +448,13 @@ public class IRBuilder implements ASTVisitor {
     @Override public void visit(CallExprNode node) {    // node must be lvalue
         node.object.accept(this);
         if (node.exprList == null) {
+            // TODO: 2021/12/14 be cautious on 'this' pointer!
             BaseType memberBaseType = root.getClassMemberBaseType(node.object.type.name, node.memberID);
             VirtualReg ptrReg = new VirtualReg(new PointerType(memberBaseType), currentFunction.takeLabel());
-            Oprand offset = new ConstInt(32, root.getClassMemberIndex(node.object.type.name, node.memberID));
-            currentBlock.append(new GetElementPtrInst(ptrReg, node.object.address, offset));
+            ArrayList<Oprand> offsets = new ArrayList<>();
+            offsets.add(new ConstInt(32, 0));   // skip load
+            offsets.add(new ConstInt(32, root.getClassMemberIndex(node.object.type.name, node.memberID)));
+            currentBlock.append(new GetElementPtrInst(ptrReg, node.object.address, offsets));
             node.address = ptrReg;
             node.value   = null;
         }
@@ -632,8 +651,8 @@ public class IRBuilder implements ASTVisitor {
             else { // short path  && : (ne) & (ne), || : (eq) | (eq)
                 VirtualReg firstValue, secondValue;
                 BasicBlock rootBlock, alterBlock, resultBlock;
-                IcmpInst.CompareType cmpType     = node.op == BinaryExprNode.BinaryOp.ANDAND ? IcmpInst.CompareType.ne : IcmpInst.CompareType.eq;
-                BinaryInst.BiArOp resultArithOp  = node.op == BinaryExprNode.BinaryOp.ANDAND ? BinaryInst.BiArOp.and   : BinaryInst.BiArOp.or;
+//                IcmpInst.CompareType cmpType     = node.op == BinaryExprNode.BinaryOp.ANDAND ? IcmpInst.CompareType.ne : IcmpInst.CompareType.eq;
+//                BinaryInst.BiArOp resultArithOp  = node.op == BinaryExprNode.BinaryOp.ANDAND ? BinaryInst.BiArOp.and : BinaryInst.BiArOp.or;
 
                 node.lhs.accept(this);
                 if (node.lhs.isLvalue()) {
@@ -652,14 +671,14 @@ public class IRBuilder implements ASTVisitor {
                             currentBlock.append(new LoadInst((VirtualReg) right, node.rhs.address));
                         } else right = node.rhs.value;
                         result = new VirtualReg(new IntType(1), currentFunction.takeLabel());
-                        currentBlock.append(new IcmpInst((VirtualReg) result, cmpType, right, new ConstInt(1, 0)));
+                        currentBlock.append(new IcmpInst((VirtualReg) result, IcmpInst.CompareType.ne, right, new ConstInt(1, 0)));
                         node.value = result;
                     }
                     node.address = null;
                     return;
                 }
                 firstValue = new VirtualReg(new IntType(1), currentFunction.takeLabel());
-                currentBlock.append(new IcmpInst(firstValue, cmpType, left, new ConstInt(1, 0)));
+                currentBlock.append(new IcmpInst(firstValue, IcmpInst.CompareType.ne, left, new ConstInt(1, 0)));
                 rootBlock  = currentBlock;
                 alterBlock = new BasicBlock(currentBlock, null, currentFunction.takeLabel());
                 currentBlock.next = alterBlock;
@@ -670,15 +689,20 @@ public class IRBuilder implements ASTVisitor {
                     currentBlock.append(new LoadInst((VirtualReg) right, node.rhs.address));
                 } else right = node.rhs.value;
                 secondValue = new VirtualReg(new IntType(1), currentFunction.takeLabel());
-                currentBlock.append(new IcmpInst(secondValue, cmpType, right, new ConstInt(1, 0)));
+                currentBlock.append(new IcmpInst(secondValue, IcmpInst.CompareType.ne, right, new ConstInt(1, 0)));
                 resultBlock = new BasicBlock(currentBlock, null, currentFunction.takeLabel());
                 currentBlock.append(new JumpInst(resultBlock));                     //   supply branch inst for root and alter
-                rootBlock.append(new BrInst(firstValue, resultBlock, alterBlock));
+                if (node.op == BinaryExprNode.BinaryOp.ANDAND) rootBlock.append(new BrInst(firstValue, alterBlock, resultBlock));
+                else rootBlock.append(new BrInst(firstValue, resultBlock, alterBlock));
                 currentBlock.next = resultBlock;
                 currentBlock = currentBlock.next;
                 // result calculate.
                 result = new VirtualReg(new IntType(1), currentFunction.takeLabel());
-                currentBlock.append(new BinaryInst((VirtualReg) result, resultArithOp, firstValue, secondValue));
+                ArrayList<Pair<Oprand, Integer>> paths = new ArrayList<>();
+                if (node.op == BinaryExprNode.BinaryOp.ANDAND) paths.add(new Pair<>(new ConstInt(1, 0), rootBlock.label));
+                else paths.add(new Pair<>(new ConstInt(1, 1), rootBlock.label));
+                paths.add(new Pair<>(secondValue, alterBlock.label));
+                currentBlock.append(new PhiInst((VirtualReg) result, paths));
             }
         }
         node.address = node.op == BinaryExprNode.BinaryOp.ASSIGN ? node.lhs.address : null;
@@ -800,11 +824,12 @@ public class IRBuilder implements ASTVisitor {
     }
 
     @Override public void visit(ThisValNode node) {
-        VirtualReg thisReg = currentScope.getVarReg("this", true);
-        VirtualReg thisObject = new VirtualReg(new ClassType(currentClass.className), currentFunction.takeLabel());
-        currentBlock.append(new LoadInst(thisObject, thisReg));
+        VirtualReg thisStoreReg = currentScope.getVarReg("this", true);
+        VirtualReg thisReg = new VirtualReg(new PointerType(new ClassType(currentClass.className)), currentFunction.takeLabel());
+        currentBlock.append(new LoadInst(thisReg, thisStoreReg));
         node.address = null;
-        node.imm = thisObject;
+        node.imm = thisReg;
+        // TODO: 2021/12/14  but 'this' is RVALUE type, using 'this' to call will cause fatal ERROR!
     }
 
     @Override public void visit(ParaListNode node) {
@@ -819,12 +844,19 @@ public class IRBuilder implements ASTVisitor {
         else {
             VirtualReg argReg;
             int index = 0;
-            if (currentClass != null){ currentScope.defineVar("this", currentFunction.args.get(index)); index++; }
+            if (currentClass != null){
+                argReg = new VirtualReg(new PointerType(new ClassType(currentClass.className), 2), currentFunction.takeLabel());
+                currentBlock.append(new AllocaInst(argReg));
+                currentBlock.append(new StoreInst(currentFunction.args.get(0), argReg));
+                currentScope.defineVar("this", argReg);
+                index++;
+            }
             for ( ; index < currentFunction.args.size() ; index++) {
                 argReg = new VirtualReg(new PointerType(currentFunction.args.get(index).baseType), currentFunction.takeLabel());
                 currentBlock.append(new AllocaInst(argReg));
                 currentBlock.append(new StoreInst(currentFunction.args.get(index), argReg));
-                currentScope.defineVar(node.ids.get(index), argReg);
+                if (currentClass != null) currentScope.defineVar(node.ids.get(index-1), argReg);
+                else currentScope.defineVar(node.ids.get(index), argReg);
             }
         }
     }
