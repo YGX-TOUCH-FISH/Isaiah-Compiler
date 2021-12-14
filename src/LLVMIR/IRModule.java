@@ -14,6 +14,10 @@ import java.util.Map;
 
 // Top Module
 public class IRModule {
+    public ArrayList<String> buildInFunctionName= new ArrayList<>();
+    public ArrayList<String> customFunctionName = new ArrayList<>();
+    public ArrayList<String> customClassName = new ArrayList<>();
+    public ArrayList<String> staticDataName = new ArrayList<>();
     public HashMap<String, Function>  builtInFunctions;
     public HashMap<String, Function>  customFunctions;  // "classname.func" or "func"
     public HashMap<String, ClassInfo> customClasses;
@@ -59,6 +63,8 @@ public class IRModule {
     // function relative info
     public void addCustomFunction(Function func) {
         // add function, whatever class-method or global
+        int x = 1;
+        customFunctionName.add(func.name);
         customFunctions.put(func.name, func);
     }
 
@@ -74,7 +80,8 @@ public class IRModule {
     }
     // class relative info
     public void addCustomClass(String name) {
-        customClasses.put(name, new ClassInfo());
+        customClassName.add(name);
+        customClasses.put(name, new ClassInfo(name));
     }
     public void appendClassMember(String name, BaseType baseType, String id) {
         customClasses.get(name).appendMember(baseType, id);
@@ -85,9 +92,11 @@ public class IRModule {
     public BaseType getClassMemberBaseType(String name, String id) {
         return customClasses.get(name).getBaseType(id);
     }
-    public boolean classContainsMember(String name, String id) {return customClasses.get(name).contains(id); }
+    public ClassInfo getClassInfo(String name) { return customClasses.get(name); }
+//    public boolean classContainsMember(String name, String id) {return customClasses.get(name).contains(id); }
     // global variable info
     public void addStaticData(String name, BaseType baseType) {
+        staticDataName.add(name);
         staticData.put(name, baseType);
     }
 }

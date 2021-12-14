@@ -1,140 +1,77 @@
 package BackEnd;
 
-import LLVMIR.BasicBlock;
-import LLVMIR.Function;
-import LLVMIR.IRModule;
-import LLVMIR.IRVisitor;
-import LLVMIR.Inst.*;
-import LLVMIR.Oprand.ConstInt;
-import LLVMIR.Oprand.ConstNull;
-import LLVMIR.Oprand.ConstStr;
+import LLVMIR.*;
+import LLVMIR.Inst.Inst;
 import LLVMIR.Oprand.VirtualReg;
-import LLVMIR.Type.*;
+import LLVMIR.Type.BaseType;
+
+import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class IRPrinter implements IRVisitor {
-    public IRPrinter() {};
-    @Override
-    public void visit(IRModule node) {
+    private PrintStream port;
+    public IRPrinter(PrintStream _port) {
+        port = _port;
+    }
+    @Override public void visit(IRModule node) {
+        for (String name : node.staticDataName) {
+            BaseType baseType = node.staticData.get(name);
+            port.println("@"+name+" = dso_local global "+baseType.toString()+" "+baseType.getZeroInit().toString());
+        }
+        port.print('\n');
+        for (String name : node.buildInFunctionName) {
+            node.builtInFunctions.get(name).accept(this);
+            port.print('\n');
+        }
+        for (String name : node.customClassName) {
+            node.customClasses.get(name).accept(this);
+            port.print('\n');
+        }
+        for (String name : node.customFunctionName) {
+            node.customFunctions.get(name).accept(this);
+            port.print('\n');
+        }
 
     }
 
-    @Override
-    public void visit(Function node) {
+    @Override public void visit(Function node) {
+        port.print("define dso_local "+node.retType.toString()+" @"+node.name);
+        int argsCounter = 0;
+        port.print('(');
+        for (VirtualReg arg : node.args) {
+            port.print(arg.toString());
+            argsCounter++;
+            if (argsCounter != node.args.size()) port.print(", ");
+        }
+        port.print(')');
 
+        port.println('{');
+        BasicBlock curBlock = node.entryBlock;
+        while (curBlock != null) {
+            if (curBlock != node.entryBlock) port.println(curBlock.label+":");
+            curBlock.accept(this);
+            curBlock = curBlock.next;
+        }
+        port.println('}');
     }
 
-    @Override
-    public void visit(BasicBlock node) {
-
+    @Override public void visit(BasicBlock node) {
+        for (Inst inst = node.headInst; inst != null ; inst = inst.next){
+            port.print('\t');
+            port.println(inst);
+        }
     }
 
-    @Override
-    public void visit(AllocaInst node) {
-
-    }
-
-    @Override
-    public void visit(BinaryInst node) {
-
-    }
-
-    @Override
-    public void visit(BitCastInst node) {
-
-    }
-
-    @Override
-    public void visit(BrInst node) {
-
-    }
-
-    @Override
-    public void visit(CallInst node) {
-
-    }
-
-    @Override
-    public void visit(GetElementPtrInst node) {
-
-    }
-
-    @Override
-    public void visit(IcmpInst node) {
-
-    }
-
-    @Override
-    public void visit(JumpInst node) {
-
-    }
-
-    @Override
-    public void visit(LoadInst node) {
-
-    }
-
-    @Override
-    public void visit(RetInst node) {
-
-    }
-
-    @Override
-    public void visit(StoreInst node) {
-
-    }
-
-    @Override
-    public void visit(UnaryInst node) {
-
-    }
-
-    @Override
-    public void visit(ConstInt node) {
-
-    }
-
-    @Override
-    public void visit(ConstNull node) {
-
-    }
-
-    @Override
-    public void visit(ConstStr node) {
-
-    }
-
-    @Override
-    public void visit(VirtualReg node) {
-
-    }
-
-    @Override
-    public void visit(ArrayType node) {
-
-    }
-
-    @Override
-    public void visit(ClassType node) {
-
-    }
-
-    @Override
-    public void visit(IntType node) {
-
-    }
-
-    @Override
-    public void visit(NullType node) {
-
-    }
-
-    @Override
-    public void visit(PointerType node) {
-
-    }
-
-    @Override
-    public void visit(VoidType node) {
-
+    @Override public void visit(ClassInfo node) {
+        int argsCounter = 0;
+        port.print("%"+node.className+" = type { ");
+        for (BaseType baseType : node.types) {
+            port.print(baseType.toString());
+            argsCounter++;
+            if (argsCounter != node.types.size()) port.print(", ");
+        }
+        port.println('}');
     }
 }

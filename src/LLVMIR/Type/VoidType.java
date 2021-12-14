@@ -11,8 +11,10 @@ public class VoidType extends BaseType{
         return "void";
     }
     @Override public Oprand getZeroInit() {
-        throw new irError("[ERROR] void type has no initial value.", new position(0, 0));
+        return null;
+//        throw new irError("[ERROR] void type has no initial value.", new position(0, 0));
     }
+
 
     @Override
     public boolean isStringType() {

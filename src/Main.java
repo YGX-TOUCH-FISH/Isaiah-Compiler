@@ -11,13 +11,12 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-        String name = "test.mx";
-        InputStream input = new FileInputStream(name);
+        String DataInFile = "test.mx";
+        InputStream input = new FileInputStream(DataInFile);
 //        InputStream input = System.in;
         try {
 //            int value = Integer.parseInt("-2147483648");
@@ -34,12 +33,12 @@ public class Main {
             ASTBuilder astBuilder = new ASTBuilder(gScope);
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
             new SemanticChecker(gScope).visit(ASTRoot);
-            System.out.println("Semantic Check passed.");
+            System.out.println("Semantic Check passed.\n");
             // IR generate & Print
             IRBuilder irBuilder = new IRBuilder();
             ASTRoot.accept(irBuilder);
             IRModule Module = irBuilder.BuiltRoot();
-            new IRPrinter().visit(Module);
+            new IRPrinter(System.out).visit(Module);
 
 //            ASTRoot.accept(irBuilder);
 //            IRRoot irRoot = irBuilder.BuiltRoot();;

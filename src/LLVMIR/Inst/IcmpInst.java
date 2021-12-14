@@ -18,7 +18,7 @@ public class IcmpInst extends Inst{
         rhs = _rhs;
     }
     @Override public String toString() {
-        return resultReg.toName()+" = icmp "+cmpType.toString()+lhs.baseType.toString()+" "+lhs.toName()+", "+rhs.toName();
+        return resultReg.toName()+" = icmp "+cmpType.toString()+" "+lhs.baseType.toString()+" "+lhs.toName()+", "+rhs.toName();
     }
 
 }

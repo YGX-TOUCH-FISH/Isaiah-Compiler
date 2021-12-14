@@ -27,30 +27,7 @@ public class Function {
         entryBlock = new BasicBlock(null, null, takeLabel());
         return entryBlock;
     }
-    public String toString() {
-        //
-        StringBuilder ret = new StringBuilder("define dso_local "+retType.toString()+" @"+name);
-        // arguments
-        int argsCounter = 0;
-        ret.append("(");
-        for (VirtualReg arg : args) {
-            ret.append(arg.toString());
-            argsCounter++;
-            if (argsCounter != args.size()) ret.append(", ");
-        }
-        ret.append(")");
-        // attributes
-
-        // body
-        BasicBlock curBlock = entryBlock;
-        ret.append("{\n");
-        while (curBlock != null) {
-            ret.append(curBlock.toString());
-            curBlock = curBlock.next;
-        }
-        ret.append("}\n");
-        return ret.toString();
-    }
+    public void accept(IRVisitor visitor) {visitor.visit(this);}
     public void appendArgument(BaseType baseType) { args.add(new VirtualReg(baseType, takeLabel()));}
     public int takeLabel() {
         return regCounter++;

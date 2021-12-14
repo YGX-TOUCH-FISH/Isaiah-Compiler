@@ -9,9 +9,11 @@ import java.util.HashMap;
 
 public class ClassInfo {
 //    private HashMap<String, BaseType> members;
-    private ArrayList<String> ids;
-    private ArrayList<BaseType> types;
-    public ClassInfo() {
+    public String className;
+    public ArrayList<String> ids;
+    public ArrayList<BaseType> types;
+    public ClassInfo(String name) {
+        className = name;
         ids   = new ArrayList<>();
         types = new ArrayList<>();
     }
@@ -20,9 +22,6 @@ public class ClassInfo {
             ids.add(_id);
             types.add(_baseType);
         }
-    }
-    public ArrayList<String> getIDs() {
-        return ids;
     }
     public int getIndex(String _id) {
         return ids.indexOf(_id);
@@ -33,4 +32,5 @@ public class ClassInfo {
     public boolean contains(String _id) {
         return ids.contains(_id);
     }
+    public void accept(IRVisitor visitor) {visitor.visit(this);}
 }

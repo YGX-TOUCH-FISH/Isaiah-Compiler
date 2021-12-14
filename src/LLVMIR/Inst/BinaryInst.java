@@ -20,7 +20,7 @@ public class BinaryInst extends Inst{
     }
 
     @Override public String toString() {
-        return resultReg.toName()+" = "+operator.toString()+" "+lhs.toString()+", "+rhs.toString();
+        return resultReg.toName()+" = "+operator.toString()+" "+lhs.baseType.toString()+" "+lhs.toName()+", "+rhs.toName();
     }
 
 }
