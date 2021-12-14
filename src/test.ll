@@ -58,11 +58,16 @@ define dso_local i32 @_Z12sum_functioni(i32 %0) #4 {
 ; Function Attrs: noinline norecurse optnone uwtable
 define dso_local i32 @main() #5 {
   %1 = alloca %class.test_class, align 4
-  %2 = alloca i32, align 4
+  %2 = alloca %class.test_class, align 4
+  %3 = alloca i32, align 4
   call void @_ZN10test_classC2Ev(%class.test_class* %1)
-  %3 = getelementptr inbounds %class.test_class, %class.test_class* %1, i32 0, i32 0
-  %4 = load i32, i32* %3, align 4
-  store i32 %4, i32* %2, align 4
+  call void @_ZN10test_classC2Ev(%class.test_class* %2)
+  %4 = bitcast %class.test_class* %1 to i8*
+  %5 = bitcast %class.test_class* %2 to i8*
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 %4, i8* align 4 %5, i64 4, i1 false)
+  %6 = getelementptr inbounds %class.test_class, %class.test_class* %1, i32 0, i32 0
+  %7 = load i32, i32* %6, align 4
+  store i32 %7, i32* %3, align 4
   ret i32 0
 }
 
@@ -78,6 +83,9 @@ define linkonce_odr dso_local void @_ZN10test_classC2Ev(%class.test_class* %0) u
   ret void
 }
 
+; Function Attrs: argmemonly nounwind willreturn
+declare void @llvm.memcpy.p0i8.p0i8.i64(i8* noalias nocapture writeonly, i8* noalias nocapture readonly, i64, i1 immarg) #7
+
 ; Function Attrs: noinline uwtable
 define internal void @_GLOBAL__sub_I_test.cpp() #0 section ".text.startup" {
   call void @__cxx_global_var_init()
@@ -91,6 +99,7 @@ attributes #3 = { nounwind }
 attributes #4 = { noinline optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #5 = { noinline norecurse optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #6 = { noinline nounwind optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #7 = { argmemonly nounwind willreturn }
 
 !llvm.module.flags = !{!0}
 !llvm.ident = !{!1}

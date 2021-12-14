@@ -9,7 +9,7 @@ public class ConstNull extends Oprand{
         super(new NullType());
     }
     @Override public String toString() {
-        return baseType.toString()+" null";
+        return "null";
     }
 
     @Override
