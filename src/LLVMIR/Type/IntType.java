@@ -20,4 +20,8 @@ public class IntType extends BaseType{
     public boolean isStringType() {
         return false;
     }
+
+    @Override public int getByteWidth() {
+        return bitWidth == 1 ? 1 : bitWidth/8;
+    }
 }

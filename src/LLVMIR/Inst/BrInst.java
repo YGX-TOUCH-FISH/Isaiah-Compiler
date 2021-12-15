@@ -14,6 +14,6 @@ public class BrInst extends Inst{
         iffalse = _iffalse;
     }
     @Override public String toString() {
-        return cond.toString()+", label "+iftrue.toName()+", label "+iffalse.toName();
+        return "br "+cond.toString()+", label "+iftrue.toName()+", label "+iffalse.toName();
     }
 }

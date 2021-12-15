@@ -21,10 +21,7 @@ public class IRPrinter implements IRVisitor {
             port.println("@"+name+" = dso_local global "+baseType.getZeroInit().toString());
         }
         port.print('\n');
-        for (String name : node.buildInFunctionName) {
-            node.builtInFunctions.get(name).accept(this);
-            port.print('\n');
-        }
+
         for (String name : node.customClassName) {
             node.customClasses.get(name).accept(this);
             port.print('\n');
@@ -33,7 +30,16 @@ public class IRPrinter implements IRVisitor {
             node.customFunctions.get(name).accept(this);
             port.print('\n');
         }
-
+        for (String name : node.buildInFunctionName) {
+            Function function = node.getBuiltInFunction(name);
+            port.print("declare dso_local "+function.retType.toString()+" @"+name);
+            port.print('(');
+            for (int i = 0 ; i < function.args.size() ; i++) {
+                port.print(function.args.get(i).baseType.toString());
+                if (i != function.args.size()-1) port.print(", ");
+            }
+            port.println(')');
+        }
     }
 
     @Override public void visit(Function node) {

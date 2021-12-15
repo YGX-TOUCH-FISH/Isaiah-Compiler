@@ -12,14 +12,12 @@ public class UnaryInst extends Inst{
     UArOp operator;
     VirtualReg resultReg;
     Oprand oprand;
-    BaseType targetType;
-    public UnaryInst(VirtualReg _result, UArOp _operator, Oprand _oprand, BaseType _target) {
+    public UnaryInst(VirtualReg _result, UArOp _operator, Oprand _oprand) {
         resultReg = _result;
         operator = _operator;
         oprand = _oprand;
-        targetType = _target;
     }
     @Override public String toString() {
-        return resultReg.toName()+" = "+operator.toString()+" "+oprand.toString()+" to "+targetType.toString();
+        return resultReg.toName()+" = "+operator.toString()+" "+oprand.toString()+" to "+resultReg.baseType.toString();
     }
 }

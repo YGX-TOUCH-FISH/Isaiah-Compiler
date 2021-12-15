@@ -25,4 +25,9 @@ public class PointerType extends BaseType{
     public boolean isStringType() {
         return (referType instanceof IntType && ((IntType)referType).bitWidth == 8);
     }
+
+    @Override
+    public int getByteWidth() {
+        return 8;
+    }
 }

@@ -2,6 +2,8 @@ package LLVMIR;
 
 import LLVMIR.Oprand.Oprand;
 import LLVMIR.Type.BaseType;
+import LLVMIR.Type.ClassType;
+import LLVMIR.Type.IntType;
 import org.antlr.v4.runtime.misc.Pair;
 
 import java.util.ArrayList;
@@ -33,4 +35,13 @@ public class ClassInfo {
         return ids.contains(_id);
     }
     public void accept(IRVisitor visitor) {visitor.visit(this);}
+    public int getByteWidth(IRModule module){
+        int byteWidth = 0;
+        for (BaseType baseType : types) {
+            if (baseType instanceof IntType && ((IntType) baseType).bitWidth == 1) byteWidth += 1;
+            else if (baseType instanceof ClassType) byteWidth += module.getClassInfo(((ClassType) baseType).className).getByteWidth(module);
+            else byteWidth += baseType.getByteWidth();
+        }
+        return byteWidth;
+    }
 }

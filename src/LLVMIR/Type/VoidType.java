@@ -20,4 +20,8 @@ public class VoidType extends BaseType{
     public boolean isStringType() {
         return false;
     }
+
+    @Override public int getByteWidth() {
+        throw new irError("[ERROR] illegal visit : no valid method to access sizeof(VoidType)", new position(0, 0));
+    }
 }

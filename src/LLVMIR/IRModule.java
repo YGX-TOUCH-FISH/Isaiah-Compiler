@@ -3,6 +3,8 @@ package LLVMIR;
 import LLVMIR.Oprand.Oprand;
 import LLVMIR.Type.BaseType;
 import LLVMIR.Type.ClassType;
+import LLVMIR.Type.IntType;
+import LLVMIR.Type.PointerType;
 import Util.error.irError;
 import Util.position;
 import org.antlr.v4.runtime.misc.Pair;
@@ -14,15 +16,16 @@ import java.util.Map;
 
 // Top Module
 public class IRModule {
-    public ArrayList<String> buildInFunctionName= new ArrayList<>();
-    public ArrayList<String> customFunctionName = new ArrayList<>();
-    public ArrayList<String> customClassName = new ArrayList<>();
-    public ArrayList<String> staticDataName = new ArrayList<>();
-    public HashMap<String, Function>  builtInFunctions;
-    public HashMap<String, Function>  customFunctions;  // "classname.func" or "func"
-    public HashMap<String, ClassInfo> customClasses;
-    public HashMap<String, BaseType>  staticData; // .data & .bss
+    public ArrayList<String> buildInFunctionName = new ArrayList<>();
+    public ArrayList<String> customFunctionName  = new ArrayList<>();
+    public ArrayList<String> customClassName     = new ArrayList<>();
+    public ArrayList<String> staticDataName      = new ArrayList<>();
+    public HashMap<String, Function>  builtInFunctions = new HashMap<>();
+    public HashMap<String, Function>  customFunctions  = new HashMap<>();  // "classname.func" or "func"
+    public HashMap<String, ClassInfo> customClasses    = new HashMap<>();
+    public HashMap<String, BaseType>  staticData       = new HashMap<>(); // .data & .bss
 
+    public Function malloc;
     public Function strADD;
     public Function strLT;
     public Function strGT;
@@ -41,21 +44,16 @@ public class IRModule {
     public Function getInt;
     public Function toString;
     public IRModule() {
-        // alloc space
-        allocSpace();
         // load built-in functions.
         functionBuild();
-    }
-    private void allocSpace() {
-        builtInFunctions = new HashMap<>();
-        customFunctions  = new HashMap<>();
-        customClasses    = new HashMap<>();
-        staticData       = new HashMap<>();
     }
 
     private void functionBuild() {
         // global here.
-
+        buildInFunctionName.add("malloc");
+        malloc = new Function("malloc", new PointerType(new IntType(8)));
+        malloc.appendArgument(new IntType(64));
+        builtInFunctions.put("malloc", malloc);
         // string here.
 
         // array  here.
@@ -63,7 +61,6 @@ public class IRModule {
     // function relative info
     public void addCustomFunction(Function func) {
         // add function, whatever class-method or global
-        int x = 1;
         customFunctionName.add(func.name);
         customFunctions.put(func.name, func);
     }
