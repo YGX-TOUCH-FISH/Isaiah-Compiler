@@ -40,7 +40,8 @@ public class IRScope {
         if (classInfo != null) {
             if (classInfo.contains(name)) {
                 VirtualReg thisReg = new VirtualReg(new PointerType(new ClassType(classInfo.className)), currentFunction.takeLabel());
-                currentBlock.append(new LoadInst(thisReg, getVarReg("this", true)));
+                VirtualReg thisStoreReg = getVarReg("this", true);
+                currentBlock.append(new LoadInst(thisReg, thisStoreReg));
                 VirtualReg ptrReg = new VirtualReg(new PointerType(classInfo.getBaseType(name)), currentFunction.takeLabel());
                 ArrayList<Oprand> offsets = new ArrayList<>();
                 offsets.add(new ConstInt(32, 0));

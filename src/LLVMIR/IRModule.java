@@ -31,6 +31,8 @@ public class IRModule {
     public Function strGT;
     public Function strLEQ;
     public Function strGEQ;
+    public Function strEQ;
+    public Function strNE;
     public Function length;
     public Function substring;
     public Function parseInt;

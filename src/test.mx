@@ -6,9 +6,10 @@ Time: 2019-10-20
 Verdict: Success
 Origin Package: Semantic Extended
 */
-int p, q;
+int p = 2;
+ int q = 3;
+  int r = 4;
+
 int main() {
-    int [][][] array;
-    array = new int [p][q][];
-    int [][][] brray = array;
+    string y;
 }

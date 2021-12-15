@@ -6,9 +6,6 @@ import LLVMIR.Oprand.VirtualReg;
 import LLVMIR.Type.BaseType;
 
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 public class IRPrinter implements IRVisitor {
     private PrintStream port;
@@ -16,6 +13,7 @@ public class IRPrinter implements IRVisitor {
         port = _port;
     }
     @Override public void visit(IRModule node) {
+        port.println("@llvm.global_ctors = appending global [1 x { i32, void ()*, i8* }] [{ i32, void ()*, i8* } { i32 65535, void ()* @global_var_init, i8* null }]");
         for (String name : node.staticDataName) {
             BaseType baseType = node.staticData.get(name);
             port.println("@"+name+" = dso_local global "+baseType.getZeroInit().toString());
@@ -64,10 +62,7 @@ public class IRPrinter implements IRVisitor {
     }
 
     @Override public void visit(BasicBlock node) {
-//        int counter = 0;
         for (Inst inst = node.headInst; inst != null ; inst = inst.next){
-//            port.print(counter++);
-//            if (counter == 8) counter = counter+1;
             port.print('\t');
             port.println(inst);
         }
