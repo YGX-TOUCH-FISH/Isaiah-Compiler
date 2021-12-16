@@ -13,7 +13,7 @@ public class ArrayType extends BaseType{
         dimSize     = _dimSize;
     }
     @Override public String toString() {
-        return " ["+dimSize.toString()+" x "+elementType.toString()+"] ";
+        return '['+dimSize.toString()+" x "+elementType.toString()+']';
     }
     @Override public Oprand getZeroInit() {
         return new ConstNull();

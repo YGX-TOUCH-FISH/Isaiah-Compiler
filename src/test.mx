@@ -6,10 +6,21 @@ Time: 2019-10-20
 Verdict: Success
 Origin Package: Semantic Extended
 */
-int p = 2;
- int q = 3;
-  int r = 4;
-
+//     @.str.1 = constant [3 x i8] c"%s\00"
+//     %4 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str.1, i64 0, i64 0), i8* %3)
+class test_master{
+    int xx;
+    int yy;
+}
+int p = 0;
+int [][] a;
 int main() {
-    string y;
+    println("10 time to try");
+    while (p < 10) {
+        string str = getString();
+        int y = getInt();
+        println(str.substring(y, y+1));
+        printlnInt(str.ord(y));
+    }
+
 }

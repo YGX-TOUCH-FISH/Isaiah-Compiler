@@ -22,6 +22,7 @@ import Util.scope.IRScope;
 import org.antlr.v4.runtime.misc.Pair;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Stack;
 
 //class member: add to type
@@ -212,7 +213,6 @@ public class IRBuilder implements ASTVisitor {
     @Override public void visit(ArrayTypeNode node) {
         node.elementType.accept(this);
         node.baseType = new PointerType(node.elementType.baseType, node.dims);
-        // store 'this'
     }
 
     @Override public void visit(EmptyStNode node) {}
@@ -229,13 +229,7 @@ public class IRBuilder implements ASTVisitor {
         allocReg = new VirtualReg(new PointerType(node.typeNode.getBaseType()), currentFunction.takeLabel());
         currentScope.defineVar(node.name, allocReg);
         currentBlock.append(new AllocaInst(allocReg));
-
-        if (node.typeNode instanceof ClassTypeNode || node.typeNode instanceof ArrayTypeNode) {
-            VirtualReg thisReg = new VirtualReg(node.typeNode.getBaseType(), currentFunction.takeLabel());
-            currentBlock.append(new LoadInst(thisReg, allocReg));
-            currentBlock.append(new StoreInst(assignValue, thisReg));
-            currentBlock.append(new StoreInst(thisReg, allocReg));
-        } else currentBlock.append(new StoreInst(assignValue, allocReg));
+        currentBlock.append(new StoreInst(assignValue, allocReg));
     }
 
     @Override public void visit(ListStNode node) {
@@ -391,7 +385,7 @@ public class IRBuilder implements ASTVisitor {
         exeTailBlock = currentBlock;
         exitBlock = new BasicBlock(currentBlock, null, currentFunction.takeLabel());
         condTailBlock.append(new BrInst(condReg, exeHeadBlock, exitBlock));
-        exeTailBlock.append(new JumpInst(exitBlock));
+        exeTailBlock.append(new JumpInst(condHeadBlock));
         condTailBlock.hasTerminal = true;
         exeTailBlock.hasTerminal  = true;
         ArrayList<BasicBlock> breakBlocks  = loopBreakStack.pop();
@@ -460,6 +454,7 @@ public class IRBuilder implements ASTVisitor {
         currentBlock.append(new GetElementPtrInst(ptrReg, thisReg, offset));
         node.address = ptrReg;
         node.value   = null;
+        // always return thisStoreReg.
     }
 
     @Override public void visit(CallExprNode node) {    // node must be lvalue
@@ -478,14 +473,38 @@ public class IRBuilder implements ASTVisitor {
             node.value   = null;
         }
         else {  // function call
-            Function function; VirtualReg resultReg ; ArrayList<Oprand> functionArgs;
+            Function function = null; VirtualReg resultReg ; ArrayList<Oprand> functionArgs;
             node.exprList.accept(this);
             functionArgs = new ArrayList<>(node.exprList.oprands);
-            if (node.object.getValueType() instanceof ClassType) {  // class included methods
-                functionArgs.add(0, thisReg);       // add 'this' pointer
+            if (node.object.getValueType() instanceof ClassType) {  // class methods
+                functionArgs.add(0, thisReg);                 // add 'this' pointer
                 String className = ((ClassType) node.object.getValueType()).className;
                 function = root.getCustomFunction(className+"."+node.memberID);
-            } else function = root.getBuiltInFunction(node.memberID);
+            } else {
+                if (Objects.equals(node.memberID, "size")) {    // array method
+                    VirtualReg thisCastReg;
+                    thisCastReg = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
+                    currentBlock.append(new BitCastInst(thisReg, thisCastReg));
+                    functionArgs.add(thisCastReg);
+                    function = root.size;
+//                    VirtualReg thisCastReg, sizeStoreReg, sizeCastReg, sizeReg;
+//                    thisCastReg  = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
+//                    sizeStoreReg = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
+//                    sizeCastReg  = new VirtualReg(new PointerType(new IntType(32)), currentFunction.takeLabel());
+//                    sizeReg      = new VirtualReg(new IntType(32), currentFunction.takeLabel());
+//                    currentBlock.append(new BitCastInst(thisReg, thisCastReg));
+//                    currentBlock.append(new GetElementPtrInst(sizeStoreReg, thisCastReg, new ConstInt(64, -4)));
+//                    currentBlock.append(new BitCastInst(sizeStoreReg, sizeCastReg));
+//                    currentBlock.append(new LoadInst(sizeReg, sizeCastReg));
+//                    node.address = null;
+//                    node.value = sizeReg;
+//                    return;
+                }
+                else {  // string method
+                    function = root.getBuiltInFunction("__built_in_string_"+node.memberID);
+                    functionArgs.add(0, thisReg);
+                }
+            }
             resultReg = null;
             if (!(function.retType instanceof VoidType)) resultReg = new VirtualReg(function.retType, currentFunction.takeLabel());
             currentBlock.append(new CallInst(resultReg, function, functionArgs));
@@ -557,7 +576,7 @@ public class IRBuilder implements ASTVisitor {
                             currentBlock.append(new BinaryInst((VirtualReg) result, BinaryInst.BiArOp.add, left, right));
                         }
                         else { //string add
-                            result = new VirtualReg(new PointerType(new IntType(8), 2), currentFunction.takeLabel());
+                            result = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
                             ArrayList<Oprand> args = new ArrayList<>();
                             args.add(left); args.add(right);
                             currentBlock.append(new CallInst((VirtualReg) result, root.strADD, args));
@@ -565,9 +584,8 @@ public class IRBuilder implements ASTVisitor {
                         break;
                     case LT: case GT: case LEQ: case GEQ:
                         result = new VirtualReg(new IntType(1), currentFunction.takeLabel());
-                        if (node.lhs.getValueType() instanceof IntType) { // int cmp
+                        if (node.lhs.getValueType() instanceof IntType)  // int cmp
                             currentBlock.append(new IcmpInst((VirtualReg) result, compareType, left, right));
-                        }
                         else { //string cmp
                             ArrayList<Oprand> args = new ArrayList<>();
                             args.add(left); args.add(right);
@@ -584,25 +602,16 @@ public class IRBuilder implements ASTVisitor {
                         currentBlock.append(new BinaryInst((VirtualReg) result, biArOp, left, right));
                         break;
                     case EQ: case NEQ:
-                        if (node.lhs.getValueType() instanceof IntType) {
-                            result = new VirtualReg(new IntType(1), currentFunction.takeLabel());
-                            currentBlock.append(new IcmpInst((VirtualReg) result, compareType, left, right));
-                        }
-                        else if (node.lhs.type.isString() && node.rhs.type.isString()) {
-
-                        }
-                        else {  // compare address
-                            Oprand leftAddress  = (left instanceof ConstNull) ? left : new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
-                            Oprand rightAddress = (left instanceof ConstNull) ? right: new VirtualReg(new PointerType(new IntType(8)),currentFunction.takeLabel());
-                            if (!(left instanceof ConstNull)) {
-                                currentBlock.append(new BitCastInst((VirtualReg) left, (VirtualReg) leftAddress));
+                        result = new VirtualReg(new IntType(1), currentFunction.takeLabel());
+                        if (node.lhs.type.isString() && node.rhs.type.isString()) {
+                            ArrayList<Oprand> args = new ArrayList<>();
+                            args.add(left); args.add(right);
+                            switch (node.op) {
+                                case EQ: currentBlock.append(new CallInst((VirtualReg) result, root.strEQ, args)); break;
+                                case NEQ:currentBlock.append(new CallInst((VirtualReg) result, root.strNE, args)); break;
                             }
-                            if (!(right instanceof ConstNull)) {
-                                currentBlock.append(new BitCastInst((VirtualReg) right, (VirtualReg) rightAddress));
-                            }
-                            result = new VirtualReg(new IntType(1), currentFunction.takeLabel());
-                            currentBlock.append(new IcmpInst((VirtualReg) result, compareType, leftAddress, rightAddress));
                         }
+                        else currentBlock.append(new IcmpInst((VirtualReg) result, compareType, left, right));
                         break;
                 }
             }
@@ -613,10 +622,7 @@ public class IRBuilder implements ASTVisitor {
                             long l = ((ConstInt)node.lhs.value).getIntValue(), r = ((ConstInt)node.rhs.value).getIntValue();
                             result = new ConstInt(32, l + r);
                         }
-                        else {
-                            String leftStr = ((ConstStr) node.lhs.value).str, rightStr = ((ConstStr) node.rhs.value).str;
-                            result = new ConstStr(leftStr+rightStr);
-                        }
+                        else throw new irError("[ERROR] unknown error occurred in constant add", node.pos);
                         break;
                     case LT: case GT: case LEQ: case GEQ:
                         long l, r;
@@ -624,10 +630,7 @@ public class IRBuilder implements ASTVisitor {
                             l = ((ConstInt)node.lhs.value).getIntValue();
                             r = ((ConstInt)node.rhs.value).getIntValue();
                         }
-                        else {
-                            l = ((ConstStr)node.lhs.value).str.length();
-                            r = ((ConstStr) node.rhs.value).str.length();
-                        }
+                        else throw new irError("[ERROR] unknown error occurred in constant compare", node.pos);
                         switch (node.op) {
                             case LT: result = new ConstInt(1, l <  r ? 1 : 0); break;
                             case GT: result = new ConstInt(1, l >  r ? 1 : 0); break;
@@ -787,8 +790,28 @@ public class IRBuilder implements ASTVisitor {
     }
 
     @Override public void visit(StringValNode node) {
+        String constantName = ".str."+root.strConstants.size();
+        String strValue = node.strValue.substring(1, node.strValue.length()-1);
+        StringBuilder llvmStr = new StringBuilder("\"");
+        int i, strLength = 0;
+        for (i = 0 ; i < strValue.length() ; i++) {
+            if (strValue.charAt(i) == '\\') {
+                i++;
+                if (strValue.charAt(i) == '\\') llvmStr.append("\\5C");
+                else if (strValue.charAt(i) == '\"') llvmStr.append("\\22");
+                else if (strValue.charAt(i) == 'n') llvmStr.append("\\0A");
+                else if (strValue.charAt(i) == '0') llvmStr.append("\\00");
+            }
+            else llvmStr.append(strValue.charAt(i));
+            strLength++;
+        }
+        llvmStr.append("\\00\""); strLength++;  // append '\0'
+        VirtualReg strConstReg = new VirtualReg(new PointerType(new ArrayType(new IntType(8), strLength)), constantName);
+        root.strConstants.add(new Pair<>(llvmStr.toString(), strConstReg));
+        VirtualReg strReg = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
+        currentBlock.append(new BitCastInst(strConstReg, strReg));
         node.address = null;
-        node.imm     = new ConstStr(node.strValue);
+        node.imm = strReg;
     }
 
     @Override public void visit(BoolValNode node) {
@@ -803,7 +826,9 @@ public class IRBuilder implements ASTVisitor {
 
     @Override public void visit(NewArrayNode node) {
         node.elementType.accept(this);
-        BaseType bottomBaseType; ArrayList<Oprand> indexValues = new ArrayList<>();
+        BaseType bottomBaseType;
+        ArrayList<Oprand> sizes = new ArrayList<>();
+        ArrayList<Oprand> extIndexValues = new ArrayList<>();
         Oprand indexValue, extIndexValue;
         VirtualReg thisReg, thisStoreReg;
         if (node.sizeofDim.size() == node.dims) bottomBaseType = node.elementType.getBaseType();
@@ -814,15 +839,16 @@ public class IRBuilder implements ASTVisitor {
                 indexValue = new VirtualReg(new IntType(32), currentFunction.takeLabel());
                 currentBlock.append(new LoadInst((VirtualReg) indexValue, node.sizeofDim.get(i).address));
             } else indexValue = node.sizeofDim.get(i).value;
+            sizes.add(indexValue);
             // extend index to 8-byte width
             if (indexValue instanceof ConstInt) extIndexValue = new ConstInt(64, ((ConstInt) indexValue).intValue);
             else {
                 extIndexValue = new VirtualReg(new IntType(64), currentFunction.takeLabel());
                 currentBlock.append(new UnaryInst((VirtualReg) extIndexValue, UnaryInst.UArOp.zext, indexValue));
             }
-            indexValues.add(extIndexValue);
+            extIndexValues.add(extIndexValue);
         }
-        thisReg = multiAllocate(node, bottomBaseType, indexValues,0);
+        thisReg = multiAllocate(node, bottomBaseType, sizes, extIndexValues,0);
         thisStoreReg = new VirtualReg(new PointerType(thisReg.baseType), currentFunction.takeLabel());
         currentBlock.append(new AllocaInst(thisStoreReg));
         currentBlock.append(new StoreInst(thisReg, thisStoreReg));
@@ -830,25 +856,32 @@ public class IRBuilder implements ASTVisitor {
         node.imm = null;
     }
 
-    private VirtualReg multiAllocate(NewArrayNode node, BaseType bottomBaseType, ArrayList<Oprand> indexValues, int depth) {
+    private VirtualReg multiAllocate(NewArrayNode node, BaseType bottomBaseType, ArrayList<Oprand> sizes, ArrayList<Oprand> indexValues, int depth) {
         // constant optimize
         ArrayList<Oprand> mallocArgs = new ArrayList<>();
-        Oprand indexSize, byteSize, mallocSize;
-        VirtualReg mallocReg, thisReg, iterStoreReg, iterReg, iterExtReg, iterLoadReg, iterPlusReg, condReg, indexPtrReg, elementReg;
+        Oprand indexSize, byteSize, arraySize, mallocSize;
+        VirtualReg mallocReg, sizeReg, arrayReg, thisReg, iterStoreReg, iterReg, iterExtReg, iterLoadReg, iterPlusReg, condReg, indexPtrReg, elementReg;
         BasicBlock rootBlock, condBlock, exeHeadBlock, exeTailBlock, increBlock, exitBlock;
         BaseType depthBaseType = depth == node.sizeofDim.size()-1 ? bottomBaseType : new PointerType(bottomBaseType, node.sizeofDim.size()-1-depth);
         byteSize = new ConstInt(64, depthBaseType.getByteWidth());
         indexSize = indexValues.get(depth);
-        if (indexSize instanceof ConstInt) mallocSize = new ConstInt(64, ((ConstInt) byteSize).intValue*((ConstInt)indexSize).intValue);
+        if (indexSize instanceof ConstInt) arraySize = new ConstInt(64, ((ConstInt) byteSize).intValue*((ConstInt)indexSize).intValue);
         else {
-            mallocSize = new VirtualReg(new IntType(64), currentFunction.takeLabel());
-            currentBlock.append(new BinaryInst((VirtualReg) mallocSize, BinaryInst.BiArOp.mul, indexSize, byteSize));
+            arraySize = new VirtualReg(new IntType(64), currentFunction.takeLabel());
+            currentBlock.append(new BinaryInst((VirtualReg) arraySize, BinaryInst.BiArOp.mul, indexSize, byteSize));
         }
+        mallocSize = new VirtualReg(new IntType(64), currentFunction.takeLabel());
+        currentBlock.append(new BinaryInst((VirtualReg) mallocSize, BinaryInst.BiArOp.add, arraySize, new ConstInt(64, 4)));
         mallocArgs.add(mallocSize);
         mallocReg = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
         currentBlock.append(new CallInst(mallocReg, root.malloc, mallocArgs));
+        sizeReg = new VirtualReg(new PointerType(new IntType(32)), currentFunction.takeLabel());
+        currentBlock.append(new BitCastInst(mallocReg, sizeReg));
+        currentBlock.append(new StoreInst(sizes.get(depth), sizeReg));
+        arrayReg = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
+        currentBlock.append(new GetElementPtrInst(arrayReg, mallocReg, new ConstInt(64, 4)));   // 4-byte to store size
         thisReg = new VirtualReg(new PointerType(depthBaseType), currentFunction.takeLabel());
-        currentBlock.append(new BitCastInst(mallocReg, thisReg));
+        currentBlock.append(new BitCastInst(arrayReg, thisReg));
         if (depth == node.sizeofDim.size()-1)  return thisReg;
         // make loop
         iterStoreReg = new VirtualReg(new PointerType(new IntType(32)), currentFunction.takeLabel());
@@ -866,7 +899,7 @@ public class IRBuilder implements ASTVisitor {
         exeHeadBlock = new BasicBlock(currentBlock, null, currentFunction.takeLabel());
         currentBlock.next = exeHeadBlock;
         currentBlock = currentBlock.next;
-        elementReg = multiAllocate(node, bottomBaseType, indexValues, depth+1);
+        elementReg = multiAllocate(node, bottomBaseType, sizes, indexValues, depth+1);
         exeTailBlock = currentBlock;
         indexPtrReg = new VirtualReg(new PointerType(depthBaseType), currentFunction.takeLabel());
         currentBlock.append(new GetElementPtrInst(indexPtrReg, thisReg, iterReg));
@@ -900,10 +933,9 @@ public class IRBuilder implements ASTVisitor {
             if (callFunction == null) callFunction = root.getFunction(node.name);                 // try global function
             else arguments.add(currentFunction.args.get(0));        // get inner function, add first argument:
         } else callFunction = root.getFunction(node.name);          // get global function
+        if (callFunction == null) throw new irError("[ERROR] function not found", node.pos);
         node.exprList.accept(this);
         arguments.addAll(node.exprList.oprands);
-        if (callFunction == null)
-            throw new irError("[ERROR] function not found", node.pos);
         resultReg = callFunction.isVoid() ? null : new VirtualReg(callFunction.retType, currentFunction.takeLabel());
         currentBlock.append(new CallInst(resultReg, callFunction, arguments));
         node.address = null;
@@ -953,10 +985,14 @@ public class IRBuilder implements ASTVisitor {
     }
 
     @Override public void visit(ExprListNode node) {
+        Oprand exprValue;
         for (ExprNode expr : node.exprs) {
             expr.accept(this);
-            if (expr.isLvalue()) node.oprands.add(expr.address);
-            else node.oprands.add(expr.value);
+            if (expr.isLvalue()) {
+                exprValue = new VirtualReg(expr.getValueType(), currentFunction.takeLabel());
+                currentBlock.append(new LoadInst((VirtualReg) exprValue, expr.address));
+            } else exprValue = expr.value;
+            node.oprands.add(exprValue);
         }
     }
 

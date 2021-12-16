@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string.h>
+using namespace std;
 class test_class{
 public:
     int p = 3;
@@ -13,12 +14,14 @@ int sum_function(int x) {
     else return 1;
 }
 int r;
+string p = "sfdsfd";
+string q = "fsdsd";
 int main() {
-    test_class t, h;
-    t = h;
-    int p = t.p;
-    if (t.p == t.show(3, 4) && sum_function(3) + sum_function(4) != sum_function(7)) r= 3;
-//    bool x = t.p == t.show(3, 4) || sum_function(3) + sum_function(4) != sum_function(7);
-//    int *p = new int[3];
-
+    int *x = new int [3];
+    x[1] = 1;
+    x[2] = 2;
+    int y = x[2];
+    string xx = p;
+    string yy = q;
+    std::cout << y;
 }

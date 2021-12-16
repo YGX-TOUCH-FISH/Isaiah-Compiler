@@ -4,6 +4,8 @@ import LLVMIR.*;
 import LLVMIR.Inst.Inst;
 import LLVMIR.Oprand.VirtualReg;
 import LLVMIR.Type.BaseType;
+import LLVMIR.Type.PointerType;
+import org.antlr.v4.runtime.misc.Pair;
 
 import java.io.PrintStream;
 
@@ -16,10 +18,15 @@ public class IRPrinter implements IRVisitor {
         port.println("@llvm.global_ctors = appending global [1 x { i32, void ()*, i8* }] [{ i32, void ()*, i8* } { i32 65535, void ()* @global_var_init, i8* null }]");
         for (String name : node.staticDataName) {
             BaseType baseType = node.staticData.get(name);
-            port.println("@"+name+" = dso_local global "+baseType.getZeroInit().toString());
+            port.println("@"+name+" = dso_local global "+baseType.toString()+" "+baseType.getZeroInit().toName());
+        }
+        for (Pair<String, VirtualReg> pair : node.strConstants) {
+            String strValue = pair.a;
+            VirtualReg strConstReg = pair.b;
+            BaseType strType = ((PointerType) strConstReg.baseType).referType;
+            port.println(strConstReg.toName()+" = constant "+strType.toString()+" c"+strValue);
         }
         port.print('\n');
-
         for (String name : node.customClassName) {
             node.customClasses.get(name).accept(this);
             port.print('\n');
@@ -28,7 +35,7 @@ public class IRPrinter implements IRVisitor {
             node.customFunctions.get(name).accept(this);
             port.print('\n');
         }
-        for (String name : node.buildInFunctionName) {
+        for (String name : node.builtInFunctionName) {
             Function function = node.getBuiltInFunction(name);
             port.print("declare dso_local "+function.retType.toString()+" @"+name);
             port.print('(');

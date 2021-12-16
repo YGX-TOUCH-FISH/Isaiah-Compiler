@@ -17,7 +17,7 @@ public class ClassType extends BaseType{
 //        memberType = new ArrayList<>();
     }
     @Override public String toString() {
-        return "%class."+className;
+        return "%"+className;
     }
     @Override public Oprand getZeroInit() {
         return new ConstNull();

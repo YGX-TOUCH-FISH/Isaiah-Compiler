@@ -2,5 +2,6 @@
 #include <string.h>
 int r = 1;
 int main() {
-    void *x = malloc(1);
+    char *str = "hello world!";
+    printf("%s", str);
 }
