@@ -494,7 +494,7 @@ declare dso_local i32 @getchar() #2
 define dso_local i32 @getInt() #0 {
   %1 = alloca i32, align 4
   store i32 0, i32* %1, align 4
-  %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.3, i64 0, i64 0), i32* %1)
+  %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str.2, i64 0, i64 0), i32* %1)
   %3 = load i32, i32* %1, align 4
   ret i32 %3
 }

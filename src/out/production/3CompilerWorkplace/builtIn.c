@@ -77,16 +77,6 @@ int getInt() {
     int x = 0;
     scanf("%d", &x);
     return x;
-//    int tag = 0;
-//    while (1) {
-//        x *= 10;
-//        char p = getchar();
-//        if (p < '0' || p > '9') {
-//            if (p == '-' && !tag) tag = 1;
-//            else return x;
-//        } else x += p-'0';
-//    }
-//    return tag ? -x : x;
 }
 
 char *toString(int x) {

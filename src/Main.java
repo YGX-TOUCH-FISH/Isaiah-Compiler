@@ -16,10 +16,12 @@ import java.io.*;
 public class Main {
     public static void main(String[] args) throws Exception{
         String DataInFile = "test.mx";
+        String LLVMOutFile = "Isaiah.ll";
         InputStream input = new FileInputStream(DataInFile);
-//        InputStream input = System.in;
+        PrintStream output;
+        boolean toConsole = false;
         try {
-//            int value = Integer.parseInt("-2147483648");
+            output = toConsole ? System.out : new PrintStream(LLVMOutFile);
             RootNode ASTRoot;
             GlobalScope gScope = new GlobalScope(null);
             IsaiahLexer lexer = new IsaiahLexer(CharStreams.fromStream(input));
@@ -29,20 +31,17 @@ public class Main {
             parser.removeErrorListeners();
             parser.addErrorListener(new IsaiahErrorListener());
             ParseTree parseTreeRoot = parser.program();
-            // Semantic Part.
+
             ASTBuilder astBuilder = new ASTBuilder(gScope);
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
             new SemanticChecker(gScope).visit(ASTRoot);
-//            System.out.println("Semantic Check passed.");
+            System.out.println("[1] Semantic check passed.");
             // IR generate & Print
             IRBuilder irBuilder = new IRBuilder();
             ASTRoot.accept(irBuilder);
             IRModule Module = irBuilder.BuiltRoot();
-            new IRPrinter(System.out).visit(Module);
-
-//            ASTRoot.accept(irBuilder);
-//            IRRoot irRoot = irBuilder.BuiltRoot();;
-
+            new IRPrinter(output).visit(Module);
+            System.out.println("[2] LLVM code generated over.");
 
         } catch (error er) {
             System.err.println(er.toString());
