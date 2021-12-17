@@ -32,6 +32,7 @@ public class BinaryExprNode extends ExprNode{
         rhs = _rhs;
     }
     @Override public void accept(ASTVisitor visitor) {visitor.visit(this);}
+
     public IcmpInst.CompareType getCmpType() {
         switch (op) {
             case LT: return IcmpInst.CompareType.slt;

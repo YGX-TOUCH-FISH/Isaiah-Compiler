@@ -74,9 +74,19 @@ char *getString() {
 }
 
 int getInt() {
-    int x = 0;
-    scanf("%d", &x);
-    return x;
+//    int x = 0;
+//    scanf("%d", &x);
+//    return x;
+    char *p = (char *) malloc(20);
+    int i = 0;
+    char x;
+    while (1) {
+        x = getchar();
+        if (i != 0 && (x < '0' || x > '9')) break;
+        *(p+i) = x;
+        i++;
+    }
+    return __built_in_string_parseInt(p);
 }
 
 char *toString(int x) {

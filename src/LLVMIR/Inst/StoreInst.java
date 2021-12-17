@@ -1,6 +1,9 @@
 package LLVMIR.Inst;
 
 import LLVMIR.Oprand.Oprand;
+import LLVMIR.Oprand.VirtualReg;
+import LLVMIR.Type.BaseType;
+import LLVMIR.Type.PointerType;
 
 public class StoreInst extends Inst{
     public Oprand storeValue, storeAddr;
@@ -9,6 +12,7 @@ public class StoreInst extends Inst{
         storeAddr  = _storeAddr;
     }
     @Override public String toString() {
-        return "store "+storeValue.toString()+", "+storeAddr.toString();
+        BaseType ptrType = ((PointerType)((VirtualReg) storeAddr).baseType).referType;
+        return "store "+ptrType.toString()+" "+storeValue.toName()+", "+storeAddr.toString();
     }
 }

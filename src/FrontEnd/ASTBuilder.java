@@ -150,7 +150,7 @@ public class ASTBuilder extends IsaiahBaseVisitor<ASTNode> {
         else if (ctx.Less() != null)op = BinaryExprNode.BinaryOp.LT;
         else if (ctx.Greater() != null) op = BinaryExprNode.BinaryOp.GT;
         else if (ctx.LessEqual() != null) op = BinaryExprNode.BinaryOp.LEQ;
-        else if (ctx.GreaterEqual() != null) op = BinaryExprNode.BinaryOp.GT;
+        else if (ctx.GreaterEqual() != null) op = BinaryExprNode.BinaryOp.GEQ;
         else if (ctx.Equal() != null) op = BinaryExprNode.BinaryOp.EQ;
         else if (ctx.NotEqual() != null) op = BinaryExprNode.BinaryOp.NEQ;
         else if (ctx.And() != null) op = BinaryExprNode.BinaryOp.AND;

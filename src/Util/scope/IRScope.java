@@ -31,16 +31,16 @@ public class IRScope {
     public void defineVar(String name, VirtualReg reg) {
         varsReg.put(name, reg);
     }
-    public VirtualReg getVarReg(String name, boolean lookUpon) {
-        if (varsReg.containsKey(name)) return varsReg.get(name);
-        else if (lookUpon && parent != null) return parent.getVarReg(name, true);
-        else return null;
-    }
+//    public VirtualReg getVarReg(String name, boolean lookUpon) {
+//        if (varsReg.containsKey(name)) return varsReg.get(name);
+//        else if (lookUpon && parent != null) return parent.getVarReg(name, true);
+//        else return null;
+//    }
     public VirtualReg getVarReg(String name, boolean lookUpon, BasicBlock currentBlock, Function currentFunction) {
         if (classInfo != null) {
             if (classInfo.contains(name)) {
                 VirtualReg thisReg = new VirtualReg(new PointerType(new ClassType(classInfo.className)), currentFunction.takeLabel());
-                VirtualReg thisStoreReg = getVarReg("this", true);
+                VirtualReg thisStoreReg = getVarReg("this", true, currentBlock, currentFunction);
                 currentBlock.append(new LoadInst(thisReg, thisStoreReg));
                 VirtualReg ptrReg = new VirtualReg(new PointerType(classInfo.getBaseType(name)), currentFunction.takeLabel());
                 ArrayList<Oprand> offsets = new ArrayList<>();
@@ -49,6 +49,7 @@ public class IRScope {
                 currentBlock.append(new GetElementPtrInst(ptrReg, thisReg, offsets));    // get from 'this'
                 return ptrReg;
             }
+            else if (varsReg.containsKey(name)) return varsReg.get(name);
             else if (lookUpon && parent != null) return getVarReg(name, true, currentBlock, currentFunction);
             else return null;
         }

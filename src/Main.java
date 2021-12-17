@@ -15,7 +15,7 @@ import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-        String DataInFile = "test.mx";
+        String DataInFile = "testcases/codegen/t24.mx";
         String LLVMOutFile = "Isaiah.ll";
         InputStream input = new FileInputStream(DataInFile);
         PrintStream output;

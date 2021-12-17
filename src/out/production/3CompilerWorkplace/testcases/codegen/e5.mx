@@ -23,7 +23,7 @@ int t,l,i;
 string s;
 int main(){
 	t = getInt();
-    for(i=0;i<t;++i){
+    for(i=0;i<3;++i){
         s = getString();
 		l = s.length();
 		if(l > 10)

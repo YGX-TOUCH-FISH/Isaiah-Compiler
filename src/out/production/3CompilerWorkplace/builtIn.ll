@@ -492,14 +492,54 @@ declare dso_local i32 @getchar() #2
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local i32 @getInt() #0 {
-  %1 = alloca i32, align 4
-  store i32 0, i32* %1, align 4
-  %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str.2, i64 0, i64 0), i32* %1)
-  %3 = load i32, i32* %1, align 4
-  ret i32 %3
-}
+  %1 = alloca i8*, align 8
+  %2 = alloca i32, align 4
+  %3 = alloca i8, align 1
+  %4 = call noalias i8* @malloc(i64 20) #3
+  store i8* %4, i8** %1, align 8
+  store i32 0, i32* %2, align 4
+  br label %5
 
-declare dso_local i32 @__isoc99_scanf(i8*, ...) #2
+5:                                                ; preds = %0, %19
+  %6 = call i32 @getchar()
+  %7 = trunc i32 %6 to i8
+  store i8 %7, i8* %3, align 1
+  %8 = load i32, i32* %2, align 4
+  %9 = icmp ne i32 %8, 0
+  br i1 %9, label %10, label %19
+
+10:                                               ; preds = %5
+  %11 = load i8, i8* %3, align 1
+  %12 = sext i8 %11 to i32
+  %13 = icmp slt i32 %12, 48
+  br i1 %13, label %18, label %14
+
+14:                                               ; preds = %10
+  %15 = load i8, i8* %3, align 1
+  %16 = sext i8 %15 to i32
+  %17 = icmp sgt i32 %16, 57
+  br i1 %17, label %18, label %19
+
+18:                                               ; preds = %14, %10
+  br label %27
+
+19:                                               ; preds = %14, %5
+  %20 = load i8, i8* %3, align 1
+  %21 = load i8*, i8** %1, align 8
+  %22 = load i32, i32* %2, align 4
+  %23 = sext i32 %22 to i64
+  %24 = getelementptr inbounds i8, i8* %21, i64 %23
+  store i8 %20, i8* %24, align 1
+  %25 = load i32, i32* %2, align 4
+  %26 = add nsw i32 %25, 1
+  store i32 %26, i32* %2, align 4
+  br label %5
+
+27:                                               ; preds = %18
+  %28 = load i8*, i8** %1, align 8
+  %29 = call i32 @__built_in_string_parseInt(i8* %28)
+  ret i32 %29
+}
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local i8* @toString(i32 %0) #0 {
