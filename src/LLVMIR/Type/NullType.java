@@ -1,5 +1,6 @@
 package LLVMIR.Type;
 
+import LLVMIR.Oprand.ConstNull;
 import LLVMIR.Oprand.Oprand;
 import Util.error.irError;
 import Util.position;
@@ -13,7 +14,7 @@ public class NullType extends BaseType{
     }
 
     @Override public Oprand getZeroInit() {
-        return null;
+        return new ConstNull();
     }
 
     @Override

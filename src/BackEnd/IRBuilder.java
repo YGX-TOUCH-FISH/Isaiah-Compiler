@@ -62,7 +62,7 @@ public class IRBuilder implements ASTVisitor {
         currentBlock = currentFunction.getEntry();
         for (DeclrNode declare : node.declrs)
             if (declare instanceof AssignDeclrNode || declare instanceof ListDeclrNode) declare.accept(this);
-        currentBlock.append(new RetInst(null));
+        currentBlock.append(new RetInst());
         currentBlock = null;
         currentFunction = null;
         root.addCustomFunction(globalVarInit);
@@ -87,7 +87,7 @@ public class IRBuilder implements ASTVisitor {
                 }
                 currentScope.classInfo = root.getClassInfo(currentClass.className);
                 if (constructor != null) constructor.accept(this);
-                if (!currentBlock.hasTerminal) currentBlock.append(new RetInst(null));
+                if (!currentBlock.hasTerminal) currentBlock.append(new RetInst());
                 root.addCustomFunction(currentFunction);
 
                 currentScope    = currentScope.getParent();
@@ -130,7 +130,7 @@ public class IRBuilder implements ASTVisitor {
             if (currentClass != null) currentScope.classInfo = root.getClassInfo(currentClass.className);
             node.paraList.accept(this);
             node.block.accept(this);
-            if (!currentBlock.hasTerminal) currentBlock.append(new RetInst(currentFunction.retType.getZeroInit())); // add efficient ret
+            if (!currentBlock.hasTerminal) currentBlock.append(new RetInst(currentFunction.retType.getZeroInit(), currentFunction.retType)); // add efficient ret
             currentBlock    = null;
             currentFunction = null;
             currentScope    = currentScope.getParent();
@@ -243,7 +243,6 @@ public class IRBuilder implements ASTVisitor {
     @Override public void visit(CondStNode node) {
         node.condition.accept(this);
         BasicBlock rootBlock, ifHeadBlock, elseHeadBlock, ifTailBlock, elseTailBlock, exitBlock;
-        VirtualReg condReg = new VirtualReg(new IntType(1), currentFunction.takeLabel());
         Oprand left, right;
         if (node.condition.isLvalue()) {
             left = new VirtualReg(node.condition.getValueType(), currentFunction.takeLabel());
@@ -264,6 +263,7 @@ public class IRBuilder implements ASTVisitor {
             }
             return;
         }
+        VirtualReg condReg = new VirtualReg(new IntType(1), currentFunction.takeLabel());
         currentBlock.append(new IcmpInst(condReg, IcmpInst.CompareType.ne, left, right));
         ifHeadBlock   = new BasicBlock(currentBlock, null, currentFunction.takeLabel());
         rootBlock    = currentBlock;
@@ -397,15 +397,15 @@ public class IRBuilder implements ASTVisitor {
     }
 
     @Override public void visit(RetStNode node) {
-        Oprand retValue = null; // void-return
+        Oprand retValue; // void-return
         if (node.retExpr != null) {
             node.retExpr.accept(this);
             if (node.retExpr.isLvalue()) {
                 retValue = new VirtualReg(node.retExpr.getValueType(), currentFunction.takeLabel());
                 currentBlock.append(new LoadInst((VirtualReg) retValue, node.retExpr.address));
             } else retValue = node.retExpr.value;
-        }
-        currentBlock.append(new RetInst(retValue));
+            currentBlock.append(new RetInst(retValue, currentFunction.retType));
+        } else currentBlock.append(new RetInst());
         currentBlock.hasTerminal = true;
     }
 
