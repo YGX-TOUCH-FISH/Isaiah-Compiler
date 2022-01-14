@@ -1,4 +1,5 @@
 import AST.RootNode;
+import BackEnd.AsmPrinter;
 import BackEnd.IRBuilder;
 import BackEnd.IRPrinter;
 import FrontEnd.*;
@@ -15,13 +16,15 @@ import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-        String DataInFile = "testcases/codegen/t30.mx";
+        String DataInFile = "test.mx";
         String LLVMOutFile = "Isaiah.ll";
+        String ASMOutFile = "Isaiah.s";
         InputStream input = new FileInputStream(DataInFile);
-        PrintStream output;
+        PrintStream llvmOutput, asmOutput;
         boolean toConsole = false;
         try {
-            output = toConsole ? System.out : new PrintStream(LLVMOutFile);
+            llvmOutput = toConsole ? System.out : new PrintStream(LLVMOutFile);
+            asmOutput  = toConsole ? System.out : new PrintStream(ASMOutFile);
             RootNode ASTRoot;
             GlobalScope gScope = new GlobalScope(null);
             IsaiahLexer lexer = new IsaiahLexer(CharStreams.fromStream(input));
@@ -39,10 +42,14 @@ public class Main {
             // IR generate & Print
             IRBuilder irBuilder = new IRBuilder();
             ASTRoot.accept(irBuilder);
-            IRModule Module = irBuilder.BuiltRoot();
-            new IRPrinter(output).visit(Module);
+            IRModule irModule = irBuilder.BuiltRoot();
+            new IRPrinter(llvmOutput).visit(irModule);
             System.out.println("[2] LLVM code generated over.");
 
+            // ASM generate & Print
+
+//            new AsmPrinter(asmOutput).visit();
+            System.out.println("[3] Assemble code generated over.");
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();

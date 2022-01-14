@@ -1,5 +1,5 @@
 	.text
-	.file	"test.c"
+	.file	"Isaiah.ll"
 	.globl	main                    # -- Begin function main
 	.p2align	2
 	.type	main,@function
@@ -10,12 +10,9 @@ main:                                   # @main
 	.cfi_def_cfa_offset 16
 	sw	ra, 12(sp)
 	.cfi_offset ra, -4
-	lui	a0, %hi(.L.str)
-	addi	a1, a0, %lo(.L.str)
-	sw	a1, 8(sp)
-	lui	a0, %hi(.L.str.1)
-	addi	a0, a0, %lo(.L.str.1)
-	call	printf
+	lui	a0, %hi(.str.0)
+	addi	a0, a0, %lo(.str.0)
+	call	print
 	mv	a0, zero
 	lw	ra, 12(sp)
 	addi	sp, sp, 16
@@ -24,24 +21,25 @@ main:                                   # @main
 	.size	main, .Lfunc_end0-main
 	.cfi_endproc
                                         # -- End function
-	.type	r,@object               # @r
-	.section	.sdata,"aw",@progbits
-	.globl	r
+	.globl	global_var_init         # -- Begin function global_var_init
 	.p2align	2
-r:
-	.word	1                       # 0x1
-	.size	r, 4
+	.type	global_var_init,@function
+global_var_init:                        # @global_var_init
+	.cfi_startproc
+# %bb.0:
+	ret
+.Lfunc_end1:
+	.size	global_var_init, .Lfunc_end1-global_var_init
+	.cfi_endproc
+                                        # -- End function
+	.section	.init_array,"aw",@init_array
+	.p2align	2
+	.word	global_var_init
+	.type	.str.0,@object          # @.str.0
+	.section	.rodata,"a",@progbits
+	.globl	.str.0
+.str.0:
+	.asciz	"hello world"
+	.size	.str.0, 12
 
-	.type	.L.str,@object          # @.str
-	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str:
-	.asciz	"hello world!"
-	.size	.L.str, 13
-
-	.type	.L.str.1,@object        # @.str.1
-.L.str.1:
-	.asciz	"%s"
-	.size	.L.str.1, 3
-
-	.ident	"clang version 10.0.0-4ubuntu1 "
 	.section	".note.GNU-stack","",@progbits

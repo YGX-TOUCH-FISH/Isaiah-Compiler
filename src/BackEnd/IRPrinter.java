@@ -8,6 +8,7 @@ import LLVMIR.Type.PointerType;
 import org.antlr.v4.runtime.misc.Pair;
 
 import java.io.*;
+import java.util.Objects;
 
 public class IRPrinter implements IRVisitor {
     private final PrintStream printPort;
@@ -17,29 +18,10 @@ public class IRPrinter implements IRVisitor {
 
 
     @Override public void visit(IRModule node) {
-        printPort.println("@llvm.global_ctors = appending global [1 x { i32, void ()*, i8* }] [{ i32, void ()*, i8* } { i32 65535, void ()* @global_var_init, i8* null }]");
-        for (String name : node.staticDataName) {
-            BaseType baseType = node.staticData.get(name);
-            printPort.println("@"+name+" = dso_local global "+baseType.toString()+" "+baseType.getZeroInit().toName());
-        }
-        for (Pair<String, VirtualReg> pair : node.strConstants) {
-            String strValue = pair.a;
-            VirtualReg strConstReg = pair.b;
-            BaseType strType = ((PointerType) strConstReg.baseType).referType;
-            printPort.println(strConstReg.toName()+" = constant "+strType.toString()+" c"+strValue);
-        }
-        printPort.print('\n');
-        for (String name : node.customClassName) {
-            node.customClasses.get(name).accept(this);
-            printPort.print('\n');
-        }
-        for (String name : node.customFunctionName) {
-            node.customFunctions.get(name).accept(this);
-            printPort.print('\n');
-        }
+//        printPort.println("@llvm.global_ctors = appending global [1 x { i32, void ()*, i8* }] [{ i32, void ()*, i8* } { i32 65535, void ()* @global_var_init, i8* null }]");
         for (String name : node.builtInFunctionName) {
             Function function = node.getBuiltInFunction(name);
-            printPort.print("declare dso_local "+function.retType.toString()+" @"+name);
+            printPort.print("declare "+function.retType.toString()+" @"+name);
             printPort.print('(');
             for (int i = 0 ; i < function.args.size() ; i++) {
                 printPort.print(function.args.get(i).baseType.toString());
@@ -47,10 +29,31 @@ public class IRPrinter implements IRVisitor {
             }
             printPort.println(')');
         }
+        printPort.println();
+        for (String name : node.staticDataName) {
+            BaseType baseType = node.staticData.get(name);
+            printPort.println("@"+name+" = global "+baseType.toString()+" "+baseType.getZeroInit().toName());
+        }
+        for (Pair<String, VirtualReg> pair : node.strConstants) {
+            String strValue = pair.a;
+            VirtualReg strConstReg = pair.b;
+            BaseType strType = ((PointerType) strConstReg.baseType).referType;
+            printPort.println(strConstReg.toName()+" = constant "+strType.toString()+" c"+strValue);
+        }
+        printPort.println();
+        for (String name : node.customClassName) {
+            node.customClasses.get(name).accept(this);
+            printPort.println();
+        }
+        for (String name : node.customFunctionName) {
+            node.customFunctions.get(name).accept(this);
+            printPort.println();
+        }
+
     }
 
     @Override public void visit(Function node) {
-        printPort.print("define dso_local "+node.retType.toString()+" @"+node.name);
+        printPort.print("define "+node.retType.toString()+" @"+node.name);
         int argsCounter = 0;
         printPort.print('(');
         for (VirtualReg arg : node.args) {
@@ -61,6 +64,7 @@ public class IRPrinter implements IRVisitor {
         printPort.print(')');
 
         printPort.println('{');
+        if (Objects.equals(node.name, "main")) printPort.println("\tcall void @global_var_init()");
         BasicBlock curBlock = node.entryBlock;
         while (curBlock != null) {
             if (curBlock != node.entryBlock) printPort.println(curBlock.label+":");

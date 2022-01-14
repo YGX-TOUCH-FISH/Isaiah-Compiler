@@ -62,31 +62,34 @@ void printInt(int x) {printf("%d", x);}
 void printlnInt(int x) {printf("%d\n", x);}
 
 char *getString() {
-    char *p = (char *) malloc(1000);
-    int i = 0;
-    char x;
-    while(1) {
-        x = getchar();
-        if (x == '\n') return p;
-        *(p+i) = x;
-        i++;
-    }
+//    char *p = (char *) malloc(1000);
+//    int i = 0;
+//    char x;
+//    while(1) {
+//        x = getchar();
+//        if (x == '\n') return p;
+//        *(p+i) = x;
+//        i++;
+//    }
+    char* ret = malloc(1024);
+    scanf("%s", ret);
+    return ret;
 }
 
 int getInt() {
-//    int x = 0;
-//    scanf("%d", &x);
-//    return x;
-    char *p = (char *) malloc(20);
-    int i = 0;
-    char x;
-    while (1) {
-        x = getchar();
-        if (i != 0 && (x < '0' || x > '9')) break;
-        *(p+i) = x;
-        i++;
-    }
-    return __built_in_string_parseInt(p);
+    int ret;
+    scanf("%d", &ret);
+    return ret;
+//    char *p = (char *) malloc(20);
+//    int i = 0;
+//    char x;
+//    while (1) {
+//        x = getchar();
+//        if (i != 0 && (x < '0' || x > '9')) break;
+//        *(p+i) = x;
+//        i++;
+//    }
+//    return __built_in_string_parseInt(p);
 }
 
 char *toString(int x) {

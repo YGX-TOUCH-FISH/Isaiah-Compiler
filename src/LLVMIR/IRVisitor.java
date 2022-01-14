@@ -8,9 +8,8 @@ import LLVMIR.Oprand.VirtualReg;
 import LLVMIR.Type.*;
 
 public interface IRVisitor {
-    public void visit(IRModule node);
-    public void visit(Function node);
-    public void visit(BasicBlock node);
-    public void visit(ClassInfo node);
-
+    void visit(IRModule node);
+    void visit(Function node);
+    void visit(BasicBlock node);
+    void visit(ClassInfo node);
 }

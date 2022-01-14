@@ -45,7 +45,6 @@ public class IRModule {
         // load built-in functions.
         functionBuild();
     }
-
     private void functionBuild() {
 
         builtInFunctionName.add("malloc");

@@ -1,7 +1,8 @@
 #include <stdio.h>
-#include <string.h>
-int r = 1;
-int main() {
-    char *str = "hello world!";
-    printf("%s", str);
+int a;
+int b;
+int main(){
+   a =1;
+   b = 2*a;
+   return a+3;
 }

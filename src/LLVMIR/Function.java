@@ -28,6 +28,7 @@ public class Function {
         return entryBlock;
     }
     public void accept(IRVisitor visitor) {visitor.visit(this);}
+    public void accept(Pass visitor) {visitor.visit(this);}
     public void appendArgument(BaseType baseType) { args.add(new VirtualReg(baseType, takeLabel()));}
     public int takeLabel() {
         return regCounter++;
