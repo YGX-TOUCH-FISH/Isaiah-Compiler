@@ -1,106 +1,91 @@
 	.text
-	.file	"Isaiah.ll"
-	.globl	main                    # -- Begin function main
+	.file Isaiah.ll
+	.globl	main
 	.p2align	2
 	.type	main,@function
-main:                                   # @main
-	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -16
-	.cfi_def_cfa_offset 16
-	sw	ra, 12(sp)
-	.cfi_offset ra, -4
+main:
+	addi	sp, sp, -64
+	sw	ra, 60(sp)
+	sw	s0, 56(sp)
+	sw	s1, 52(sp)
+	sw	s2, 48(sp)
+	sw	s3, 44(sp)
+	sw	s4, 40(sp)
+	sw	s5, 36(sp)
+	sw	s6, 32(sp)
+	sw	s7, 28(sp)
+	sw	s8, 24(sp)
+	sw	s9, 20(sp)
+	sw	s10, 16(sp)
+	sw	s11, 12(sp)
 	call	global_var_init
-	mv	a0, zero
-	lw	ra, 12(sp)
-	addi	sp, sp, 16
+	la	s0 .str.0
+	li	s1 8
+	add	s2, sp,s1
+	sw	s0, 0(s2)
+	li	s0 8
+	add	s1, sp,s0
+	lw	a0, 0(s1)
+	call	print
+	li	a0 0
+	lw	s0, 56(sp)
+	lw	s1, 52(sp)
+	lw	s2, 48(sp)
+	lw	s3, 44(sp)
+	lw	s4, 40(sp)
+	lw	s5, 36(sp)
+	lw	s6, 32(sp)
+	lw	s7, 28(sp)
+	lw	s8, 24(sp)
+	lw	s9, 20(sp)
+	lw	s10, 16(sp)
+	lw	s11, 12(sp)
+	lw	ra, 60(sp)
+	addi	sp, sp, 64
 	ret
-.Lfunc_end0:
-	.size	main, .Lfunc_end0-main
-	.cfi_endproc
-                                        # -- End function
-	.globl	global_var_init         # -- Begin function global_var_init
+
+	.globl	global_var_init
 	.p2align	2
 	.type	global_var_init,@function
-global_var_init:                        # @global_var_init
-	.cfi_startproc
-# %bb.0:
-	lui	a0, %hi(.str.0)
-	addi	a0, a0, %lo(.str.0)
-	lui	a1, %hi(x)
-	sw	a0, %lo(x)(a1)
-	lui	a0, %hi(.str.1)
-	addi	a0, a0, %lo(.str.1)
-	lui	a1, %hi(y)
-	sw	a0, %lo(y)(a1)
-	lui	a0, %hi(m)
-	sw	zero, %lo(m)(a0)
+global_var_init:
+	addi	sp, sp, -64
+	sw	ra, 60(sp)
+	sw	s0, 56(sp)
+	sw	s1, 52(sp)
+	sw	s2, 48(sp)
+	sw	s3, 44(sp)
+	sw	s4, 40(sp)
+	sw	s5, 36(sp)
+	sw	s6, 32(sp)
+	sw	s7, 28(sp)
+	sw	s8, 24(sp)
+	sw	s9, 20(sp)
+	sw	s10, 16(sp)
+	sw	s11, 12(sp)
+	lw	s0, 56(sp)
+	lw	s1, 52(sp)
+	lw	s2, 48(sp)
+	lw	s3, 44(sp)
+	lw	s4, 40(sp)
+	lw	s5, 36(sp)
+	lw	s6, 32(sp)
+	lw	s7, 28(sp)
+	lw	s8, 24(sp)
+	lw	s9, 20(sp)
+	lw	s10, 16(sp)
+	lw	s11, 12(sp)
+	lw	ra, 60(sp)
+	addi	sp, sp, 64
 	ret
-.Lfunc_end1:
-	.size	global_var_init, .Lfunc_end1-global_var_init
-	.cfi_endproc
-                                        # -- End function
-	.globl	a                       # -- Begin function a
-	.p2align	2
-	.type	a,@function
-a:                                      # @a
-	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -16
-	.cfi_def_cfa_offset 16
-	sw	a0, 12(sp)
-	addi	sp, sp, 16
-	ret
-.Lfunc_end2:
-	.size	a, .Lfunc_end2-a
-	.cfi_endproc
-                                        # -- End function
-	.type	x,@object               # @x
-	.section	.sbss,"aw",@nobits
-	.globl	x
-	.p2align	2
-x:
-	.word	0
-	.size	x, 4
 
-	.type	y,@object               # @y
-	.globl	y
-	.p2align	2
-y:
-	.word	0
-	.size	y, 4
 
-	.type	m,@object               # @m
-	.globl	m
-	.p2align	2
-m:
-	.word	0                       # 0x0
-	.size	m, 4
+	.section	.bss,"aw",@nobits
 
-	.type	test,@object            # @test
-	.globl	test
-	.p2align	2
-test:
-	.word	0
-	.size	test, 4
-
-	.type	pp,@object              # @pp
-	.globl	pp
-pp:
-	.byte	0                       # 0x0
-	.size	pp, 1
-
-	.type	.str.0,@object          # @.str.0
 	.section	.rodata,"a",@progbits
+	.type	.str.0,@object
 	.globl	.str.0
-.str.0:
-	.zero	1
-	.size	.str.0, 1
-
-	.type	.str.1,@object          # @.str.1
-	.globl	.str.1
-.str.1:
-	.asciz	"justice"
-	.size	.str.1, 8
+.str.0: 
+	.asciz	"Hello, Wenrui Han!\0A\00"
+	.size	.str.0, 27
 
 	.section	".note.GNU-stack","",@progbits

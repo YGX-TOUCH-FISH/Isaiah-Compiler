@@ -16,7 +16,7 @@ public class AsmFunction {
     public AsmFunction(String _name) {
         name = _name;
         labelCounter = 0;
-        entryBlock = new AsmBlock(null, null, takeLabel());
+        entryBlock = new AsmBlock(null, null, _name, takeLabel());
     }
 
     public AsmBlock getEntry() {return entryBlock;}

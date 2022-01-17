@@ -48,11 +48,11 @@ public class Main {
             new IRPrinter(llvmOutput).visit(irModule);
             System.out.println("[2] LLVM code generated over.");
             // ASM generate & Print
-//            AsmBuilder asmBuilder = new AsmBuilder();
-//            irModule.accept(asmBuilder);
-//            AsmModule asmModule = asmBuilder.BuiltRoot();
-//            new AsmPrinter(asmOutput).visit(asmModule);
-//            System.out.println("[3] Assemble code generated over.");
+            AsmBuilder asmBuilder = new AsmBuilder();
+            irModule.accept(asmBuilder);
+            AsmModule asmModule = asmBuilder.BuiltRoot();
+            new AsmPrinter(asmOutput).visit(asmModule);
+            System.out.println("[3] Assemble code generated over.");
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();

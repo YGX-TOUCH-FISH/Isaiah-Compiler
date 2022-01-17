@@ -59,26 +59,28 @@ public class AsmBuilder implements Pass {
 
     @Override public void visit(IRModule node) {
         root.bssSection.addAll(node.staticDataName);
-
         for (Pair<String, VirtualReg> pair : node.strConstants)
             root.rodataSection.add(new Pair<>(pair.b.name, pair.a));
-
         for (String name : node.customFunctionName)
             node.customFunctions.get(name).accept(this);
     }
 
     @Override public void visit(Function node) {
         currentFunction = new AsmFunction(node.name);
-        currentBlock  = currentFunction.getEntry();
+        currentBlock = null;
         regAddress = new LinkedHashMap<>();
-        frameAllocate(node);
         irBlock = node.entryBlock;
         while (irBlock != null) {
+            if (currentBlock != null) {
+                currentBlock.next = new AsmBlock(currentBlock, null, node.name, currentFunction.takeLabel());
+                currentBlock = currentBlock.next;
+            } else {
+                currentBlock = currentFunction.getEntry();
+                frameAllocate(node);
+            }
             irBlock.accept(this);
             irBlock = irBlock.next;
             blockMap.put(currentBlock.label, currentBlock);
-            currentBlock.next = new AsmBlock(currentBlock, null, currentFunction.takeLabel());
-            currentBlock = currentBlock.next;
         }
         root.textSection.add(new Pair<>(node.name, currentFunction));
         currentBlock = null;
@@ -232,8 +234,8 @@ public class AsmBuilder implements Pass {
         VirtualReg alterValue = (VirtualReg) node.paths.get(1).a;
         AsmBlock rootBlock  = blockMap.get(rootLabel);
         AsmBlock alterBlock = blockMap.get(alterLabel);
-        if (!(rootBlock.tailInst instanceof Branch)) throw new RuntimeException("branch lost.");
-        if (!(alterBlock.tailInst instanceof Jump))  throw new RuntimeException("jump lost.");
+        if (!(rootBlock.tailInst instanceof Branch)) throw new RuntimeException("root-block: branch lost.");
+        if (!(alterBlock.tailInst instanceof Jump))  throw new RuntimeException("alter-block: jump lost.");
         ((PhyReg)rootBlock.tailInst.rs1).occupy();
         PhyReg result = getCalleeSaveReg();
         PhyReg offset = getCalleeSaveReg();
@@ -280,11 +282,11 @@ public class AsmBuilder implements Pass {
 
     private void frameAllocate(Function node) {
         int blockNumber = 0;
-        irBlock = node.entryBlock;
-        while (irBlock != null) {
-            labelMap.put(irBlock.label, blockNumber);
+        BasicBlock BB = node.entryBlock;
+        while (BB != null) {
+            labelMap.put(BB.label, blockNumber);
             blockNumber++;
-            irBlock = irBlock.next;
+            BB = BB.next;
         }
         // block-tagged
 
@@ -350,7 +352,7 @@ public class AsmBuilder implements Pass {
 
     private void getPReg(PhyReg p, Oprand o) {
         if (o instanceof VirtualReg) getPReg(p, (VirtualReg) o);
-        else if (o instanceof ConstNull) getPReg(p, (ConstNull) o);
+        else if (o instanceof ConstNull) getPReg(p);
         else getPReg(p, (ConstInt) o);
     }
     private void getPReg(PhyReg p, VirtualReg v) {
@@ -368,7 +370,7 @@ public class AsmBuilder implements Pass {
     private void getPReg(PhyReg p, ConstInt i) {
         currentBlock.append(new LoadImm(p, i.getIntValue()));
     }
-    private void getPReg(PhyReg p, ConstNull n) {
+    private void getPReg(PhyReg p) {
         currentBlock.append(new Move(p, zero()));
     }
     private void savePReg(PhyReg p, VirtualReg v) {

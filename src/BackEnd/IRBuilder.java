@@ -33,6 +33,7 @@ public class IRBuilder implements ASTVisitor {
     BasicBlock currentBlock     = null;
     ClassType  currentClass     = null;
     boolean    preCheck         = false;
+    Function globalVarInit;
     Stack<ArrayList<BasicBlock>> loopBreakStack  = new Stack<>();
     Stack<ArrayList<BasicBlock>> loopContinStack = new Stack<>();
 
@@ -57,7 +58,7 @@ public class IRBuilder implements ASTVisitor {
                 currentClass = null;
             }
         }
-        Function globalVarInit = new Function("global_var_init", new VoidType());
+        globalVarInit = new Function("global_var_init", new VoidType());
         currentFunction = globalVarInit;
         currentBlock = currentFunction.getEntry();
         for (DeclrNode declare : node.declrs)
@@ -128,6 +129,7 @@ public class IRBuilder implements ASTVisitor {
             currentFunction = root.getCustomFunction(name);
             currentBlock    = currentFunction.getEntry();   // build entry block
             if (currentClass != null) currentScope.classInfo = root.getClassInfo(currentClass.className);
+            if (Objects.equals(node.name, "main")) currentBlock.append(new CallInst(null, globalVarInit, null));
             node.paraList.accept(this);
             node.block.accept(this);
             if (!currentBlock.hasTerminal) currentBlock.append(new RetInst(currentFunction.retType.getZeroInit(), currentFunction.retType)); // add efficient ret

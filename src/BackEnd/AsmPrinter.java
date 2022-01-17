@@ -35,6 +35,7 @@ public class AsmPrinter implements AsmVisitor {
         printPort.println(node.name+":");
         AsmBlock block = node.getEntry();
         while (block != null) {
+            if (block != node.entryBlock) printPort.println(block.getLabel());
             block.accept(this);
             block = block.next;
         }
@@ -43,7 +44,6 @@ public class AsmPrinter implements AsmVisitor {
 
     @Override public void visit(AsmBlock node) {
         Inst inst = node.headInst;
-//        printPort.println("# %bb."+node.label);
         while (inst != null) {
             printPort.println("\t"+inst);
             inst = inst.next;
@@ -51,7 +51,6 @@ public class AsmPrinter implements AsmVisitor {
     }
     private void printBss(AsmModule node) {
         printPort.println("\t.section\t.bss,\"aw\",@nobits");
-//        for (Pair<String, BaseType>)
         for (String bssName : node.bssSection) {
             printPort.println("\t.type\t"+bssName+",@object");
             printPort.println("\t.globl\t"+bssName);

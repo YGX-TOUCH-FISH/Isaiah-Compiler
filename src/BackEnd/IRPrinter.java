@@ -1,6 +1,7 @@
 package BackEnd;
 
 import LLVMIR.*;
+import LLVMIR.Inst.CallInst;
 import LLVMIR.Inst.Inst;
 import LLVMIR.Oprand.VirtualReg;
 import LLVMIR.Type.BaseType;
@@ -64,7 +65,6 @@ public class IRPrinter implements IRVisitor {
         printPort.print(')');
 
         printPort.println('{');
-        if (Objects.equals(node.name, "main")) printPort.println("\tcall void @global_var_init()");
         BasicBlock curBlock = node.entryBlock;
         while (curBlock != null) {
             if (curBlock != node.entryBlock) printPort.println(curBlock.label+":");

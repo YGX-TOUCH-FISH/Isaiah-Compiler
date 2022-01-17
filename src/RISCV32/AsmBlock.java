@@ -3,13 +3,15 @@ package RISCV32;
 import RISCV32.Inst.Inst;
 
 public class AsmBlock {
+    public String functionName;
     public Integer label;
     public AsmBlock prev, next;
     public Inst headInst, tailInst;
-    public AsmBlock(AsmBlock _prev, AsmBlock _next, int _label) {
+    public AsmBlock(AsmBlock _prev, AsmBlock _next, String _functionName, int _label) {
         headInst = null;
         prev = _prev;
         next = _next;
+        functionName = _functionName;
         label = _label;
     }
     public void append(Inst _inst) {
@@ -26,4 +28,7 @@ public class AsmBlock {
         }
     }
     public void accept(AsmVisitor visitor) {visitor.visit(this);}
+    public String getLabel() {
+        return "."+functionName+"_"+label;
+    }
 }
