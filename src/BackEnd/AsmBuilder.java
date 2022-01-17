@@ -6,6 +6,7 @@ import LLVMIR.Oprand.ConstInt;
 import LLVMIR.Oprand.ConstNull;
 import LLVMIR.Oprand.Oprand;
 import LLVMIR.Oprand.VirtualReg;
+import LLVMIR.Type.PointerType;
 import RISCV32.AsmBlock;
 import RISCV32.AsmFunction;
 import RISCV32.AsmModule;
@@ -122,9 +123,10 @@ public class AsmBuilder implements Pass {
     @Override public void visit(BrInst node) {
         Branch.condOperator op = irBlock.next == node.iftrue ? Branch.condOperator.beqz : Branch.condOperator.bnez;
         int target = irBlock.next == node.iftrue ? node.iffalse.label : node.iftrue.label;
+        int asmLabel = labelMap.get(target);
         PhyReg rs1 = getCalleeSaveReg();
         getPReg(rs1, node.cond);
-        currentBlock.append(new Branch(op, rs1, null, labelMap.get(target)));
+        currentBlock.append(new Branch(op, rs1, null, "."+currentFunction.name+"_"+asmLabel));
         rs1.free();
     }
 
@@ -154,29 +156,28 @@ public class AsmBuilder implements Pass {
     }
 
     @Override public void visit(GetElementPtrInst node) {
-        // size == 2: offset[0] is 0`
+        // size == 2: offset[0] is 0
         if (!(node.indexSrc instanceof VirtualReg)) throw new RuntimeException("constant called gep instruction.");
         PhyReg result   = getCalleeSaveReg();
         PhyReg baseAddr = getCalleeSaveReg();
         PhyReg reg1 = getCalleeSaveReg();
         PhyReg reg2 = getCalleeSaveReg();
-        PhyReg reg3 = getCalleeSaveReg();
         Oprand offset = node.indexOffsets.get(node.indexOffsets.size()-1);
         getPReg(baseAddr, node.indexSrc);
         if (offset instanceof ConstInt) {
             long value = ((ConstInt)offset).getIntValue();
-            currentBlock.append(new LoadImm(reg1, 4*value));
-            currentBlock.append(new RegBinary(RegBinary.RegOperator.add, reg2, baseAddr, reg1));
-            currentBlock.append(new Load(word, result, reg2 , 0L));
+            long gepOffset = value*4;
+            if (((PointerType)node.indexSrc.baseType).referType.getByteWidth() == 1) gepOffset = value;
+            currentBlock.append(new LoadImm(reg1, gepOffset));
+            currentBlock.append(new RegBinary(RegBinary.RegOperator.add, result, baseAddr, reg1));        // got address!
         } else {
             getPReg(reg1, offset);
             currentBlock.append(new ImmBinary(ImmBinary.immOperator.slli, reg2, reg1,2L));
-            currentBlock.append(new RegBinary(RegBinary.RegOperator.add,  reg3, baseAddr, reg2));
-            currentBlock.append(new Load(word, result, reg3, 0L));
+            currentBlock.append(new RegBinary(RegBinary.RegOperator.add,  result, baseAddr, reg2));
         }
         spaceAllocate(node.resultReg);
         savePReg(result, node.resultReg);
-        result.free(); baseAddr.free(); reg1.free(); reg2.free(); reg3.free();
+        result.free(); baseAddr.free(); reg1.free(); reg2.free();
     }
 
     @Override public void visit(IcmpInst node) {
@@ -213,18 +214,21 @@ public class AsmBuilder implements Pass {
     }
 
     @Override public void visit(JumpInst node) {
-        currentBlock.append(new Jump(labelMap.get(node.dest.label)));
+        int asmLabel = labelMap.get(node.dest.label);
+        currentBlock.append(new Jump("."+currentFunction.name+"_"+asmLabel));
     }
 
     @Override public void visit(LoadInst node) {
-        PhyReg result = getCalleeSaveReg();
         PhyReg addr = getCalleeSaveReg();
-        getPReg(addr, node.address);
+        PhyReg result = getCalleeSaveReg();
+        if (node.address.name != null) currentBlock.append(new LoadAddr(addr, node.address.name));
+        else getPReg(addr, node.address);
         currentBlock.append(new Load(word, result, addr, 0L));
         spaceAllocate(node.resultReg);
         savePReg(result, node.resultReg);
         result.free();
         addr.free();
+
     }
 
     @Override public void visit(PhiInst node) {
@@ -267,13 +271,24 @@ public class AsmBuilder implements Pass {
 
     @Override public void visit(StoreInst node) {
         PhyReg value  = getCalleeSaveReg();
-        PhyReg target = getCalleeSaveReg();
+        PhyReg address = getCalleeSaveReg();
+        PhyReg reg = getCalleeSaveReg();
         getPReg(value, node.storeValue);
-        getPReg(target, node.storeTarget);
-        currentBlock.append(new Store(word, value, target, 0L));
+        if (node.storeTarget.name != null) {
+            currentBlock.append(new LoadAddr(address, node.storeTarget.name));
+            currentBlock.append(new Store(word, value, address, 0L));
+        }
+        else {
+            PhyReg offset = getCalleeSaveReg();
+            currentBlock.append(new LoadImm(offset, regAddress.get(node.storeTarget.label)));
+            currentBlock.append(new RegBinary(RegBinary.RegOperator.add, reg, sp(), offset));
+            currentBlock.append(new Load(word, address, reg, 0L));
+            currentBlock.append(new Store(word, value, address, 0L));
+            offset.free();
+        }
         value.free();
-        target.free();
-
+        address.free();
+        reg.free();
     }
 
     private PhyReg ra() { return phyRegs.get("ra"); }
@@ -349,23 +364,20 @@ public class AsmBuilder implements Pass {
         registerReserve++;
         regAddress.put(reg.label, spOffset - registerReserve *4);
     }
-
+    // getPReg: read virtualReg's value into physicalReg
     private void getPReg(PhyReg p, Oprand o) {
         if (o instanceof VirtualReg) getPReg(p, (VirtualReg) o);
         else if (o instanceof ConstNull) getPReg(p);
         else getPReg(p, (ConstInt) o);
     }
     private void getPReg(PhyReg p, VirtualReg v) {
-        if (v.name != null) currentBlock.append(new LoadAddr(p, v.name));
-        else {
-            PhyReg offset = getCalleeSaveReg();
-            PhyReg addr = getCalleeSaveReg();
-            currentBlock.append(new LoadImm(offset, regAddress.get(v.label)));
-            currentBlock.append(new RegBinary(RegBinary.RegOperator.add, addr, sp(), offset));
-            currentBlock.append(new Load(word, p, addr, 0L));
-            offset.free();
-            addr.free();
-        }
+        PhyReg offset = getCalleeSaveReg();
+        PhyReg addr = getCalleeSaveReg();
+        currentBlock.append(new LoadImm(offset, regAddress.get(v.label)));
+        currentBlock.append(new RegBinary(RegBinary.RegOperator.add, addr, sp(), offset));
+        currentBlock.append(new Load(word, p, addr, 0L));
+        offset.free();
+        addr.free();
     }
     private void getPReg(PhyReg p, ConstInt i) {
         currentBlock.append(new LoadImm(p, i.getIntValue()));
@@ -373,14 +385,17 @@ public class AsmBuilder implements Pass {
     private void getPReg(PhyReg p) {
         currentBlock.append(new Move(p, zero()));
     }
+
+    // savePReg: save physicalReg's value into virtualReg's addr.
     private void savePReg(PhyReg p, VirtualReg v) {
-        PhyReg offset = getCalleeSaveReg();
+        // v.name always null
         PhyReg addr = getCalleeSaveReg();
+        PhyReg offset = getCalleeSaveReg();
         currentBlock.append(new LoadImm(offset, regAddress.get(v.label)));
         currentBlock.append(new RegBinary(RegBinary.RegOperator.add, addr, sp(), offset));
         currentBlock.append(new Store(word, p, addr, 0L));
-        offset.free();
         addr.free();
+        offset.free();
     }
 
     private void insertInst(Inst insert, Inst inst) {

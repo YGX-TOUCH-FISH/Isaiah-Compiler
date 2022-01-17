@@ -35,7 +35,7 @@ public class AsmPrinter implements AsmVisitor {
         printPort.println(node.name+":");
         AsmBlock block = node.getEntry();
         while (block != null) {
-            if (block != node.entryBlock) printPort.println(block.getLabel());
+            if (block != node.entryBlock) printPort.println(block.getLabel()+":");
             block.accept(this);
             block = block.next;
         }

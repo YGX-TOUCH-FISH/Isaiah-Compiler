@@ -19,13 +19,24 @@ declare i8* @getString()
 declare i32 @getInt()
 declare i8* @toString(i32)
 
-@.str.0 = constant [20 x i8] c"Hello, Wenrui Han!\0A\00"
 
 define i32 @main(){
 	call void @global_var_init()
-	%1 = bitcast [20 x i8]* @.str.0 to i8*
-	call void @print(i8* %1)
-	ret i32 0
+	%1 = add i32 12, 4
+	%2 = call i8* @malloc(i32 %1)
+	%3 = bitcast i8* %2 to i32*
+	store i32 3, i32* %3
+	%4 = getelementptr inbounds i8, i8* %2, i32 4
+	%5 = bitcast i8* %4 to i32*
+	%6 = alloca i32*
+	store i32* %5, i32** %6
+	%7 = load i32*, i32** %6
+	%8 = alloca i32*
+	store i32* %7, i32** %8
+	%9 = load i32*, i32** %8
+	%10 = bitcast i32* %9 to i8*
+	%11 = call i32 @array_size(i8* %10)
+	ret i32 %11
 }
 
 define void @global_var_init(){

@@ -1,4 +1,6 @@
+
 int main(){
-    print("Hello, 姜楠!\n");
+    int []a = new int [3];
+    return a.size();
 }
 
