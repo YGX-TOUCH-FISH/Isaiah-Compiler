@@ -3,6 +3,7 @@ package LLVMIR.Inst;
 import LLVMIR.BasicBlock;
 import LLVMIR.Oprand.ConstInt;
 import LLVMIR.Oprand.Oprand;
+import LLVMIR.Pass;
 
 // conditional branch
 public class BrInst extends Inst{
@@ -16,4 +17,5 @@ public class BrInst extends Inst{
     @Override public String toString() {
         return "br "+cond.toString()+", label "+iftrue.toName()+", label "+iffalse.toName();
     }
+    @Override public void accept(Pass visitor) {visitor.visit(this);}
 }

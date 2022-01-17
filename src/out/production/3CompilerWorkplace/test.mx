@@ -1,20 +1,12 @@
-int a;
-int b = 1;
-int c;
-int []array;
-string d = "branch";
-class mm{
-    int a ;
-    int b;
-    mm() {
-        b=3;
-        a = b+3;
-    }
+string x = "";
+string y = "justice";
+int m = 0;
+class a{
+    int pp;
 }
-mm x;
-int abs(int a) { return a+1;}
+a test;
+bool pp;
 int main(){
-    x = new mm();
-    return x.a+x.b;
+    return 0;
 }
 

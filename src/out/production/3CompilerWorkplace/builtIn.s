@@ -1,5 +1,5 @@
-	.text
-	.file	"BuiltIn.c"
+.text
+	.file	"builtIn.c"
 	.globl	print                   # -- Begin function print
 	.p2align	2
 	.type	print,@function

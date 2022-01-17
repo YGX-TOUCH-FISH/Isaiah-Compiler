@@ -10,11 +10,9 @@ import java.util.ArrayList;
 public class BasicBlock {
     public Integer label;
     public BasicBlock prev, next;
-//    ArrayList<BasicBlock> prevPaths;
     public Inst headInst, tailInst;
     public boolean hasTerminal = false;
     public BasicBlock(BasicBlock _prev, BasicBlock _next, int _label) {
-//        prevPaths = new ArrayList<>();
         headInst  = null;
         prev      = _prev;
         next      = _next;
@@ -25,6 +23,7 @@ public class BasicBlock {
         return "%"+label.toString();
     }
     public void accept(IRVisitor visitor) {visitor.visit(this);}
+    public void accept(Pass visitor) {visitor.visit(this);}
     public void append(Inst _inst) {
         if (headInst == null) headInst = _inst;
         else tailInst.next = _inst;

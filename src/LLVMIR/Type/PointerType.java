@@ -28,6 +28,6 @@ public class PointerType extends BaseType{
 
     @Override
     public int getByteWidth() {
-        return 8;
+        return 4;
     }
 }

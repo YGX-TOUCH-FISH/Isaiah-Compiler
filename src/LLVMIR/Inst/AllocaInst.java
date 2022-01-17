@@ -1,6 +1,7 @@
 package LLVMIR.Inst;
 
 import LLVMIR.Oprand.VirtualReg;
+import LLVMIR.Pass;
 import LLVMIR.Type.BaseType;
 import LLVMIR.Type.PointerType;
 
@@ -13,4 +14,5 @@ public class AllocaInst extends Inst{
         PointerType pointerType = (PointerType) allocReg.baseType;
         return  allocReg.toName()+" = alloca "+pointerType.referType.toString();
     }
+    @Override public void accept(Pass visitor) {visitor.visit(this);}
 }

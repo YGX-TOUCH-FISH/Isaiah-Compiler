@@ -49,7 +49,7 @@ public class IRModule {
 
         builtInFunctionName.add("malloc");
         malloc = new Function("malloc", new PointerType(new IntType(8)));
-        malloc.appendArgument(new IntType(64));
+        malloc.appendArgument(new IntType(32));
         builtInFunctions.put("malloc", malloc);
 
         builtInFunctionName.add("__built_in_string_add");
@@ -58,69 +58,69 @@ public class IRModule {
         strADD.appendArgument(new PointerType(new IntType(8)));
         builtInFunctions.put("__built_in_string_add", strADD);
 
-        builtInFunctionName.add("__built_in_string_less_than");
-        strLT = new Function("__built_in_string_less_than", new IntType(1));
+        builtInFunctionName.add("string_lt");
+        strLT = new Function("string_lt", new IntType(1));
         strLT.appendArgument(new PointerType(new IntType(8)));
         strLT.appendArgument(new PointerType(new IntType(8)));
-        builtInFunctions.put("__built_in_string_less_than", strLT);
+        builtInFunctions.put("string_lt", strLT);
 
-        builtInFunctionName.add("__built_in_string_greater_than");
-        strGT = new Function("__built_in_string_greater_than", new IntType(1));
+        builtInFunctionName.add("string_gt");
+        strGT = new Function("string_gt", new IntType(1));
         strGT.appendArgument(new PointerType(new IntType(8)));
         strGT.appendArgument(new PointerType(new IntType(8)));
-        builtInFunctions.put("__built_in_string_greater_than", strGT);
+        builtInFunctions.put("string_gt", strGT);
 
-        builtInFunctionName.add("__built_in_string_less_equal");
-        strLEQ = new Function("__built_in_string_less_equal", new IntType(1));
+        builtInFunctionName.add("string_le");
+        strLEQ = new Function("string_le", new IntType(1));
         strLEQ.appendArgument(new PointerType(new IntType(8)));
         strLEQ.appendArgument(new PointerType(new IntType(8)));
-        builtInFunctions.put("__built_in_string_less_equal", strLEQ);
+        builtInFunctions.put("string_le", strLEQ);
 
-        builtInFunctionName.add("__built_in_string_greater_equal");
-        strGEQ = new Function("__built_in_string_greater_equal", new IntType(1));
+        builtInFunctionName.add("string_ge");
+        strGEQ = new Function("string_ge", new IntType(1));
         strGEQ.appendArgument(new PointerType(new IntType(8)));
         strGEQ.appendArgument(new PointerType(new IntType(8)));
-        builtInFunctions.put("__built_in_string_greater_equal", strGEQ);
+        builtInFunctions.put("string_ge", strGEQ);
 
-        builtInFunctionName.add("__built_in_string_equal");
-        strEQ = new Function("__built_in_string_equal", new IntType(1));
+        builtInFunctionName.add("string_eq");
+        strEQ = new Function("string_eq", new IntType(1));
         strEQ.appendArgument(new PointerType(new IntType(8)));
         strEQ.appendArgument(new PointerType(new IntType(8)));
-        builtInFunctions.put("__built_in_string_equal", strEQ);
+        builtInFunctions.put("string_eq", strEQ);
 
-        builtInFunctionName.add("__built_in_string_not_equal");
-        strNE = new Function("__built_in_string_not_equal", new IntType(1));
+        builtInFunctionName.add("string_ne");
+        strNE = new Function("string_ne", new IntType(1));
         strNE.appendArgument(new PointerType(new IntType(8)));
         strNE.appendArgument(new PointerType(new IntType(8)));
-        builtInFunctions.put("__built_in_string_not_equal", strNE);
+        builtInFunctions.put("string_ne", strNE);
 
-        builtInFunctionName.add("__built_in_string_length");
-        length = new Function("__built_in_string_length", new IntType(32));
+        builtInFunctionName.add("string_length");
+        length = new Function("string_length", new IntType(32));
         length.appendArgument(new PointerType(new IntType(8)));
-        builtInFunctions.put("__built_in_string_length", length);
+        builtInFunctions.put("string_length", length);
 
-        builtInFunctionName.add("__built_in_string_substring");
-        substring = new Function("__built_in_string_substring", new PointerType(new IntType(8)));
+        builtInFunctionName.add("string_subString");
+        substring = new Function("string_subString", new PointerType(new IntType(8)));
         substring.appendArgument(new PointerType(new IntType(8)));
         substring.appendArgument(new IntType(32));
         substring.appendArgument(new IntType(32));
-        builtInFunctions.put("__built_in_string_substring", substring);
+        builtInFunctions.put("string_subString", substring);
 
-        builtInFunctionName.add("__built_in_string_parseInt");
-        parseInt = new Function("__built_in_string_parseInt", new IntType(32));
+        builtInFunctionName.add("string_parseInt");
+        parseInt = new Function("string_parseInt", new IntType(32));
         parseInt.appendArgument(new PointerType(new IntType(8)));
-        builtInFunctions.put("__built_in_string_parseInt", parseInt);
+        builtInFunctions.put("string_parseInt", parseInt);
 
-        builtInFunctionName.add("__built_in_string_ord");
-        ord = new Function("__built_in_string_ord", new IntType(32));
+        builtInFunctionName.add("string_ord");
+        ord = new Function("string_ord", new IntType(32));
         ord.appendArgument(new PointerType(new IntType(8)));
         ord.appendArgument(new IntType(32));
-        builtInFunctions.put("__built_in_string_ord", ord);
+        builtInFunctions.put("string_ord", ord);
 
-        builtInFunctionName.add("__built_in_array_size");
-        size = new Function("__built_in_array_size", new IntType(32));
+        builtInFunctionName.add("array_size");
+        size = new Function("array_size", new IntType(32));
         size.appendArgument(new PointerType(new IntType(8)));
-        builtInFunctions.put("__built_in_array_size", size);
+        builtInFunctions.put("array_size", size);
 
         builtInFunctionName.add("print");
         print = new Function("print", new VoidType());
@@ -193,4 +193,5 @@ public class IRModule {
         staticDataName.add(name);
         staticData.put(name, baseType);
     }
+    public void accept(Pass visitor) { visitor.visit(this); }
 }

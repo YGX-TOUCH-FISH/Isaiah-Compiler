@@ -752,7 +752,7 @@ public class IRBuilder implements ASTVisitor {
             thisStoreReg = new VirtualReg(new PointerType(new ClassType(node.type.name), 2), currentFunction.takeLabel());
             currentBlock.append(new AllocaInst(thisStoreReg));
             mallocReg = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
-            mallocArgs.add(new ConstInt(64, root.getClassInfo(node.type.name).getByteWidth(root)));
+            mallocArgs.add(new ConstInt(32, root.getClassInfo(node.type.name).getByteWidth(root)));
             currentBlock.append(new CallInst(mallocReg, root.malloc, mallocArgs));
             thisReg = new VirtualReg(new PointerType(new ClassType(node.type.name)), currentFunction.takeLabel());
             currentBlock.append(new BitCastInst(mallocReg, thisReg));
@@ -808,8 +808,7 @@ public class IRBuilder implements ASTVisitor {
         node.elementType.accept(this);
         BaseType bottomBaseType;
         ArrayList<Oprand> sizes = new ArrayList<>();
-        ArrayList<Oprand> extIndexValues = new ArrayList<>();
-        Oprand indexValue, extIndexValue;
+        Oprand indexValue;
         VirtualReg thisReg, thisStoreReg;
         if (node.sizeofDim.size() == node.dims) bottomBaseType = node.elementType.getBaseType();
         else bottomBaseType = new PointerType(node.elementType.getBaseType(), node.dims-node.sizeofDim.size());
@@ -820,15 +819,8 @@ public class IRBuilder implements ASTVisitor {
                 currentBlock.append(new LoadInst((VirtualReg) indexValue, node.sizeofDim.get(i).address));
             } else indexValue = node.sizeofDim.get(i).value;
             sizes.add(indexValue);
-            // extend index to 8-byte width
-            if (indexValue instanceof ConstInt) extIndexValue = new ConstInt(64, ((ConstInt) indexValue).intValue);
-            else {
-                extIndexValue = new VirtualReg(new IntType(64), currentFunction.takeLabel());
-                currentBlock.append(new UnaryInst((VirtualReg) extIndexValue, UnaryInst.UArOp.zext, indexValue));
-            }
-            extIndexValues.add(extIndexValue);
         }
-        thisReg = multiAllocate(node, bottomBaseType, sizes, extIndexValues,0);
+        thisReg = multiAllocate(node, bottomBaseType, sizes,0);
         thisStoreReg = new VirtualReg(new PointerType(thisReg.baseType), currentFunction.takeLabel());
         currentBlock.append(new AllocaInst(thisStoreReg));
         currentBlock.append(new StoreInst(thisReg, thisStoreReg));
@@ -836,22 +828,22 @@ public class IRBuilder implements ASTVisitor {
         node.imm = null;
     }
 
-    private VirtualReg multiAllocate(NewArrayNode node, BaseType bottomBaseType, ArrayList<Oprand> sizes, ArrayList<Oprand> indexValues, int depth) {
+    private VirtualReg multiAllocate(NewArrayNode node, BaseType bottomBaseType, ArrayList<Oprand> sizes, int depth) {
         // constant optimize
         ArrayList<Oprand> mallocArgs = new ArrayList<>();
         Oprand indexSize, byteSize, arraySize, mallocSize;
-        VirtualReg mallocReg, sizeReg, arrayReg, thisReg, iterStoreReg, iterReg, iterExtReg, iterLoadReg, iterPlusReg, condReg, indexPtrReg, elementReg;
+        VirtualReg mallocReg, sizeReg, arrayReg, thisReg, iterStoreReg, iterReg, iterLoadReg, iterPlusReg, condReg, indexPtrReg, elementReg;
         BasicBlock rootBlock, condBlock, exeHeadBlock, exeTailBlock, increBlock, exitBlock;
         BaseType depthBaseType = depth == node.sizeofDim.size()-1 ? bottomBaseType : new PointerType(bottomBaseType, node.sizeofDim.size()-1-depth);
-        byteSize = new ConstInt(64, depthBaseType.getByteWidth());
-        indexSize = indexValues.get(depth);
-        if (indexSize instanceof ConstInt) arraySize = new ConstInt(64, ((ConstInt) byteSize).intValue*((ConstInt)indexSize).intValue);
+        byteSize = new ConstInt(32, depthBaseType.getByteWidth());
+        indexSize = sizes.get(depth);
+        if (indexSize instanceof ConstInt) arraySize = new ConstInt(32, ((ConstInt) byteSize).intValue*((ConstInt)indexSize).intValue);
         else {
-            arraySize = new VirtualReg(new IntType(64), currentFunction.takeLabel());
+            arraySize = new VirtualReg(new IntType(32), currentFunction.takeLabel());
             currentBlock.append(new BinaryInst((VirtualReg) arraySize, BinaryInst.BiArOp.mul, indexSize, byteSize));
         }
-        mallocSize = new VirtualReg(new IntType(64), currentFunction.takeLabel());
-        currentBlock.append(new BinaryInst((VirtualReg) mallocSize, BinaryInst.BiArOp.add, arraySize, new ConstInt(64, 4)));
+        mallocSize = new VirtualReg(new IntType(32), currentFunction.takeLabel());
+        currentBlock.append(new BinaryInst((VirtualReg) mallocSize, BinaryInst.BiArOp.add, arraySize, new ConstInt(32, 4)));
         mallocArgs.add(mallocSize);
         mallocReg = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
         currentBlock.append(new CallInst(mallocReg, root.malloc, mallocArgs));
@@ -859,7 +851,7 @@ public class IRBuilder implements ASTVisitor {
         currentBlock.append(new BitCastInst(mallocReg, sizeReg));
         currentBlock.append(new StoreInst(sizes.get(depth), sizeReg));
         arrayReg = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
-        currentBlock.append(new GetElementPtrInst(arrayReg, mallocReg, new ConstInt(64, 4)));   // 4-byte to store size
+        currentBlock.append(new GetElementPtrInst(arrayReg, mallocReg, new ConstInt(32, 4)));   // 4-byte to store size
         thisReg = new VirtualReg(new PointerType(depthBaseType), currentFunction.takeLabel());
         currentBlock.append(new BitCastInst(arrayReg, thisReg));
         if (depth == node.sizeofDim.size()-1)  return thisReg;
@@ -873,13 +865,11 @@ public class IRBuilder implements ASTVisitor {
         currentBlock = currentBlock.next;
         iterReg = new VirtualReg(new IntType(32), currentFunction.takeLabel());
         currentBlock.append(new LoadInst(iterReg, iterStoreReg));
-        iterExtReg = new VirtualReg(new IntType(64), currentFunction.takeLabel());
-        currentBlock.append(new UnaryInst(iterExtReg, UnaryInst.UArOp.zext, iterReg));
         condReg = new VirtualReg(new IntType(1), currentFunction.takeLabel());
         exeHeadBlock = new BasicBlock(currentBlock, null, currentFunction.takeLabel());
         currentBlock.next = exeHeadBlock;
         currentBlock = currentBlock.next;
-        elementReg = multiAllocate(node, bottomBaseType, sizes, indexValues, depth+1);
+        elementReg = multiAllocate(node, bottomBaseType, sizes, depth+1);
         exeTailBlock = currentBlock;
         indexPtrReg = new VirtualReg(new PointerType(depthBaseType), currentFunction.takeLabel());
         currentBlock.append(new GetElementPtrInst(indexPtrReg, thisReg, iterReg));
@@ -896,7 +886,7 @@ public class IRBuilder implements ASTVisitor {
         currentBlock.next = exitBlock;
         currentBlock = currentBlock.next;
         rootBlock.append(new JumpInst(condBlock));
-        condBlock.append(new IcmpInst(condReg, IcmpInst.CompareType.slt, iterExtReg, indexSize));
+        condBlock.append(new IcmpInst(condReg, IcmpInst.CompareType.slt, iterReg, indexSize));
         condBlock.append(new BrInst(condReg, exeHeadBlock, exitBlock));
         exeTailBlock.append(new JumpInst(increBlock));
         increBlock.append(new JumpInst(condBlock));

@@ -1,8 +1,23 @@
 package RISCV32.Inst;
 
+import RISCV32.Oprand.Reg;
+
 public class Branch extends Inst{
-    @Override
-    public String toString() {
-        return null;
+    public enum condOperator{
+        beqz, bnez, bltu, blt, bge, bgeu
+    }
+    private final condOperator op;
+    private final Integer target;
+    public Branch(condOperator _op, Reg _rs1, Reg _rs2, int _target) {
+        super(null , _rs1, _rs2);
+        op     = _op;
+        target = _target;
+    }
+
+    @Override public String toString() {
+        String ret = op+" "+rs1;
+        if (rs2 != null) ret += ", "+rs2;
+        ret += " .BB_"+target;
+        return ret;
     }
 }

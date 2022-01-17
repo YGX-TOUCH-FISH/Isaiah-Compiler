@@ -2,6 +2,7 @@ package LLVMIR.Inst;
 
 import LLVMIR.Oprand.Oprand;
 import LLVMIR.Oprand.VirtualReg;
+import LLVMIR.Pass;
 import LLVMIR.Type.ArrayType;
 import LLVMIR.Type.PointerType;
 
@@ -9,9 +10,9 @@ import java.util.ArrayList;
 
 // dereference: load
 public class GetElementPtrInst extends Inst{
-    VirtualReg resultReg;
-    Oprand     indexSrc;
-    ArrayList<Oprand> indexOffsets = new ArrayList<>();
+    public VirtualReg resultReg;
+    public Oprand     indexSrc;
+    public ArrayList<Oprand> indexOffsets = new ArrayList<>();
     public GetElementPtrInst(VirtualReg _result, Oprand _indexSrc, ArrayList<Oprand> _indexOffsets) {
         resultReg   = _result;
         indexSrc    = _indexSrc;
@@ -33,4 +34,5 @@ public class GetElementPtrInst extends Inst{
         }
         return ret.toString();
     }
+    @Override public void accept(Pass visitor) {visitor.visit(this);}
 }

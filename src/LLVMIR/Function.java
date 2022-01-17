@@ -33,6 +33,7 @@ public class Function {
     public int takeLabel() {
         return regCounter++;
     }
+    public int getLabel() { return regCounter; }
     public boolean isEmpty() { return regCounter == 0; }
     public boolean isVoid() { return retType instanceof VoidType;}
 }

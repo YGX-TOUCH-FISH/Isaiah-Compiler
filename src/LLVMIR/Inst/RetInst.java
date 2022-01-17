@@ -2,10 +2,11 @@ package LLVMIR.Inst;
 
 import LLVMIR.Oprand.ConstNull;
 import LLVMIR.Oprand.Oprand;
+import LLVMIR.Pass;
 import LLVMIR.Type.BaseType;
 
 public class RetInst extends Inst{
-    Oprand retValue;
+    public Oprand retValue;
     BaseType nullptrType;
     public RetInst(Oprand _retValue, BaseType _Type) {
         retValue = _retValue;
@@ -23,4 +24,5 @@ public class RetInst extends Inst{
         }
         return "ret "+retValueStr;
     }
+    @Override public void accept(Pass visitor) {visitor.visit(this);}
 }

@@ -6,7 +6,6 @@ public interface Pass {
     void visit(IRModule node);
     void visit(Function node);
     void visit(BasicBlock node);
-    void visit(ClassInfo node);
 
     void visit(AllocaInst node);
     void visit(BinaryInst node);
@@ -20,5 +19,4 @@ public interface Pass {
     void visit(PhiInst node);
     void visit(RetInst node);
     void visit(StoreInst node);
-    void visit(UnaryInst node);
 }

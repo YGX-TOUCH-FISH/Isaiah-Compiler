@@ -13,9 +13,9 @@ public class ConstInt extends Oprand{
     @Override public String toString() {
         if (((IntType) baseType).bitWidth == 1) {
             String value = intValue == 0 ? "false" : "true";
-            return baseType.toString()+" "+value;
+            return baseType+" "+value;
         }
-        else return baseType.toString()+" "+ intValue.toString();
+        else return baseType+" "+ intValue.toString();
     }
 
     @Override

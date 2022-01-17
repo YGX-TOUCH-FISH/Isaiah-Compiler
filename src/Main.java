@@ -1,10 +1,12 @@
 import AST.RootNode;
+import BackEnd.AsmBuilder;
 import BackEnd.AsmPrinter;
 import BackEnd.IRBuilder;
 import BackEnd.IRPrinter;
 import FrontEnd.*;
 import LLVMIR.IRModule;
 import Parser.*;
+import RISCV32.AsmModule;
 import Util.error.IsaiahErrorListener;
 import Util.error.error;
 import Util.scope.GlobalScope;
@@ -47,9 +49,11 @@ public class Main {
             System.out.println("[2] LLVM code generated over.");
 
             // ASM generate & Print
-
-//            new AsmPrinter(asmOutput).visit();
-            System.out.println("[3] Assemble code generated over.");
+//            AsmBuilder asmBuilder = new AsmBuilder();
+//            irModule.accept(asmBuilder);
+//            AsmModule asmModule = asmBuilder.BuiltRoot();
+//            new AsmPrinter(asmOutput).visit(asmModule);
+//            System.out.println("[3] Assemble code generated over.");
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();

@@ -1,8 +1,16 @@
 package RISCV32.Inst;
 
-public class Jump extends Inst{
+import RISCV32.Oprand.Reg;
+
+public class Jump extends Inst {
+    final Integer target;
+    public Jump(int _target) {
+        super(null, null, null);
+        target = _target;
+    }
+
     @Override
     public String toString() {
-        return null;
+        return "j\t.BB_"+target;
     }
 }

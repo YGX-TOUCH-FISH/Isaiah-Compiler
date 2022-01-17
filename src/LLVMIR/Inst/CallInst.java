@@ -3,13 +3,14 @@ package LLVMIR.Inst;
 import LLVMIR.Function;
 import LLVMIR.Oprand.Oprand;
 import LLVMIR.Oprand.VirtualReg;
+import LLVMIR.Pass;
 
 import java.util.ArrayList;
 
 public class CallInst extends Inst{
-    VirtualReg        allocReg;    //null: void
-    Function          func;
-    ArrayList<Oprand> inputArgs;
+    public VirtualReg        allocReg;    //null: void
+    public Function          func;
+    public ArrayList<Oprand> inputArgs;
     public CallInst(VirtualReg _allocReg, Function _callFunction, ArrayList<Oprand> _inputArgs) {
         allocReg     = _allocReg;
         func         = _callFunction;
@@ -34,4 +35,5 @@ public class CallInst extends Inst{
         ret.append(")");
         return ret.toString();
     }
+    @Override public void accept(Pass visitor) {visitor.visit(this);}
 }

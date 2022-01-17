@@ -2,17 +2,20 @@ package LLVMIR.Inst;
 
 import LLVMIR.Oprand.Oprand;
 import LLVMIR.Oprand.VirtualReg;
+import LLVMIR.Pass;
 import LLVMIR.Type.BaseType;
 import LLVMIR.Type.PointerType;
 
 public class StoreInst extends Inst{
-    public Oprand storeValue, storeAddr;
-    public StoreInst(Oprand _storeValue, Oprand _storeAddr) {
+    public Oprand storeValue;
+    public VirtualReg storeTarget;
+    public StoreInst(Oprand _storeValue, VirtualReg _storeAddr) {
         storeValue = _storeValue;
-        storeAddr  = _storeAddr;
+        storeTarget = _storeAddr;
     }
     @Override public String toString() {
-        BaseType ptrType = ((PointerType)((VirtualReg) storeAddr).baseType).referType;
-        return "store "+ptrType.toString()+" "+storeValue.toName()+", "+storeAddr.toString();
+        BaseType ptrType = ((PointerType)((VirtualReg) storeTarget).baseType).referType;
+        return "store "+ptrType.toString()+" "+storeValue.toName()+", "+ storeTarget.toString();
     }
+    @Override public void accept(Pass visitor) {visitor.visit(this);}
 }
