@@ -29,6 +29,10 @@ global_var_init:                        # @global_var_init
 	addi	a0, a0, %lo(.str.0)
 	lui	a1, %hi(x)
 	sw	a0, %lo(x)(a1)
+	lui	a0, %hi(.str.1)
+	addi	a0, a0, %lo(.str.1)
+	lui	a1, %hi(y)
+	sw	a0, %lo(y)(a1)
 	lui	a0, %hi(m)
 	sw	zero, %lo(m)(a0)
 	ret
@@ -59,6 +63,13 @@ x:
 	.word	0
 	.size	x, 4
 
+	.type	y,@object               # @y
+	.globl	y
+	.p2align	2
+y:
+	.word	0
+	.size	y, 4
+
 	.type	m,@object               # @m
 	.globl	m
 	.p2align	2
@@ -83,7 +94,13 @@ pp:
 	.section	.rodata,"a",@progbits
 	.globl	.str.0
 .str.0:
-	.asciz	"b"
-	.size	.str.0, 2
+	.zero	1
+	.size	.str.0, 1
+
+	.type	.str.1,@object          # @.str.1
+	.globl	.str.1
+.str.1:
+	.asciz	"justice"
+	.size	.str.1, 8
 
 	.section	".note.GNU-stack","",@progbits

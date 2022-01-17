@@ -47,7 +47,6 @@ public class Main {
             IRModule irModule = irBuilder.BuiltRoot();
             new IRPrinter(llvmOutput).visit(irModule);
             System.out.println("[2] LLVM code generated over.");
-
             // ASM generate & Print
 //            AsmBuilder asmBuilder = new AsmBuilder();
 //            irModule.accept(asmBuilder);

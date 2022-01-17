@@ -20,10 +20,12 @@ declare i32 @getInt()
 declare i8* @toString(i32)
 
 @x = global i8* null
+@y = global i8* null
 @m = global i32 0
 @test = global %a* null
 @pp = global i1 false
-@.str.0 = constant [2 x i8] c"b\00"
+@.str.0 = constant [1 x i8] c"\00"
+@.str.1 = constant [8 x i8] c"justice\00"
 
 %a = type { i32 }
 
@@ -33,8 +35,10 @@ define i32 @main(){
 }
 
 define void @global_var_init(){
-	%1 = bitcast [2 x i8]* @.str.0 to i8*
+	%1 = bitcast [1 x i8]* @.str.0 to i8*
 	store i8* %1, i8** @x
+	%2 = bitcast [8 x i8]* @.str.1 to i8*
+	store i8* %2, i8** @y
 	store i32 0, i32* @m
 	ret void
 }
