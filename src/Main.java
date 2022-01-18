@@ -21,9 +21,9 @@ public class Main {
     public static void main(String[] args) throws Exception{
 //        String DataInFile = "test.mx";
         String LLVMOutFile = "Isaiah.ll";
-        String ASMOutFile = "../output.s";
-//        InputStream input = System.in;
+        String ASMOutFile = "output.s";
         InputStream input = System.in;
+//        InputStream input = new FileInputStream(DataInFile);
         PrintStream llvmOutput, asmOutput;
         boolean toConsole = false;
         boolean semanticOnly = false;
