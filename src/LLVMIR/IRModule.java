@@ -52,11 +52,11 @@ public class IRModule {
         malloc.appendArgument(new IntType(32));
         builtInFunctions.put("malloc", malloc);
 
-        builtInFunctionName.add("__built_in_string_add");
-        strADD = new Function("__built_in_string_add", new PointerType(new IntType(8)));
+        builtInFunctionName.add("string_add");
+        strADD = new Function("string_add", new PointerType(new IntType(8)));
         strADD.appendArgument(new PointerType(new IntType(8)));
         strADD.appendArgument(new PointerType(new IntType(8)));
-        builtInFunctions.put("__built_in_string_add", strADD);
+        builtInFunctions.put("string_add", strADD);
 
         builtInFunctionName.add("string_lt");
         strLT = new Function("string_lt", new IntType(1));

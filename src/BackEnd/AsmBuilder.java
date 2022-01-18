@@ -6,6 +6,8 @@ import LLVMIR.Oprand.ConstInt;
 import LLVMIR.Oprand.ConstNull;
 import LLVMIR.Oprand.Oprand;
 import LLVMIR.Oprand.VirtualReg;
+import LLVMIR.Type.BaseType;
+import LLVMIR.Type.IntType;
 import LLVMIR.Type.PointerType;
 import RISCV32.AsmBlock;
 import RISCV32.AsmFunction;
@@ -94,9 +96,9 @@ public class AsmBuilder implements Pass {
     }
 
     @Override public void visit(AllocaInst node) {
+        currentFunction.allocaStackVar(node.allocReg);
         spaceAllocate(node.allocReg);
     }
-
     @Override public void visit(BinaryInst node) {
         PhyReg rs1 = getCalleeSaveReg();
         PhyReg rs2 = getCalleeSaveReg();
@@ -111,10 +113,10 @@ public class AsmBuilder implements Pass {
         rs2.free();
         rd.free();
     }
-
     @Override public void visit(BitCastInst node) {
         PhyReg reg = getCalleeSaveReg();
-        getPReg(reg, node.srcReg);
+        if (node.srcReg.name != null) currentBlock.append(new LoadAddr(reg, node.srcReg.name));
+        else getPReg(reg, node.srcReg);
         spaceAllocate(node.destReg);
         savePReg(reg, node.destReg);
         reg.free();
@@ -167,7 +169,8 @@ public class AsmBuilder implements Pass {
         if (offset instanceof ConstInt) {
             long value = ((ConstInt)offset).getIntValue();
             long gepOffset = value*4;
-            if (((PointerType)node.indexSrc.baseType).referType.getByteWidth() == 1) gepOffset = value;
+            BaseType refType = ((PointerType)node.indexSrc.baseType).referType;
+            if (refType instanceof IntType && ((IntType)refType).bitWidth == 8) gepOffset = value;
             currentBlock.append(new LoadImm(reg1, gepOffset));
             currentBlock.append(new RegBinary(RegBinary.RegOperator.add, result, baseAddr, reg1));        // got address!
         } else {
@@ -199,10 +202,10 @@ public class AsmBuilder implements Pass {
             currentBlock.append(new Unary(Unary.UnaryOperator.sltz, result, reg3));
         } else if (node.cmpType == IcmpInst.CompareType.sge) {
             currentBlock.append(new Unary(Unary.UnaryOperator.sltz, reg4, reg3));
-            currentBlock.append(new Unary(Unary.UnaryOperator.snez, result, reg4));
+            currentBlock.append(new Unary(Unary.UnaryOperator.seqz, result, reg4));
         } else {
             currentBlock.append(new Unary(Unary.UnaryOperator.sgtz, reg4, reg3));
-            currentBlock.append(new Unary(Unary.UnaryOperator.snez, result, reg4));
+            currentBlock.append(new Unary(Unary.UnaryOperator.seqz, result, reg4));
         }
         spaceAllocate(node.resultReg);
         savePReg(result, node.resultReg);
@@ -219,16 +222,19 @@ public class AsmBuilder implements Pass {
     }
 
     @Override public void visit(LoadInst node) {
-        PhyReg addr = getCalleeSaveReg();
         PhyReg result = getCalleeSaveReg();
-        if (node.address.name != null) currentBlock.append(new LoadAddr(addr, node.address.name));
-        else getPReg(addr, node.address);
-        currentBlock.append(new Load(word, result, addr, 0L));
+        PhyReg address = getCalleeSaveReg();
+        if (node.address.name != null) {    // global
+            currentBlock.append(new LoadAddr(address, node.address.name));
+            currentBlock.append(new Load(word, result, address, 0L));
+        } else if (!currentFunction.containStackVar(node.address)) {
+            getPReg(address, node.address);
+            currentBlock.append(new Load(word, result, address, 0L));
+        } else getPReg(result, node.address);
         spaceAllocate(node.resultReg);
         savePReg(result, node.resultReg);
         result.free();
-        addr.free();
-
+        address.free();
     }
 
     @Override public void visit(PhiInst node) {
@@ -272,29 +278,20 @@ public class AsmBuilder implements Pass {
     @Override public void visit(StoreInst node) {
         PhyReg value  = getCalleeSaveReg();
         PhyReg address = getCalleeSaveReg();
-        PhyReg reg = getCalleeSaveReg();
         getPReg(value, node.storeValue);
         if (node.storeTarget.name != null) {
             currentBlock.append(new LoadAddr(address, node.storeTarget.name));
             currentBlock.append(new Store(word, value, address, 0L));
-        }
-        else {
-            PhyReg offset = getCalleeSaveReg();
-            currentBlock.append(new LoadImm(offset, regAddress.get(node.storeTarget.label)));
-            currentBlock.append(new RegBinary(RegBinary.RegOperator.add, reg, sp(), offset));
-            currentBlock.append(new Load(word, address, reg, 0L));
+        } else if (!currentFunction.containStackVar(node.storeTarget)) {
+            getPReg(address, node.storeTarget);
             currentBlock.append(new Store(word, value, address, 0L));
-            offset.free();
-        }
+        } else savePReg(value, node.storeTarget);
         value.free();
         address.free();
-        reg.free();
     }
-
     private PhyReg ra() { return phyRegs.get("ra"); }
     private PhyReg sp() { return phyRegs.get("sp"); }
     private PhyReg zero() { return phyRegs.get("zero"); }
-
     private void frameAllocate(Function node) {
         int blockNumber = 0;
         BasicBlock BB = node.entryBlock;
@@ -340,7 +337,6 @@ public class AsmBuilder implements Pass {
         }
         // parameter
     }
-
     private void regRelease() {
         long i = 2;
         for (String calleeSaveName : calleeSavePRegNames) {
@@ -349,7 +345,6 @@ public class AsmBuilder implements Pass {
         }
         currentBlock.append(new Load(word, ra(), sp(), spOffset-4));
     }
-
     private PhyReg getCalleeSaveReg() {
         for (String calleeSaveName : calleeSavePRegNames) {
             PhyReg s = phyRegs.get(calleeSaveName);
@@ -371,13 +366,18 @@ public class AsmBuilder implements Pass {
         else getPReg(p, (ConstInt) o);
     }
     private void getPReg(PhyReg p, VirtualReg v) {
-        PhyReg offset = getCalleeSaveReg();
-        PhyReg addr = getCalleeSaveReg();
-        currentBlock.append(new LoadImm(offset, regAddress.get(v.label)));
-        currentBlock.append(new RegBinary(RegBinary.RegOperator.add, addr, sp(), offset));
-        currentBlock.append(new Load(word, p, addr, 0L));
-        offset.free();
-        addr.free();
+        if (spOffset < 2048) {
+            currentBlock.append(new Load(word, p, sp(), regAddress.get(v.label)));
+        }
+        else {
+            PhyReg offset = getCalleeSaveReg();
+            PhyReg addr = getCalleeSaveReg();
+            currentBlock.append(new LoadImm(offset, regAddress.get(v.label)));
+            currentBlock.append(new RegBinary(RegBinary.RegOperator.add, addr, sp(), offset));
+            currentBlock.append(new Load(word, p, addr, 0L));
+            offset.free();
+            addr.free();
+        }
     }
     private void getPReg(PhyReg p, ConstInt i) {
         currentBlock.append(new LoadImm(p, i.getIntValue()));
@@ -385,26 +385,26 @@ public class AsmBuilder implements Pass {
     private void getPReg(PhyReg p) {
         currentBlock.append(new Move(p, zero()));
     }
-
     // savePReg: save physicalReg's value into virtualReg's addr.
     private void savePReg(PhyReg p, VirtualReg v) {
         // v.name always null
-        PhyReg addr = getCalleeSaveReg();
-        PhyReg offset = getCalleeSaveReg();
-        currentBlock.append(new LoadImm(offset, regAddress.get(v.label)));
-        currentBlock.append(new RegBinary(RegBinary.RegOperator.add, addr, sp(), offset));
-        currentBlock.append(new Store(word, p, addr, 0L));
-        addr.free();
-        offset.free();
+        if (spOffset < 2048) currentBlock.append(new Store(word, p, sp(), regAddress.get(v.label)));
+        else {
+            PhyReg addr = getCalleeSaveReg();
+            PhyReg offset = getCalleeSaveReg();
+            currentBlock.append(new LoadImm(offset, regAddress.get(v.label)));
+            currentBlock.append(new RegBinary(RegBinary.RegOperator.add, addr, sp(), offset));
+            currentBlock.append(new Store(word, p, addr, 0L));
+            addr.free();
+            offset.free();
+        }
     }
-
     private void insertInst(Inst insert, Inst inst) {
         if (inst.prev != null ) inst.prev.next = insert;
         inst.prev = insert.prev;
         insert.next = inst;
         inst.prev = insert;
     }
-
     private RegBinary.RegOperator getRegOp(BinaryInst.BiArOp op) {
         switch (op) {
             case add: return RegBinary.RegOperator.add;

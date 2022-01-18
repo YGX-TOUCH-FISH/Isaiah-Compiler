@@ -18,14 +18,14 @@ import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-        String DataInFile = "test.mx";
-        String LLVMOutFile = "Isaiah.ll";
-        String ASMOutFile = "Isaiah.s";
-        InputStream input = new FileInputStream(DataInFile);
+//        String DataInFile = "testcases/codegen/t18.mx";
+//        String LLVMOutFile = "Isaiah.ll";
+        String ASMOutFile = "output.s";
+        InputStream input = System.in;
         PrintStream llvmOutput, asmOutput;
         boolean toConsole = false;
         try {
-            llvmOutput = toConsole ? System.out : new PrintStream(LLVMOutFile);
+//            llvmOutput = toConsole ? System.out : new PrintStream(LLVMOutFile);
             asmOutput  = toConsole ? System.out : new PrintStream(ASMOutFile);
             RootNode ASTRoot;
             GlobalScope gScope = new GlobalScope(null);
@@ -40,19 +40,19 @@ public class Main {
             ASTBuilder astBuilder = new ASTBuilder(gScope);
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
             new SemanticChecker(gScope).visit(ASTRoot);
-            System.out.println("[1] Semantic check passed.");
+//            System.out.println("[1] Semantic check passed.");
             // IR generate & Print
             IRBuilder irBuilder = new IRBuilder();
             ASTRoot.accept(irBuilder);
             IRModule irModule = irBuilder.BuiltRoot();
-            new IRPrinter(llvmOutput).visit(irModule);
-            System.out.println("[2] LLVM code generated over.");
+//            new IRPrinter(llvmOutput).visit(irModule);
+//            System.out.println("[2] LLVM code generated over.");
             // ASM generate & Print
             AsmBuilder asmBuilder = new AsmBuilder();
             irModule.accept(asmBuilder);
             AsmModule asmModule = asmBuilder.BuiltRoot();
             new AsmPrinter(asmOutput).visit(asmModule);
-            System.out.println("[3] Assemble code generated over.");
+//            System.out.println("[3] Assemble code generated over.");
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();

@@ -18,6 +18,7 @@ import LLVMIR.Inst.*;
 import LLVMIR.Oprand.*;
 import LLVMIR.Type.*;
 import Util.error.irError;
+import Util.position;
 import Util.scope.IRScope;
 import org.antlr.v4.runtime.misc.Pair;
 
@@ -483,7 +484,11 @@ public class IRBuilder implements ASTVisitor {
                     function = root.size;
                 }
                 else {  // string method
-                    function = root.getBuiltInFunction("__built_in_string_"+node.memberID);
+                    if (Objects.equals(node.memberID, "length")) function = root.getBuiltInFunction("string_length");
+                    else if (Objects.equals(node.memberID, "substring")) function = root.getBuiltInFunction("string_subString");
+                    else if (Objects.equals(node.memberID, "parseInt")) function = root.getBuiltInFunction("string_parseInt");
+                    else if (Objects.equals(node.memberID, "ord")) function = root.getBuiltInFunction("string_ord");
+                    else throw new irError("unknown string-builtIn function error", new position(0, 0));
                     functionArgs.add(0, thisReg);
                 }
             }
