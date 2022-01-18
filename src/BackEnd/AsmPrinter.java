@@ -17,7 +17,6 @@ public class AsmPrinter implements AsmVisitor {
 
     @Override public void visit(AsmModule node) {
         printPort.println("\t.text");
-        printPort.println("\t.file Isaiah.ll");
         for (Pair<String, AsmFunction> pair : node.textSection) {
             pair.b.accept(this);
         }
