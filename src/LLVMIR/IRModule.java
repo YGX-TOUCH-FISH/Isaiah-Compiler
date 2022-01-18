@@ -21,6 +21,7 @@ public class IRModule {
     public HashMap<String, ClassInfo> customClasses    = new HashMap<>();
     public HashMap<String, BaseType>  staticData       = new HashMap<>(); // .data & .bss
     public ArrayList<Pair<String, VirtualReg>> strConstants = new ArrayList<>();
+    public ArrayList<Pair<String, VirtualReg>> asmStrings = new ArrayList<>();
     public Function malloc;
     public Function strADD;
     public Function strLT;

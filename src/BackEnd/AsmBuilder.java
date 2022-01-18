@@ -62,7 +62,7 @@ public class AsmBuilder implements Pass {
 
     @Override public void visit(IRModule node) {
         root.bssSection.addAll(node.staticDataName);
-        for (Pair<String, VirtualReg> pair : node.strConstants)
+        for (Pair<String, VirtualReg> pair : node.asmStrings)
             root.rodataSection.add(new Pair<>(pair.b.name, pair.a));
         for (String name : node.customFunctionName)
             node.customFunctions.get(name).accept(this);
@@ -143,11 +143,17 @@ public class AsmBuilder implements Pass {
                 getPReg(reg, parameter);
             }
             else {
+                PhyReg offsetReg = getCalleeSaveReg();
+                PhyReg addrReg = getCalleeSaveReg();
                 spilledOffset = (node.inputArgs.size()-i-1)* 4L;    // cast to long
                 reg = getCalleeSaveReg();
                 getPReg(reg, parameter);
-                currentBlock.append(new Store(word, reg, sp(), spilledOffset));   // no possibility of 12-bit spill
+                currentBlock.append(new LoadImm(offsetReg, spilledOffset));
+                currentBlock.append(new RegBinary(RegBinary.RegOperator.add, addrReg, sp(), offsetReg));
+                currentBlock.append(new Store(word, reg, addrReg, 0L));   // no possibility of 12-bit spill
                 reg.free();
+                offsetReg.free();
+                addrReg.free();
             }
         }
         currentBlock.append(new Call(node.func.name));
@@ -271,7 +277,8 @@ public class AsmBuilder implements Pass {
         PhyReg a0 = phyRegs.get("a0");
         if (node.retValue != null) getPReg(a0, node.retValue);
         regRelease();
-        currentBlock.append(new ImmBinary(ImmBinary.immOperator.addi, sp(), sp(), spOffset));
+        currentBlock.append(new LoadImm(t0(), spOffset));
+        currentBlock.append(new RegBinary(RegBinary.RegOperator.add, sp(), sp(), t0()));
         currentBlock.append(new Return());
     }
 
@@ -292,6 +299,8 @@ public class AsmBuilder implements Pass {
     private PhyReg ra() { return phyRegs.get("ra"); }
     private PhyReg sp() { return phyRegs.get("sp"); }
     private PhyReg zero() { return phyRegs.get("zero"); }
+    private PhyReg t0() { return phyRegs.get("t0"); }
+    private PhyReg t1() {return phyRegs.get("t1"); }
     private void frameAllocate(Function node) {
         int blockNumber = 0;
         BasicBlock BB = node.entryBlock;
@@ -309,12 +318,16 @@ public class AsmBuilder implements Pass {
         long number = pReg + vReg + inPara + outPara;
         spOffset = number%4 == 0 ? 4*number : 16*(number/4 + 1);
         // get frame size
-
-        currentBlock.append(new ImmBinary(ImmBinary.immOperator.addi, sp(), sp(), -spOffset));
-        currentBlock.append(new Store(word, ra(), sp(), spOffset-4));
+        currentBlock.append(new LoadImm(t0(), -spOffset));
+        currentBlock.append(new RegBinary(RegBinary.RegOperator.add, sp(), sp(), t0()));
+        currentBlock.append(new LoadImm(t0(), spOffset-4));
+        currentBlock.append(new RegBinary(RegBinary.RegOperator.add, t1(), t0(), sp()));
+        currentBlock.append(new Store(word, ra(), t1(), 0L));
         int i = 2;
         for (String calleeSaveName : calleeSavePRegNames) {
-            currentBlock.append(new Store(word, phyRegs.get(calleeSaveName), sp(), spOffset - 4L*i));
+            currentBlock.append(new LoadImm(t0(), spOffset - 4L*i));
+            currentBlock.append(new RegBinary(RegBinary.RegOperator.add, t1(), sp(), t0()));
+            currentBlock.append(new Store(word, phyRegs.get(calleeSaveName), t1(), 0L));
             i++;
         }
         registerReserve = 13;
@@ -330,7 +343,9 @@ public class AsmBuilder implements Pass {
             }
             else {
                 p = getCalleeSaveReg();
-                currentBlock.append(new Load(word, p, sp(), spOffset + 4L*(i-8)));
+                currentBlock.append(new LoadImm(t0(), spOffset + 4L*(i-8)));
+                currentBlock.append(new RegBinary(RegBinary.RegOperator.add, t1(), sp(), t0()));
+                currentBlock.append(new Load(word, p, t1(), 0L));
                 savePReg(p, arg);
                 p.free();
             }
@@ -340,10 +355,14 @@ public class AsmBuilder implements Pass {
     private void regRelease() {
         long i = 2;
         for (String calleeSaveName : calleeSavePRegNames) {
-            currentBlock.append(new Load(word, phyRegs.get(calleeSaveName), sp(), spOffset-4*i));
+            currentBlock.append(new LoadImm(t0(), spOffset-4*i));
+            currentBlock.append(new RegBinary(RegBinary.RegOperator.add, t1(), sp(), t0()));
+            currentBlock.append(new Load(word, phyRegs.get(calleeSaveName), t1(), 0L));
             i++;
         }
-        currentBlock.append(new Load(word, ra(), sp(), spOffset-4));
+        currentBlock.append(new LoadImm(t0(), spOffset-4));
+        currentBlock.append(new RegBinary(RegBinary.RegOperator.add, t1(), sp(), t0()));
+        currentBlock.append(new Load(word, ra(), t1(), 0L));
     }
     private PhyReg getCalleeSaveReg() {
         for (String calleeSaveName : calleeSavePRegNames) {
@@ -366,18 +385,15 @@ public class AsmBuilder implements Pass {
         else getPReg(p, (ConstInt) o);
     }
     private void getPReg(PhyReg p, VirtualReg v) {
-        if (spOffset < 2048) {
-            currentBlock.append(new Load(word, p, sp(), regAddress.get(v.label)));
-        }
-        else {
-            PhyReg offset = getCalleeSaveReg();
-            PhyReg addr = getCalleeSaveReg();
-            currentBlock.append(new LoadImm(offset, regAddress.get(v.label)));
-            currentBlock.append(new RegBinary(RegBinary.RegOperator.add, addr, sp(), offset));
-            currentBlock.append(new Load(word, p, addr, 0L));
-            offset.free();
-            addr.free();
-        }
+//        if (spOffset < 2048) {
+
+        PhyReg offset = getCalleeSaveReg();
+        PhyReg addr = getCalleeSaveReg();
+        currentBlock.append(new LoadImm(offset, regAddress.get(v.label)));
+        currentBlock.append(new RegBinary(RegBinary.RegOperator.add, addr, sp(), offset));
+        currentBlock.append(new Load(word, p, addr, 0L));
+        offset.free();
+        addr.free();
     }
     private void getPReg(PhyReg p, ConstInt i) {
         currentBlock.append(new LoadImm(p, i.getIntValue()));
@@ -388,16 +404,14 @@ public class AsmBuilder implements Pass {
     // savePReg: save physicalReg's value into virtualReg's addr.
     private void savePReg(PhyReg p, VirtualReg v) {
         // v.name always null
-        if (spOffset < 2048) currentBlock.append(new Store(word, p, sp(), regAddress.get(v.label)));
-        else {
-            PhyReg addr = getCalleeSaveReg();
-            PhyReg offset = getCalleeSaveReg();
-            currentBlock.append(new LoadImm(offset, regAddress.get(v.label)));
-            currentBlock.append(new RegBinary(RegBinary.RegOperator.add, addr, sp(), offset));
-            currentBlock.append(new Store(word, p, addr, 0L));
-            addr.free();
-            offset.free();
-        }
+
+        PhyReg addr = getCalleeSaveReg();
+        PhyReg offset = getCalleeSaveReg();
+        currentBlock.append(new LoadImm(offset, regAddress.get(v.label)));
+        currentBlock.append(new RegBinary(RegBinary.RegOperator.add, addr, sp(), offset));
+        currentBlock.append(new Store(word, p, addr, 0L));
+        addr.free();
+        offset.free();
     }
     private void insertInst(Inst insert, Inst inst) {
         if (inst.prev != null ) inst.prev.next = insert;

@@ -806,6 +806,7 @@ public class IRBuilder implements ASTVisitor {
         llvmStr.append("\\00\""); strLength++;  // append '\0'
         VirtualReg strConstReg = new VirtualReg(new PointerType(new ArrayType(new IntType(8), strLength)), constantName);
         root.strConstants.add(new Pair<>(llvmStr.toString(), strConstReg));
+        root.asmStrings.add(new Pair<>("\""+strValue+"\"", strConstReg));
         VirtualReg strReg = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
         currentBlock.append(new BitCastInst(strConstReg, strReg));
         node.address = null;
