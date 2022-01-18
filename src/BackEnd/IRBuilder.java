@@ -434,18 +434,28 @@ public class IRBuilder implements ASTVisitor {
         Oprand offset;
         node.array.accept(this);
         node.index.accept(this);
-        if (!(node.array.getValueType() instanceof PointerType)) throw new irError("[ERROR] array must be pointer-type: ", node.pos);
         if (node.index.isLvalue()) {
             offset = new VirtualReg(node.index.getValueType(), currentFunction.takeLabel());
             currentBlock.append(new LoadInst((VirtualReg) offset, node.index.address));
         } else offset = node.index.value;
 
-        thisReg = new VirtualReg(node.array.getValueType(), currentFunction.takeLabel());
-        currentBlock.append(new LoadInst(thisReg, node.array.address));
-        ptrReg = new VirtualReg(node.array.getValueType(), currentFunction.takeLabel());
-        currentBlock.append(new GetElementPtrInst(ptrReg, thisReg, offset));
+        if (!(node.array.getValueType() instanceof PointerType)) {
+
+            thisReg = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
+            currentBlock.append(new BitCastInst(node.array.address, thisReg));
+            ptrReg = new VirtualReg(new PointerType(new IntType(8)), currentFunction.takeLabel());
+            currentBlock.append(new GetElementPtrInst(ptrReg, thisReg, offset));
+        }
+        else {
+            thisReg = new VirtualReg(node.array.getValueType(), currentFunction.takeLabel());
+            currentBlock.append(new LoadInst(thisReg, node.array.address));
+            ptrReg = new VirtualReg(node.array.getValueType(), currentFunction.takeLabel());
+            currentBlock.append(new GetElementPtrInst(ptrReg, thisReg, offset));
+        }
         node.address = ptrReg;
         node.value   = null;
+//        if (!(node.array.getValueType() instanceof PointerType)) throw new irError("[ERROR] array must be pointer-type: ", node.pos);
+
         // always return thisStoreReg.
     }
 
@@ -749,8 +759,9 @@ public class IRBuilder implements ASTVisitor {
 
     @Override public void visit(VariValNode node) {
         // anonymous variable: new Class()
-        if (node.name != null)
+        if (node.name != null)  {
             node.address = currentScope.getVarReg(node.name, true, currentBlock, currentFunction);
+        }
         else {  // call malloc
             Function constructor;
             VirtualReg thisStoreReg, thisReg, mallocReg;

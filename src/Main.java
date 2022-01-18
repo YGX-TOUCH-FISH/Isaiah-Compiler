@@ -15,17 +15,27 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.*;
+import java.util.Objects;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-//        String DataInFile = "testcases/codegen/t18.mx";
-//        String LLVMOutFile = "Isaiah.ll";
+        String DataInFile = "test.mx";
+        String LLVMOutFile = "Isaiah.ll";
         String ASMOutFile = "output.s";
-        InputStream input = System.in;
+//        InputStream input = System.in;
+        InputStream input = new FileInputStream(DataInFile);
         PrintStream llvmOutput, asmOutput;
         boolean toConsole = false;
+        boolean semanticOnly = false;
+
+        for (String str : args) {
+            if (Objects.equals(str, "-fsyntax-only")) {
+                semanticOnly = true;
+                break;
+            }
+        }
         try {
-//            llvmOutput = toConsole ? System.out : new PrintStream(LLVMOutFile);
+            llvmOutput = toConsole ? System.out : new PrintStream(LLVMOutFile);
             asmOutput  = toConsole ? System.out : new PrintStream(ASMOutFile);
             RootNode ASTRoot;
             GlobalScope gScope = new GlobalScope(null);
@@ -40,12 +50,13 @@ public class Main {
             ASTBuilder astBuilder = new ASTBuilder(gScope);
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
             new SemanticChecker(gScope).visit(ASTRoot);
+            if (semanticOnly) return;
 //            System.out.println("[1] Semantic check passed.");
             // IR generate & Print
             IRBuilder irBuilder = new IRBuilder();
             ASTRoot.accept(irBuilder);
             IRModule irModule = irBuilder.BuiltRoot();
-//            new IRPrinter(llvmOutput).visit(irModule);
+            new IRPrinter(llvmOutput).visit(irModule);
 //            System.out.println("[2] LLVM code generated over.");
             // ASM generate & Print
             AsmBuilder asmBuilder = new AsmBuilder();
