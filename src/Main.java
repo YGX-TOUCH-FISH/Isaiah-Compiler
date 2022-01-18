@@ -19,11 +19,11 @@ import java.util.Objects;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-        String DataInFile = "test.mx";
+//        String DataInFile = "test.mx";
         String LLVMOutFile = "Isaiah.ll";
         String ASMOutFile = "output.s";
 //        InputStream input = System.in;
-        InputStream input = new FileInputStream(DataInFile);
+        InputStream input = System.in;
         PrintStream llvmOutput, asmOutput;
         boolean toConsole = false;
         boolean semanticOnly = false;
