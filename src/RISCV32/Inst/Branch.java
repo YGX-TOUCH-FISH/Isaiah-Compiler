@@ -17,7 +17,7 @@ public class Branch extends Inst{
     @Override public String toString() {
         String ret = op+" "+rs1;
         if (rs2 != null) ret += ", "+rs2;
-        ret += " "+target;
+        ret += ", "+target;
         return ret;
     }
 }
