@@ -11,6 +11,6 @@ public class LoadAddr extends Inst{
     }
 
     @Override public String toString() {
-        return "la\t"+rd+" "+variable;
+        return "la\t"+rd+", "+variable;
     }
 }

@@ -12,6 +12,6 @@ public class LoadImm extends Inst{
     }
 
     @Override public String toString() {
-        return "li\t"+rd+" "+imm;
+        return "li\t"+rd+", "+imm;
     }
 }
