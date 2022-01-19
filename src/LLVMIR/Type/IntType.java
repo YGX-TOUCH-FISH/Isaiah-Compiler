@@ -22,6 +22,6 @@ public class IntType extends BaseType{
     }
 
     @Override public int getByteWidth() {
-        return bitWidth == 1 ? 1 : bitWidth/8;
+        return 4;
     }
 }

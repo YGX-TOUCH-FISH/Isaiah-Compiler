@@ -313,7 +313,7 @@ public class AsmBuilder implements Pass {
 
         int pReg    = 13;
         int inPara  = node.args.size();
-        int outPara = 0;
+        int outPara = 50;
         int vReg    = node.getLabel()-blockNumber;
         long number = pReg + vReg + inPara + outPara;
         spOffset = number%4 == 0 ? 4*number : 16*(number/4 + 1);

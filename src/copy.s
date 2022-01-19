@@ -1,123 +1,96 @@
 	.text
 	.file	"Isaiah.ll"
-	.globl	abs                     # -- Begin function abs
-	.p2align	2
-	.type	abs,@function
-abs:                                    # @abs
-	.cfi_startproc
-# %bb.0:
-	addi	sp, sp, -16
-	.cfi_def_cfa_offset 16
-	addi	a1, zero, 1
-	sw	a0, 12(sp)
-	blt	a0, a1, .LBB0_2
-# %bb.1:
-	lw	a0, 12(sp)
-	addi	sp, sp, 16
-	ret
-.LBB0_2:
-	lw	a0, 12(sp)
-	neg	a0, a0
-	addi	sp, sp, 16
-	ret
-.Lfunc_end0:
-	.size	abs, .Lfunc_end0-abs
-	.cfi_endproc
-                                        # -- End function
 	.globl	main                    # -- Begin function main
 	.p2align	2
 	.type	main,@function
 main:                                   # @main
 	.cfi_startproc
 # %bb.0:
-	addi	sp, sp, -48
-	.cfi_def_cfa_offset 48
-	sw	ra, 44(sp)
-	sw	s0, 40(sp)
-	sw	s1, 36(sp)
-	sw	s2, 32(sp)
-	sw	s3, 28(sp)
-	sw	s4, 24(sp)
-	sw	s5, 20(sp)
-	sw	s6, 16(sp)
-	sw	s7, 12(sp)
+	addi	sp, sp, -32
+	.cfi_def_cfa_offset 32
+	sw	ra, 28(sp)
+	sw	s0, 24(sp)
+	sw	s1, 20(sp)
 	.cfi_offset ra, -4
 	.cfi_offset s0, -8
 	.cfi_offset s1, -12
-	.cfi_offset s2, -16
-	.cfi_offset s3, -20
-	.cfi_offset s4, -24
-	.cfi_offset s5, -28
-	.cfi_offset s6, -32
-	.cfi_offset s7, -36
 	call	global_var_init
-	lui	s2, %hi(i)
-	addi	a0, s2, %lo(i)
-	sw	zero, 0(a0)
-	addi	s1, zero, 4
-	lui	s0, %hi(j)
-	addi	s3, s0, %lo(j)
-	lui	s4, %hi(n)
-	addi	s5, zero, 1
-	lui	s6, %hi(r)
-	lui	s7, %hi(c)
-	j	.LBB1_2
-.LBB1_1:                                #   in Loop: Header=BB1_2 Depth=1
-	lw	a0, %lo(i)(s2)
+	addi	a0, zero, 2
+	sw	a0, 16(sp)
+	addi	a0, zero, 1
+	sw	a0, 12(sp)
+	lui	a1, %hi(N)
+	lui	a2, %hi(b)
+.LBB0_1:                                # =>This Inner Loop Header: Depth=1
+	lw	a3, 12(sp)
+	lw	a4, %lo(N)(a1)
+	blt	a4, a3, .LBB0_3
+# %bb.2:                                #   in Loop: Header=BB0_1 Depth=1
+	lw	a3, 12(sp)
+	lw	a4, %lo(b)(a2)
+	add	a3, a4, a3
+	sb	a0, 0(a3)
+	lw	a3, 12(sp)
+	addi	a3, a3, 1
+	sw	a3, 12(sp)
+	j	.LBB0_1
+.LBB0_3:
+	addi	a0, zero, 2
+	sw	a0, 12(sp)
+	lui	s0, %hi(N)
+	lui	s1, %hi(b)
+.LBB0_4:                                # =>This Inner Loop Header: Depth=1
+	lw	a0, 12(sp)
+	lw	a1, 16(sp)
+	call	__mulsi3
+	lw	a1, %lo(N)(s0)
+	blt	a1, a0, .LBB0_6
+# %bb.5:                                #   in Loop: Header=BB0_4 Depth=1
+	lw	a0, 12(sp)
+	lw	a1, 16(sp)
+	call	__mulsi3
+	lw	a1, %lo(b)(s1)  ;b
+	add	a0, a1, a0      ;b+%24*%25
+	sb	zero, 0(a0)
+	lw	a0, 16(sp)
 	addi	a0, a0, 1
-	sw	a0, %lo(i)(s2)
-.LBB1_2:                                # =>This Loop Header: Depth=1
-                                        #     Child Loop BB1_5 Depth 2
-	lw	a0, %lo(i)(s2)
-	blt	s1, a0, .LBB1_8
-# %bb.3:                                #   in Loop: Header=BB1_2 Depth=1
-	sw	zero, 0(s3)
-	j	.LBB1_5
-.LBB1_4:                                #   in Loop: Header=BB1_5 Depth=2
-	lw	a0, %lo(j)(s0)
-	addi	a0, a0, 1
-	sw	a0, %lo(j)(s0)
-.LBB1_5:                                #   Parent Loop BB1_2 Depth=1
-                                        # =>  This Inner Loop Header: Depth=2
-	lw	a0, %lo(j)(s0)
-	blt	s1, a0, .LBB1_1
-# %bb.6:                                #   in Loop: Header=BB1_5 Depth=2
-	call	getInt
-	sw	a0, %lo(n)(s4)
-	bne	a0, s5, .LBB1_4
-# %bb.7:                                #   in Loop: Header=BB1_5 Depth=2
-	lw	a0, %lo(i)(s2)
-	lw	a1, %lo(j)(s0)
-	sw	a0, %lo(r)(s6)
-	sw	a1, %lo(c)(s7)
-	j	.LBB1_4
-.LBB1_8:
-	lui	a0, %hi(r)
-	lw	a0, %lo(r)(a0)
-	addi	s1, zero, 2
-	sub	a0, s1, a0
-	call	abs
-	lui	a1, %hi(c)
-	lw	a1, %lo(c)(a1)
-	mv	s0, a0
-	sub	a0, s1, a1
-	call	abs
-	add	a0, s0, a0
-	call	printInt
+	sw	a0, 16(sp)
+	j	.LBB0_4
+.LBB0_6:
+	addi	a0, zero, 1
+	sw	a0, 12(sp)
+	lui	s0, %hi(N)
+	lui	s1, %hi(b)
+	j	.LBB0_9
+.LBB0_7:                                #   in Loop: Header=BB0_9 Depth=1
 	mv	a0, zero
-	lw	s7, 12(sp)
-	lw	s6, 16(sp)
-	lw	s5, 20(sp)
-	lw	s4, 24(sp)
-	lw	s3, 28(sp)
-	lw	s2, 32(sp)
-	lw	s1, 36(sp)
-	lw	s0, 40(sp)
-	lw	ra, 44(sp)
-	addi	sp, sp, 48
+.LBB0_8:                                #   in Loop: Header=BB0_9 Depth=1
+	call	printlnInt
+	lw	a0, 12(sp)
+	addi	a0, a0, 1
+	sw	a0, 12(sp)
+.LBB0_9:                                # =>This Inner Loop Header: Depth=1
+	lw	a0, 12(sp)
+	lw	a1, %lo(N)(s0)
+	blt	a1, a0, .LBB0_12
+# %bb.10:                               #   in Loop: Header=BB0_9 Depth=1
+	lw	a0, 12(sp)
+	lw	a1, %lo(b)(s1)
+	add	a0, a1, a0
+	lbu	a0, 0(a0)
+	beqz	a0, .LBB0_7
+# %bb.11:                               #   in Loop: Header=BB0_9 Depth=1
+	addi	a0, zero, 1
+	j	.LBB0_8
+.LBB0_12:
+	mv	a0, zero
+	lw	s1, 20(sp)
+	lw	s0, 24(sp)
+	lw	ra, 28(sp)
+	addi	sp, sp, 32
 	ret
-.Lfunc_end1:
-	.size	main, .Lfunc_end1-main
+.Lfunc_end0:
+	.size	main, .Lfunc_end0-main
 	.cfi_endproc
                                         # -- End function
 	.globl	global_var_init         # -- Begin function global_var_init
@@ -126,45 +99,41 @@ main:                                   # @main
 global_var_init:                        # @global_var_init
 	.cfi_startproc
 # %bb.0:
+	addi	sp, sp, -16
+	.cfi_def_cfa_offset 16
+	sw	ra, 12(sp)
+	.cfi_offset ra, -4
+	addi	a0, zero, 34
+	call	malloc
+	addi	a1, zero, 30
+	sw	a1, 0(a0)
+	addi	a0, a0, 4
+	sw	a0, 8(sp)
+	lui	a1, %hi(b)
+	sw	a0, %lo(b)(a1)
+	lui	a0, %hi(N)
+	addi	a1, zero, 10
+	sw	a1, %lo(N)(a0)
+	lw	ra, 12(sp)
+	addi	sp, sp, 16
 	ret
-.Lfunc_end2:
-	.size	global_var_init, .Lfunc_end2-global_var_init
+.Lfunc_end1:
+	.size	global_var_init, .Lfunc_end1-global_var_init
 	.cfi_endproc
                                         # -- End function
-	.type	n,@object               # @n
+	.type	b,@object               # @b
 	.section	.sbss,"aw",@nobits
-	.globl	n
+	.globl	b
 	.p2align	2
-n:
-	.word	0                       # 0x0
-	.size	n, 4
+b:
+	.word	0
+	.size	b, 4
 
-	.type	r,@object               # @r
-	.globl	r
+	.type	N,@object               # @N
+	.globl	N
 	.p2align	2
-r:
+N:
 	.word	0                       # 0x0
-	.size	r, 4
-
-	.type	c,@object               # @c
-	.globl	c
-	.p2align	2
-c:
-	.word	0                       # 0x0
-	.size	c, 4
-
-	.type	i,@object               # @i
-	.globl	i
-	.p2align	2
-i:
-	.word	0                       # 0x0
-	.size	i, 4
-
-	.type	j,@object               # @j
-	.globl	j
-	.p2align	2
-j:
-	.word	0                       # 0x0
-	.size	j, 4
+	.size	N, 4
 
 	.section	".note.GNU-stack","",@progbits
